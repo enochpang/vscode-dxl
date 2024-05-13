@@ -1,0 +1,17 @@
+{
+	"editor.formatOnSave": true,
+	"files.exclude": {
+		"out": false
+	},
+	"search.exclude": {
+		"out": true,
+		"node_modules": true
+	},
+	"typescript.tsc.autoDetect": "off",
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
+}

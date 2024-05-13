@@ -1,0 +1,1063 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`parse !null ad 1`] = `
+"Node TREEROOT@0..8
+  Node STMTEXPR@0..8
+    Node EXPRUNARY@0..8
+      Leaf BANG@0..1 "!"
+      Node EXPRCALL@1..8
+        Node NULL@1..5
+          Leaf KWNULL@1..5 "null"
+        Node ARGLIST@6..8
+          Node NAMEREF@6..8
+            Leaf IDENT@6..8 "ad""
+`;
+
+exports[`parse "hello" //-
+"world" 1`] = `
+"Node TREEROOT@0..19
+  Node STMTEXPR@0..19
+    Node EXPRSTRINGCONCAT@0..19
+      Node EXPRLITERAL@0..7
+        Leaf STRING@0..7 ""hello""
+      Node EXPRLITERAL@12..19
+        Leaf STRING@12..19 ""world"""
+`;
+
+exports[`parse #include "file.txt" 1`] = `
+"Node TREEROOT@0..19
+  Node DXLINCLUDE@0..19
+    Leaf KWINCLUDE@0..8 "#include"
+    Leaf STRING@9..19 ""file.txt"""
+`;
+
+exports[`parse #include <file.txt> 1`] = `
+"Node TREEROOT@0..19
+  Node DXLINCLUDE@0..19
+    Leaf KWINCLUDE@0..8 "#include"
+    Leaf LESS@9..10 "<"
+    Leaf IDENT@10..14 "file"
+    Leaf PERIOD@14..15 "."
+    Leaf IDENT@15..18 "txt"
+    Leaf GREAT@18..19 ">""
+`;
+
+exports[`parse (1 + 2) * 3 1`] = `
+"Node TREEROOT@0..11
+  Node STMTEXPR@0..11
+    Node EXPRBINARY@0..11
+      Node EXPRGROUPING@0..7
+        Leaf LPAREN@0..1 "("
+        Node EXPRBINARY@1..6
+          Node EXPRLITERAL@1..2
+            Leaf INTEGER@1..2 "1"
+          Leaf PLUS@3..4 "+"
+          Node EXPRLITERAL@5..6
+            Leaf INTEGER@5..6 "2"
+        Leaf RPAREN@6..7 ")"
+      Leaf STAR@8..9 "*"
+      Node EXPRLITERAL@10..11
+        Leaf INTEGER@10..11 "3""
+`;
+
+exports[`parse (int key sk) 1`] = `
+"Node TREEROOT@0..12
+  Node STMTEXPR@0..12
+    Node EXPRCAST@0..12
+      Leaf LPAREN@0..1 "("
+      Node TYPEANNOTATION@1..4
+        Leaf KWINT@1..4 "int"
+      Node EXPRCALL@5..11
+        Node NAMEREF@5..8
+          Leaf IDENT@5..8 "key"
+        Node ARGLIST@9..11
+          Node NAMEREF@9..11
+            Leaf IDENT@9..11 "sk"
+      Leaf RPAREN@11..12 ")""
+`;
+
+exports[`parse -1 * 2 1`] = `
+"Node TREEROOT@0..6
+  Node STMTEXPR@0..6
+    Node EXPRBINARY@0..6
+      Node EXPRUNARY@0..2
+        Leaf MINUS@0..1 "-"
+        Node EXPRLITERAL@1..2
+          Leaf INTEGER@1..2 "1"
+      Leaf STAR@3..4 "*"
+      Node EXPRLITERAL@5..6
+        Leaf INTEGER@5..6 "2""
+`;
+
+exports[`parse 1 + 2 * 3 1`] = `
+"Node TREEROOT@0..9
+  Node STMTEXPR@0..9
+    Node EXPRBINARY@0..9
+      Node EXPRLITERAL@0..1
+        Leaf INTEGER@0..1 "1"
+      Leaf PLUS@2..3 "+"
+      Node EXPRBINARY@4..9
+        Node EXPRLITERAL@4..5
+          Leaf INTEGER@4..5 "2"
+        Leaf STAR@6..7 "*"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "3""
+`;
+
+exports[`parse 1 + 2 + 3 1`] = `
+"Node TREEROOT@0..9
+  Node STMTEXPR@0..9
+    Node EXPRBINARY@0..9
+      Node EXPRLITERAL@0..1
+        Leaf INTEGER@0..1 "1"
+      Leaf PLUS@2..3 "+"
+      Node EXPRBINARY@4..9
+        Node EXPRLITERAL@4..5
+          Leaf INTEGER@4..5 "2"
+        Leaf PLUS@6..7 "+"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "3""
+`;
+
+exports[`parse 1 + 2 1`] = `
+"Node TREEROOT@0..5
+  Node STMTEXPR@0..5
+    Node EXPRBINARY@0..5
+      Node EXPRLITERAL@0..1
+        Leaf INTEGER@0..1 "1"
+      Leaf PLUS@2..3 "+"
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "2""
+`;
+
+exports[`parse 1 + 2; 3 + 4 1`] = `
+"Node TREEROOT@0..12
+  Node STMTEXPR@0..5
+    Node EXPRBINARY@0..5
+      Node EXPRLITERAL@0..1
+        Leaf INTEGER@0..1 "1"
+      Leaf PLUS@2..3 "+"
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "2"
+  Node STMTEXPR@7..12
+    Node EXPRBINARY@7..12
+      Node EXPRLITERAL@7..8
+        Leaf INTEGER@7..8 "3"
+      Leaf PLUS@9..10 "+"
+      Node EXPRLITERAL@11..12
+        Leaf INTEGER@11..12 "4""
+`;
+
+exports[`parse 2 "" 1`] = `
+"Node TREEROOT@0..4
+  Node STMTEXPR@0..4
+    Node EXPRSTRINGCONCAT@0..4
+      Node EXPRLITERAL@0..1
+        Leaf INTEGER@0..1 "2"
+      Node EXPRLITERAL@2..4
+        Leaf STRING@2..4 """""
+`;
+
+exports[`parse a && isspace b 1`] = `
+"Node TREEROOT@0..14
+  Node STMTEXPR@0..14
+    Node EXPRLOGICAL@0..14
+      Node NAMEREF@0..1
+        Leaf IDENT@0..1 "a"
+      Leaf AMPRAMPR@2..4 "&&"
+      Node EXPRCALL@5..14
+        Node NAMEREF@5..12
+          Leaf IDENT@5..12 "isspace"
+        Node ARGLIST@13..14
+          Node NAMEREF@13..14
+            Leaf IDENT@13..14 "b""
+`;
+
+exports[`parse a += 2 1`] = `
+"Node TREEROOT@0..6
+  Node STMTEXPR@0..6
+    Node EXPRASSIGN@0..6
+      Node NAMEREF@0..1
+        Leaf IDENT@0..1 "a"
+      Leaf PLUSEQUAL@2..4 "+="
+      Node EXPRLITERAL@5..6
+        Leaf INTEGER@5..6 "2""
+`;
+
+exports[`parse a < 2 ? 3 : 4 1`] = `
+"Node TREEROOT@0..13
+  Node STMTEXPR@0..13
+    Node EXPRTERNARY@0..13
+      Node EXPRCOMPARE@0..5
+        Node NAMEREF@0..1
+          Leaf IDENT@0..1 "a"
+        Leaf LESS@2..3 "<"
+        Node EXPRLITERAL@4..5
+          Leaf INTEGER@4..5 "2"
+      Leaf QMARK@6..7 "?"
+      Node EXPRLITERAL@8..9
+        Leaf INTEGER@8..9 "3"
+      Leaf COLON@10..11 ":"
+      Node EXPRLITERAL@12..13
+        Leaf INTEGER@12..13 "4""
+`;
+
+exports[`parse a = 2 1`] = `
+"Node TREEROOT@0..5
+  Node STMTEXPR@0..5
+    Node EXPRASSIGN@0..5
+      Node NAMEREF@0..1
+        Leaf IDENT@0..1 "a"
+      Leaf EQUAL@2..3 "="
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "2""
+`;
+
+exports[`parse ad.object 1`] = `
+"Node TREEROOT@0..9
+  Node STMTEXPR@0..9
+    Node EXPRGET@0..9
+      Node NAMEREF@0..2
+        Leaf IDENT@0..2 "ad"
+      Leaf PERIOD@2..3 "."
+      Node EXPRLITERAL@3..9
+        Leaf KWOBJECT@3..9 "object""
+`;
+
+exports[`parse arr[1] 1`] = `
+"Node TREEROOT@0..6
+  Node STMTEXPR@0..6
+    Node EXPRINDEX@0..6
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "arr"
+      Leaf LBRACKET@3..4 "["
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "1"
+      Leaf RBRACKET@5..6 "]""
+`;
+
+exports[`parse current Object 1`] = `
+"Node TREEROOT@0..14
+  Node STMTEXPR@0..14
+    Node EXPRCAST@0..14
+      Node NAMEREF@0..7
+        Leaf IDENT@0..7 "current"
+      Node TYPEANNOTATION@8..14
+        Leaf IDENT@8..14 "Object""
+`;
+
+exports[`parse dbe->"left"->"form" 1`] = `
+"Node TREEROOT@0..19
+  Node STMTEXPR@0..19
+    Node EXPRSETDBE@0..19
+      Node EXPRSETDBE@0..11
+        Node NAMEREF@0..3
+          Leaf IDENT@0..3 "dbe"
+        Leaf MINUSGREAT@3..5 "->"
+        Node EXPRLITERAL@5..11
+          Leaf STRING@5..11 ""left""
+      Leaf MINUSGREAT@11..13 "->"
+      Node EXPRLITERAL@13..19
+        Leaf STRING@13..19 ""form"""
+`;
+
+exports[`parse for (i = 0; i < 4; i++) {
+    a + 1
+} 1`] = `
+"Node TREEROOT@0..37
+  Node STMTFOR@0..37
+    Leaf KWFOR@0..3 "for"
+    Leaf LPAREN@4..5 "("
+    Node STMTEXPR@5..10
+      Node EXPRASSIGN@5..10
+        Node NAMEREF@5..6
+          Leaf IDENT@5..6 "i"
+        Leaf EQUAL@7..8 "="
+        Node EXPRLITERAL@9..10
+          Leaf INTEGER@9..10 "0"
+    Leaf SEMICOLON@10..11 ";"
+    Node STMTEXPR@12..17
+      Node EXPRCOMPARE@12..17
+        Node NAMEREF@12..13
+          Leaf IDENT@12..13 "i"
+        Leaf LESS@14..15 "<"
+        Node EXPRLITERAL@16..17
+          Leaf INTEGER@16..17 "4"
+    Leaf SEMICOLON@17..18 ";"
+    Node STMTEXPR@19..22
+      Node EXPRUNARY@19..22
+        Node NAMEREF@19..20
+          Leaf IDENT@19..20 "i"
+        Leaf PLUSPLUS@20..22 "++"
+    Leaf RPAREN@22..23 ")"
+    Node STMTBLOCK@24..37
+      Leaf LCURLY@24..25 "{"
+      Node STMTEXPR@30..35
+        Node EXPRBINARY@30..35
+          Node NAMEREF@30..31
+            Leaf IDENT@30..31 "a"
+          Leaf PLUS@32..33 "+"
+          Node EXPRLITERAL@34..35
+            Leaf INTEGER@34..35 "1"
+      Leaf RCURLY@36..37 "}""
+`;
+
+exports[`parse for obj in mod do {} 1`] = `
+"Node TREEROOT@0..20
+  Node STMTFORIN@0..20
+    Leaf KWFOR@0..3 "for"
+    Node STMTEXPR@4..7
+      Node NAMEREF@4..7
+        Leaf IDENT@4..7 "obj"
+    Leaf KWIN@8..10 "in"
+    Node STMTEXPR@11..14
+      Node NAMEREF@11..14
+        Leaf IDENT@11..14 "mod"
+    Leaf KWDO@15..17 "do"
+    Node STMTBLOCK@18..20
+      Leaf LCURLY@18..19 "{"
+      Leaf RCURLY@19..20 "}""
+`;
+
+exports[`parse from + start 0 1`] = `
+"Node TREEROOT@0..14
+  Node STMTEXPR@0..14
+    Node EXPRBINARY@0..14
+      Node NAMEREF@0..4
+        Leaf IDENT@0..4 "from"
+      Leaf PLUS@5..6 "+"
+      Node EXPRCALL@7..14
+        Node NAMEREF@7..12
+          Leaf IDENT@7..12 "start"
+        Node ARGLIST@13..14
+          Node EXPRLITERAL@13..14
+            Leaf INTEGER@13..14 "0""
+`;
+
+exports[`parse i++ 1`] = `
+"Node TREEROOT@0..3
+  Node STMTEXPR@0..3
+    Node EXPRUNARY@0..3
+      Node NAMEREF@0..1
+        Leaf IDENT@0..1 "i"
+      Leaf PLUSPLUS@1..3 "++""
+`;
+
+exports[`parse if (a < 2) {
+    a + 1
+} 1`] = `
+"Node TREEROOT@0..24
+  Node STMTIF@0..24
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..9
+      Node EXPRCOMPARE@4..9
+        Node NAMEREF@4..5
+          Leaf IDENT@4..5 "a"
+        Leaf LESS@6..7 "<"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "2"
+    Leaf RPAREN@9..10 ")"
+    Node STMTBLOCK@11..24
+      Leaf LCURLY@11..12 "{"
+      Node STMTEXPR@17..22
+        Node EXPRBINARY@17..22
+          Node NAMEREF@17..18
+            Leaf IDENT@17..18 "a"
+          Leaf PLUS@19..20 "+"
+          Node EXPRLITERAL@21..22
+            Leaf INTEGER@21..22 "1"
+      Leaf RCURLY@23..24 "}""
+`;
+
+exports[`parse if (a < 2) { a + 1 } else { b + 2 } 1`] = `
+"Node TREEROOT@0..35
+  Node STMTIF@0..35
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..9
+      Node EXPRCOMPARE@4..9
+        Node NAMEREF@4..5
+          Leaf IDENT@4..5 "a"
+        Leaf LESS@6..7 "<"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "2"
+    Leaf RPAREN@9..10 ")"
+    Node STMTBLOCK@11..20
+      Leaf LCURLY@11..12 "{"
+      Node STMTEXPR@13..18
+        Node EXPRBINARY@13..18
+          Node NAMEREF@13..14
+            Leaf IDENT@13..14 "a"
+          Leaf PLUS@15..16 "+"
+          Node EXPRLITERAL@17..18
+            Leaf INTEGER@17..18 "1"
+      Leaf RCURLY@19..20 "}"
+    Leaf KWELSE@21..25 "else"
+    Node STMTBLOCK@26..35
+      Leaf LCURLY@26..27 "{"
+      Node STMTEXPR@28..33
+        Node EXPRBINARY@28..33
+          Node NAMEREF@28..29
+            Leaf IDENT@28..29 "b"
+          Leaf PLUS@30..31 "+"
+          Node EXPRLITERAL@32..33
+            Leaf INTEGER@32..33 "2"
+      Leaf RCURLY@34..35 "}""
+`;
+
+exports[`parse if (a < 2) continue 1`] = `
+"Node TREEROOT@0..19
+  Node STMTIF@0..19
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..9
+      Node EXPRCOMPARE@4..9
+        Node NAMEREF@4..5
+          Leaf IDENT@4..5 "a"
+        Leaf LESS@6..7 "<"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "2"
+    Leaf RPAREN@9..10 ")"
+    Node STMTCONTINUE@11..19
+      Leaf KWCONTINUE@11..19 "continue""
+`;
+
+exports[`parse if (a < 2) return 1`] = `
+"Node TREEROOT@0..17
+  Node STMTIF@0..17
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..9
+      Node EXPRCOMPARE@4..9
+        Node NAMEREF@4..5
+          Leaf IDENT@4..5 "a"
+        Leaf LESS@6..7 "<"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "2"
+    Leaf RPAREN@9..10 ")"
+    Node STMTJUMP@11..17
+      Leaf KWRETURN@11..17 "return""
+`;
+
+exports[`parse if (a < 2) return 2 1`] = `
+"Node TREEROOT@0..19
+  Node STMTIF@0..19
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..9
+      Node EXPRCOMPARE@4..9
+        Node NAMEREF@4..5
+          Leaf IDENT@4..5 "a"
+        Leaf LESS@6..7 "<"
+        Node EXPRLITERAL@8..9
+          Leaf INTEGER@8..9 "2"
+    Leaf RPAREN@9..10 ")"
+    Node STMTJUMP@11..19
+      Leaf KWRETURN@11..17 "return"
+      Node STMTEXPR@18..19
+        Node EXPRLITERAL@18..19
+          Leaf INTEGER@18..19 "2""
+`;
+
+exports[`parse if (a) { 1 } else if (b) { 2 } 1`] = `
+"Node TREEROOT@0..30
+  Node STMTIF@0..30
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..5
+      Node NAMEREF@4..5
+        Leaf IDENT@4..5 "a"
+    Leaf RPAREN@5..6 ")"
+    Node STMTBLOCK@7..12
+      Leaf LCURLY@7..8 "{"
+      Node STMTEXPR@9..10
+        Node EXPRLITERAL@9..10
+          Leaf INTEGER@9..10 "1"
+      Leaf RCURLY@11..12 "}"
+    Leaf KWELSE@13..17 "else"
+    Node STMTIF@18..30
+      Leaf KWIF@18..20 "if"
+      Leaf LPAREN@21..22 "("
+      Node STMTEXPR@22..23
+        Node NAMEREF@22..23
+          Leaf IDENT@22..23 "b"
+      Leaf RPAREN@23..24 ")"
+      Node STMTBLOCK@25..30
+        Leaf LCURLY@25..26 "{"
+        Node STMTEXPR@27..28
+          Node EXPRLITERAL@27..28
+            Leaf INTEGER@27..28 "2"
+        Leaf RCURLY@29..30 "}""
+`;
+
+exports[`parse if (isDeleted module(modVersion)) {} 1`] = `
+"Node TREEROOT@0..36
+  Node STMTIF@0..36
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..32
+      Node EXPRCALL@4..32
+        Node NAMEREF@4..13
+          Leaf IDENT@4..13 "isDeleted"
+        Node ARGLIST@14..32
+          Node EXPRCALL@14..32
+            Node NAMEREF@14..20
+              Leaf KWMODULE@14..20 "module"
+            Leaf LPAREN@20..21 "("
+            Node ARGLIST@21..31
+              Node NAMEREF@21..31
+                Leaf IDENT@21..31 "modVersion"
+            Leaf RPAREN@31..32 ")"
+    Leaf RPAREN@32..33 ")"
+    Node STMTBLOCK@34..36
+      Leaf LCURLY@34..35 "{"
+      Leaf RCURLY@35..36 "}""
+`;
+
+exports[`parse if (true) 1 else 2 1`] = `
+"Node TREEROOT@0..18
+  Node STMTIF@0..18
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..8
+      Node EXPRLITERAL@4..8
+        Leaf KWTRUE@4..8 "true"
+    Leaf RPAREN@8..9 ")"
+    Node STMTEXPR@10..11
+      Node EXPRLITERAL@10..11
+        Leaf INTEGER@10..11 "1"
+    Leaf KWELSE@12..16 "else"
+    Node STMTEXPR@17..18
+      Node EXPRLITERAL@17..18
+        Leaf INTEGER@17..18 "2""
+`;
+
+exports[`parse int 1`] = `
+"Node TREEROOT@0..3
+  Node ERRORNODE@0..3
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int""
+`;
+
+exports[`parse int a = 2 1`] = `
+"Node TREEROOT@0..9
+  Node STMTVARDECL@0..9
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..5
+      Leaf IDENT@4..5 "a"
+    Leaf EQUAL@6..7 "="
+    Node STMTEXPR@8..9
+      Node EXPRLITERAL@8..9
+        Leaf INTEGER@8..9 "2""
+`;
+
+exports[`parse int a 1`] = `
+"Node TREEROOT@0..5
+  Node STMTVARDECL@0..5
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..5
+      Leaf IDENT@4..5 "a""
+`;
+
+exports[`parse int acc(int base, int f(int, int)) {} 1`] = `
+"Node TREEROOT@0..37
+  Node STMTFUNCDECL@0..37
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "acc"
+    Leaf LPAREN@7..8 "("
+    Node PARAMLIST@8..33
+      Node PARAM@8..16
+        Node STMTVARDECL@8..16
+          Node TYPEANNOTATION@8..11
+            Leaf KWINT@8..11 "int"
+          Node NAMEREF@12..16
+            Leaf IDENT@12..16 "base"
+      Leaf COMMA@16..17 ","
+      Node PARAM@18..33
+        Node STMTFUNCDECL@18..33
+          Node TYPEANNOTATION@18..21
+            Leaf KWINT@18..21 "int"
+          Node NAMEREF@22..23
+            Leaf IDENT@22..23 "f"
+          Leaf LPAREN@23..24 "("
+          Node PARAMLIST@24..32
+            Node PARAM@24..27
+              Node STMTFUNCDECL@24..27
+                Node TYPEANNOTATION@24..27
+                  Leaf KWINT@24..27 "int"
+            Leaf COMMA@27..28 ","
+            Node PARAM@29..32
+              Node STMTFUNCDECL@29..32
+                Node TYPEANNOTATION@29..32
+                  Leaf KWINT@29..32 "int"
+          Leaf RPAREN@32..33 ")"
+    Leaf RPAREN@33..34 ")"
+    Node STMTBLOCK@35..37
+      Leaf LCURLY@35..36 "{"
+      Leaf RCURLY@36..37 "}""
+`;
+
+exports[`parse int nums[] = {1, 2, 3} 1`] = `
+"Node TREEROOT@0..22
+  Node STMTARRAYDECL@0..22
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..8
+      Leaf IDENT@4..8 "nums"
+    Leaf LBRACKET@8..9 "["
+    Leaf RBRACKET@9..10 "]"
+    Leaf EQUAL@11..12 "="
+    Leaf LCURLY@13..14 "{"
+    Node ARGLIST@14..21
+      Node EXPRLITERAL@14..15
+        Leaf INTEGER@14..15 "1"
+      Leaf COMMA@15..16 ","
+      Node EXPRLITERAL@17..18
+        Leaf INTEGER@17..18 "2"
+      Leaf COMMA@18..19 ","
+      Node EXPRLITERAL@20..21
+        Leaf INTEGER@20..21 "3"
+    Leaf RCURLY@21..22 "}""
+`;
+
+exports[`parse int nums[3] 1`] = `
+"Node TREEROOT@0..11
+  Node STMTARRAYDECL@0..11
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..8
+      Leaf IDENT@4..8 "nums"
+    Leaf LBRACKET@8..9 "["
+    Node STMTEXPR@9..10
+      Node EXPRLITERAL@9..10
+        Leaf INTEGER@9..10 "3"
+    Leaf RBRACKET@10..11 "]""
+`;
+
+exports[`parse int sum(int &a, int &b) {
+
+} 1`] = `
+"Node TREEROOT@0..28
+  Node STMTFUNCDECL@0..28
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "sum"
+    Leaf LPAREN@7..8 "("
+    Node PARAMLIST@8..22
+      Node PARAM@8..14
+        Node STMTVARDECL@8..14
+          Node TYPEANNOTATION@8..11
+            Leaf KWINT@8..11 "int"
+          Leaf AMPR@12..13 "&"
+          Node NAMEREF@13..14
+            Leaf IDENT@13..14 "a"
+      Leaf COMMA@14..15 ","
+      Node PARAM@16..22
+        Node STMTVARDECL@16..22
+          Node TYPEANNOTATION@16..19
+            Leaf KWINT@16..19 "int"
+          Leaf AMPR@20..21 "&"
+          Node NAMEREF@21..22
+            Leaf IDENT@21..22 "b"
+    Leaf RPAREN@22..23 ")"
+    Node STMTBLOCK@24..28
+      Leaf LCURLY@24..25 "{"
+      Leaf RCURLY@27..28 "}""
+`;
+
+exports[`parse int sum(int a, b) 1`] = `
+"Node TREEROOT@0..17
+  Node STMTFUNCDECL@0..17
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "sum"
+    Leaf LPAREN@7..8 "("
+    Node PARAMLIST@8..16
+      Node PARAM@8..13
+        Node STMTVARDECL@8..13
+          Node TYPEANNOTATION@8..11
+            Leaf KWINT@8..11 "int"
+          Node NAMEREF@12..13
+            Leaf IDENT@12..13 "a"
+      Leaf COMMA@13..14 ","
+      Node PARAM@15..16
+        Node STMTVARDECL@15..16
+          Node NAMEREF@15..16
+            Leaf IDENT@15..16 "b"
+    Leaf RPAREN@16..17 ")""
+`;
+
+exports[`parse int sum(int a, int b) {
+    return a + b
+} 1`] = `
+"Node TREEROOT@0..42
+  Node STMTFUNCDECL@0..42
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "sum"
+    Leaf LPAREN@7..8 "("
+    Node PARAMLIST@8..20
+      Node PARAM@8..13
+        Node STMTVARDECL@8..13
+          Node TYPEANNOTATION@8..11
+            Leaf KWINT@8..11 "int"
+          Node NAMEREF@12..13
+            Leaf IDENT@12..13 "a"
+      Leaf COMMA@13..14 ","
+      Node PARAM@15..20
+        Node STMTVARDECL@15..20
+          Node TYPEANNOTATION@15..18
+            Leaf KWINT@15..18 "int"
+          Node NAMEREF@19..20
+            Leaf IDENT@19..20 "b"
+    Leaf RPAREN@20..21 ")"
+    Node STMTBLOCK@22..42
+      Leaf LCURLY@22..23 "{"
+      Node STMTJUMP@28..40
+        Leaf KWRETURN@28..34 "return"
+        Node STMTEXPR@35..40
+          Node EXPRBINARY@35..40
+            Node NAMEREF@35..36
+              Leaf IDENT@35..36 "a"
+            Leaf PLUS@37..38 "+"
+            Node NAMEREF@39..40
+              Leaf IDENT@39..40 "b"
+      Leaf RCURLY@41..42 "}""
+`;
+
+exports[`parse int sum(int, int) 1`] = `
+"Node TREEROOT@0..17
+  Node STMTFUNCDECL@0..17
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "sum"
+    Leaf LPAREN@7..8 "("
+    Node PARAMLIST@8..16
+      Node PARAM@8..11
+        Node STMTFUNCDECL@8..11
+          Node TYPEANNOTATION@8..11
+            Leaf KWINT@8..11 "int"
+      Leaf COMMA@11..12 ","
+      Node PARAM@13..16
+        Node STMTFUNCDECL@13..16
+          Node TYPEANNOTATION@13..16
+            Leaf KWINT@13..16 "int"
+    Leaf RPAREN@16..17 ")""
+`;
+
+exports[`parse major(b) "" minor(b) "" 1`] = `
+"Node TREEROOT@0..23
+  Node STMTEXPR@0..23
+    Node EXPRSTRINGCONCAT@0..23
+      Node EXPRSTRINGCONCAT@0..11
+        Node EXPRCALL@0..8
+          Node NAMEREF@0..5
+            Leaf IDENT@0..5 "major"
+          Leaf LPAREN@5..6 "("
+          Node ARGLIST@6..7
+            Node NAMEREF@6..7
+              Leaf IDENT@6..7 "b"
+          Leaf RPAREN@7..8 ")"
+        Node EXPRLITERAL@9..11
+          Leaf STRING@9..11 """"
+      Node EXPRSTRINGCONCAT@12..23
+        Node EXPRCALL@12..20
+          Node NAMEREF@12..17
+            Leaf IDENT@12..17 "minor"
+          Leaf LPAREN@17..18 "("
+          Node ARGLIST@18..19
+            Node NAMEREF@18..19
+              Leaf IDENT@18..19 "b"
+          Leaf RPAREN@19..20 ")"
+        Node EXPRLITERAL@21..23
+          Leaf STRING@21..23 """""
+`;
+
+exports[`parse null obj 1`] = `
+"Node TREEROOT@0..8
+  Node STMTEXPR@0..8
+    Node EXPRCALL@0..8
+      Node NULL@0..4
+        Leaf KWNULL@0..4 "null"
+      Node ARGLIST@5..8
+        Node NAMEREF@5..8
+          Leaf IDENT@5..8 "obj""
+`;
+
+exports[`parse null(obj) 1`] = `
+"Node TREEROOT@0..9
+  Node STMTEXPR@0..9
+    Node EXPRCALL@0..9
+      Node NULL@0..4
+        Leaf KWNULL@0..4 "null"
+      Leaf LPAREN@4..5 "("
+      Node ARGLIST@5..8
+        Node NAMEREF@5..8
+          Leaf IDENT@5..8 "obj"
+      Leaf RPAREN@8..9 ")""
+`;
+
+exports[`parse obj."number" = 2 1`] = `
+"Node TREEROOT@0..16
+  Node STMTEXPR@0..16
+    Node EXPRSET@0..16
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "obj"
+      Leaf PERIOD@3..4 "."
+      Node EXPRLITERAL@4..12
+        Leaf STRING@4..12 ""number""
+      Leaf EQUAL@13..14 "="
+      Node EXPRLITERAL@15..16
+        Leaf INTEGER@15..16 "2""
+`;
+
+exports[`parse obj."text" 1`] = `
+"Node TREEROOT@0..10
+  Node STMTEXPR@0..10
+    Node EXPRGET@0..10
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "obj"
+      Leaf PERIOD@3..4 "."
+      Node EXPRLITERAL@4..10
+        Leaf STRING@4..10 ""text"""
+`;
+
+exports[`parse out << "hello"
+out << "world" 1`] = `
+"Node TREEROOT@0..29
+  Node STMTEXPR@0..14
+    Node EXPRWRITE@0..14
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "out"
+      Leaf LESSLESS@4..6 "<<"
+      Node EXPRLITERAL@7..14
+        Leaf STRING@7..14 ""hello""
+  Node STMTEXPR@15..29
+    Node EXPRWRITE@15..29
+      Node NAMEREF@15..18
+        Leaf IDENT@15..18 "out"
+      Leaf LESSLESS@19..21 "<<"
+      Node EXPRLITERAL@22..29
+        Leaf STRING@22..29 ""world"""
+`;
+
+exports[`parse out << "hello" << "world" 1`] = `
+"Node TREEROOT@0..25
+  Node STMTEXPR@0..25
+    Node EXPRWRITE@0..25
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "out"
+      Leaf LESSLESS@4..6 "<<"
+      Node EXPRWRITE@7..25
+        Node EXPRLITERAL@7..14
+          Leaf STRING@7..14 ""hello""
+        Leaf LESSLESS@15..17 "<<"
+        Node EXPRLITERAL@18..25
+          Leaf STRING@18..25 ""world"""
+`;
+
+exports[`parse pragma encoding, "utf-8" 1`] = `
+"Node TREEROOT@0..24
+  Node DXLPRAGMA@0..24
+    Leaf KWPRAGMA@0..6 "pragma"
+    Leaf IDENT@7..15 "encoding"
+    Leaf COMMA@15..16 ","
+    Leaf STRING@17..24 ""utf-8"""
+`;
+
+exports[`parse pragma runLim, 0 1`] = `
+"Node TREEROOT@0..16
+  Node DXLPRAGMA@0..16
+    Leaf KWPRAGMA@0..6 "pragma"
+    Leaf IDENT@7..13 "runLim"
+    Leaf COMMA@13..14 ","
+    Leaf INTEGER@15..16 "0""
+`;
+
+exports[`parse print square 2 1`] = `
+"Node TREEROOT@0..14
+  Node STMTEXPR@0..14
+    Node EXPRCALL@0..14
+      Node NAMEREF@0..5
+        Leaf IDENT@0..5 "print"
+      Node ARGLIST@6..14
+        Node EXPRCALL@6..14
+          Node NAMEREF@6..12
+            Leaf IDENT@6..12 "square"
+          Node ARGLIST@13..14
+            Node EXPRLITERAL@13..14
+              Leaf INTEGER@13..14 "2""
+`;
+
+exports[`parse return a 1`] = `
+"Node TREEROOT@0..8
+  Node STMTJUMP@0..8
+    Leaf KWRETURN@0..6 "return"
+    Node STMTEXPR@7..8
+      Node NAMEREF@7..8
+        Leaf IDENT@7..8 "a""
+`;
+
+exports[`parse str[0:] 1`] = `
+"Node TREEROOT@0..7
+  Node STMTEXPR@0..7
+    Node EXPRRANGE@0..7
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "str"
+      Leaf LBRACKET@3..4 "["
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "0"
+      Leaf COLON@5..6 ":"
+      Leaf RBRACKET@6..7 "]""
+`;
+
+exports[`parse str[0:2] 1`] = `
+"Node TREEROOT@0..8
+  Node STMTEXPR@0..8
+    Node EXPRRANGE@0..8
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "str"
+      Leaf LBRACKET@3..4 "["
+      Node EXPRLITERAL@4..5
+        Leaf INTEGER@4..5 "0"
+      Leaf COLON@5..6 ":"
+      Node EXPRLITERAL@6..7
+        Leaf INTEGER@6..7 "2"
+      Leaf RBRACKET@7..8 "]""
+`;
+
+exports[`parse string s1, s2, s3 1`] = `
+"Node TREEROOT@0..17
+  Node STMTVARDECL@0..17
+    Node TYPEANNOTATION@0..6
+      Leaf KWSTRING@0..6 "string"
+    Node NAMEREFLIST@7..17
+      Node NAMEREF@7..9
+        Leaf IDENT@7..9 "s1"
+      Leaf COMMA@9..10 ","
+      Node NAMEREF@11..13
+        Leaf IDENT@11..13 "s2"
+      Leaf COMMA@13..14 ","
+      Node NAMEREF@15..17
+        Leaf IDENT@15..17 "s3""
+`;
+
+exports[`parse styleCentered|styleFixed 1`] = `
+"Node TREEROOT@0..24
+  Node STMTEXPR@0..24
+    Node EXPRBINARY@0..24
+      Node NAMEREF@0..13
+        Leaf IDENT@0..13 "styleCentered"
+      Leaf BAR@13..14 "|"
+      Node NAMEREF@14..24
+        Leaf IDENT@14..24 "styleFixed""
+`;
+
+exports[`parse sum(1, 2) 1`] = `
+"Node TREEROOT@0..9
+  Node STMTEXPR@0..9
+    Node EXPRCALL@0..9
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "sum"
+      Leaf LPAREN@3..4 "("
+      Node ARGLIST@4..8
+        Node EXPRLITERAL@4..5
+          Leaf INTEGER@4..5 "1"
+        Leaf COMMA@5..6 ","
+        Node EXPRLITERAL@7..8
+          Leaf INTEGER@7..8 "2"
+      Leaf RPAREN@8..9 ")""
+`;
+
+exports[`parse true || false 1`] = `
+"Node TREEROOT@0..13
+  Node STMTEXPR@0..13
+    Node EXPRLOGICAL@0..13
+      Node EXPRLITERAL@0..4
+        Leaf KWTRUE@0..4 "true"
+      Leaf BARABR@5..7 "||"
+      Node EXPRLITERAL@8..13
+        Leaf KWFALSE@8..13 "false""
+`;
+
+exports[`parse while (a < 2) {
+    a + 1
+    break
+} 1`] = `
+"Node TREEROOT@0..37
+  Node STMTWHILE@0..37
+    Leaf KWWHILE@0..5 "while"
+    Leaf LPAREN@6..7 "("
+    Node STMTEXPR@7..12
+      Node EXPRCOMPARE@7..12
+        Node NAMEREF@7..8
+          Leaf IDENT@7..8 "a"
+        Leaf LESS@9..10 "<"
+        Node EXPRLITERAL@11..12
+          Leaf INTEGER@11..12 "2"
+    Leaf RPAREN@12..13 ")"
+    Node STMTBLOCK@14..37
+      Leaf LCURLY@14..15 "{"
+      Node STMTEXPR@20..25
+        Node EXPRBINARY@20..25
+          Node NAMEREF@20..21
+            Leaf IDENT@20..21 "a"
+          Leaf PLUS@22..23 "+"
+          Node EXPRLITERAL@24..25
+            Leaf INTEGER@24..25 "1"
+      Node STMTBREAK@30..35
+        Leaf KWBREAK@30..35 "break"
+      Leaf RCURLY@36..37 "}""
+`;
+
+exports[`parse while (a < 2) {
+    a + 1
+} 1`] = `
+"Node TREEROOT@0..27
+  Node STMTWHILE@0..27
+    Leaf KWWHILE@0..5 "while"
+    Leaf LPAREN@6..7 "("
+    Node STMTEXPR@7..12
+      Node EXPRCOMPARE@7..12
+        Node NAMEREF@7..8
+          Leaf IDENT@7..8 "a"
+        Leaf LESS@9..10 "<"
+        Node EXPRLITERAL@11..12
+          Leaf INTEGER@11..12 "2"
+    Leaf RPAREN@12..13 ")"
+    Node STMTBLOCK@14..27
+      Leaf LCURLY@14..15 "{"
+      Node STMTEXPR@20..25
+        Node EXPRBINARY@20..25
+          Node NAMEREF@20..21
+            Leaf IDENT@20..21 "a"
+          Leaf PLUS@22..23 "+"
+          Node EXPRLITERAL@24..25
+            Leaf INTEGER@24..25 "1"
+      Leaf RCURLY@26..27 "}""
+`;
+
+exports[`parse while (a) last-- 1`] = `
+"Node TREEROOT@0..16
+  Node STMTWHILE@0..16
+    Leaf KWWHILE@0..5 "while"
+    Leaf LPAREN@6..7 "("
+    Node STMTEXPR@7..8
+      Node NAMEREF@7..8
+        Leaf IDENT@7..8 "a"
+    Leaf RPAREN@8..9 ")"
+    Node STMTEXPR@10..16
+      Node EXPRUNARY@10..16
+        Node NAMEREF@10..14
+          Leaf IDENT@10..14 "last"
+        Leaf MINUSMINUS@14..16 "--""
+`;
