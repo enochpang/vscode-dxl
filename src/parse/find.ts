@@ -2,7 +2,7 @@ import * as ast from "./syntax/ast";
 import { type RedElement, RedNode, RedToken } from "./syntax/red_tree";
 import { OTreeKind } from "./syntax/syntax_kind";
 
-export function find_reference(
+export function find_definition(
 	red_tree: RedNode,
 	offset: number,
 ): RedToken | undefined {
@@ -21,6 +21,8 @@ export function find_reference(
 		return undefined;
 	}
 
+	const start_level = level(start_node);
+
 	for (const previous_node of start_node.previous()) {
 		const stmt = ast.cast_stmt(previous_node);
 
@@ -30,7 +32,10 @@ export function find_reference(
 				for (const nameRef of names) {
 					const name = nameRef.name();
 					if (name && start_name === name.green.text) {
-						return name;
+						const name_level = level(name);
+						if (name_level <= start_level) {
+							return name;
+						}
 					}
 				}
 			} else {
@@ -38,7 +43,10 @@ export function find_reference(
 				if (nameRef) {
 					const name = nameRef.name();
 					if (name && start_name === name.green.text) {
-						return name;
+						const name_level = level(name);
+						if (name_level <= start_level) {
+							return name;
+						}
 					}
 				}
 			}
@@ -47,7 +55,10 @@ export function find_reference(
 			if (nameRef) {
 				const name = nameRef.name();
 				if (name && start_name === name.green.text) {
-					return name;
+					const name_level = level(name);
+					if (name_level <= start_level) {
+						return name;
+					}
 				}
 			}
 
@@ -63,7 +74,10 @@ export function find_reference(
 					if (nameRef) {
 						const name = nameRef.name();
 						if (name && start_name === name.green.text) {
-							return name;
+							const name_level = level(name);
+							if (name_level <= start_level) {
+								return name;
+							}
 						}
 					}
 				} else if (param_expr instanceof ast.StmtFunctionDecl) {
@@ -71,7 +85,10 @@ export function find_reference(
 					if (nameRef) {
 						const name = nameRef.name();
 						if (name && start_name === name.green.text) {
-							return name;
+							const name_level = level(name);
+							if (name_level <= start_level) {
+								return name;
+							}
 						}
 					}
 				}
@@ -83,7 +100,10 @@ export function find_reference(
 				if (nameRef) {
 					const name = nameRef.name();
 					if (name && start_name === name.green.text) {
-						return name;
+						const name_level = level(name);
+						if (name_level <= start_level) {
+							return name;
+						}
 					}
 				}
 			}

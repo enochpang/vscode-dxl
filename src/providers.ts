@@ -57,7 +57,7 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 		const tree = get_parsedFile(document);
 		if (tree) {
 			const offset = document.offsetAt(position);
-			const res = dxl.find.find_reference(tree, offset);
+			const res = dxl.find.find_definition(tree, offset);
 			if (res) {
 				const token = res.green.token;
 				const start = token.start_loc;
