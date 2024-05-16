@@ -216,6 +216,22 @@ export const TOKEN_KEYWORD = new Map<string, TokenKind>([
 	["while", OTokenKind.KwWhile],
 ]);
 
+export function pp_green_element(elem: GreenElement): string {
+	if (elem instanceof GreenToken) {
+		const token = elem.token;
+		const kind = token.kind;
+		const offset = token.offset;
+		const end_offset = token.end_offset;
+		const text = elem.text;
+		return `Leaf ${kind}@${offset}..${end_offset} "${text}"`;
+	} else {
+		const kind = elem.kind;
+		const offset = elem.get_start_offset();
+		const end_offset = elem.get_end_offset();
+		return `Node ${kind}@${offset}..${end_offset}`;
+	}
+}
+
 /**
  * Returns the tree as a formatted string
  */
@@ -224,16 +240,9 @@ export function pp_cst(tree: GreenNode): string {
 		const newline = `\n${" ".repeat(2 * n)}`;
 
 		if (tree instanceof GreenToken) {
-			const token = tree.token;
-			const kind = token.kind;
-			const offset = token.offset;
-			const end_offset = token.end_offset;
-			return `Leaf ${kind}@${offset}..${end_offset} "${tree.text}"`;
+			return pp_green_element(tree);
 		} else {
-			const kind = tree.kind;
-			const offset = tree.get_start_offset();
-			const end_offset = tree.get_end_offset();
-			const res = [`Node ${kind}@${offset}..${end_offset}`];
+			const res = [pp_green_element(tree)];
 
 			for (const item of tree.children) {
 				res.push(newline, pp_cst_inner(n + 1, item));

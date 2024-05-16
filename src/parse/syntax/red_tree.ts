@@ -1,4 +1,4 @@
-import { GreenNode, GreenToken } from "./green_tree";
+import { GreenNode, GreenToken, pp_green_element } from "./green_tree";
 
 export type RedElement = RedNode | RedToken;
 
@@ -103,4 +103,8 @@ export class RedToken {
 			parent = parent.parent;
 		}
 	}
+}
+
+export function pp_red_element(elem: RedElement): string {
+	return pp_green_element(elem.green);
 }
