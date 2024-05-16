@@ -19,6 +19,13 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	context.subscriptions.push(
+		vscode.languages.registerReferenceProvider(
+			{ language: "dxl" },
+			new providers.DxlReferenceProvider(),
+		),
+	);
+
+	context.subscriptions.push(
 		vscode.workspace.onDidSaveTextDocument((document) => {
 			if (document.languageId === "dxl") {
 				get_parsedFile(document);

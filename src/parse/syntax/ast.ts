@@ -42,6 +42,8 @@ export type Expr =
 
 export function cast_stmt(node: RedNode): Stmt | undefined {
 	switch (node.green.kind) {
+		case OTreeKind.TreeRoot:
+			return new Root(node);
 		case OTreeKind.StmtArrayDecl:
 			return new StmtArrayDecl(node);
 		case OTreeKind.StmtBlock:
