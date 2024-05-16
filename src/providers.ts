@@ -57,9 +57,9 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 		const tree = get_parsedFile(document);
 		if (tree) {
 			const offset = document.offsetAt(position);
-			const res = dxl.find.find_definition(tree, offset);
-			if (res) {
-				const token = res.green.token;
+			const result = dxl.find.find_definition(tree, offset);
+			if (result) {
+				const token = result.green.token;
 				const start = token.start_loc;
 				const end = token.end_loc;
 				const location = new vscode.Location(
@@ -72,6 +72,43 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 
 				return location;
 			}
+		}
+
+		throw new Error("Method not implemented.");
+	}
+}
+
+export class DxlReferenceProvider implements vscode.ReferenceProvider {
+	provideReferences(
+		document: vscode.TextDocument,
+		position: vscode.Position,
+		_context: vscode.ReferenceContext,
+		_token: vscode.CancellationToken,
+	): vscode.ProviderResult<vscode.Location[]> {
+		const locations: vscode.Location[] = [];
+
+		const tree = get_parsedFile(document);
+		if (tree) {
+			const offset = document.offsetAt(position);
+			const results = dxl.find.find_references(tree, offset);
+			if (results) {
+				for (const result of results) {
+					const token = result.green.token;
+					const start = token.start_loc;
+					const end = token.end_loc;
+					const location = new vscode.Location(
+						document.uri,
+						new vscode.Range(
+							new vscode.Position(start.line, start.col),
+							new vscode.Position(end.line, end.col),
+						),
+					);
+
+					locations.push(location);
+				}
+			}
+
+			return locations;
 		}
 
 		throw new Error("Method not implemented.");
