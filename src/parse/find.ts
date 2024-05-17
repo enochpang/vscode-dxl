@@ -5,7 +5,7 @@ import {
 	RedToken,
 	pp_red_element,
 } from "./syntax/red_tree";
-import { OTreeKind } from "./syntax/syntax_kind";
+import { OTokenKind, OTreeKind } from "./syntax/syntax_kind";
 
 export function find_definition(
 	red_tree: RedNode,
@@ -29,89 +29,20 @@ export function find_definition(
 	const start_level = get_level(start_node);
 
 	for (const previous_node of start_node.previous()) {
-		const stmt = ast.cast_stmt(previous_node);
+		const name = get_same_decl_name(previous_node, start_name);
 
-		if (stmt instanceof ast.StmtVariableDecl) {
-			const names = stmt.names();
-			if (names) {
-				for (const nameRef of names) {
-					const name = nameRef.name();
-					if (name && start_name === name.green.text) {
-						const name_level = get_level(name);
-						if (name_level <= start_level) {
-							return name;
-						}
-					}
-				}
-			} else {
-				const nameRef = stmt.name();
-				if (nameRef) {
-					const name = nameRef.name();
-					if (name && start_name === name.green.text) {
-						const name_level = get_level(name);
-						if (name_level <= start_level) {
-							return name;
-						}
-					}
-				}
-			}
-		} else if (stmt instanceof ast.StmtFunctionDecl) {
-			const nameRef = stmt.name();
-			if (nameRef) {
-				const name = nameRef.name();
-				if (name && start_name === name.green.text) {
-					const name_level = get_level(name);
-					if (name_level <= start_level) {
-						return name;
-					}
-				}
-			}
+		if (name && get_level(name) <= start_level) {
+			return name;
+		}
+	}
 
-			const paramList = stmt.params();
-			if (!paramList) {
-				continue;
-			}
+	// If there were no variable or function declarations of the same name, then use the first variable
+	// equal (=) assignment of the same name
+	for (const previous_node of start_node.previous()) {
+		const name = get_same_assign_name(previous_node, start_name);
 
-			for (const param of paramList.params()) {
-				const param_expr = param.expr();
-				if (param_expr instanceof ast.StmtVariableDecl) {
-					const nameRef = param_expr.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							const name_level = get_level(name);
-							if (name_level <= start_level) {
-								return name;
-							}
-						}
-					}
-				} else if (param_expr instanceof ast.StmtFunctionDecl) {
-					const nameRef = param_expr.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							const name_level = get_level(name);
-							if (name_level <= start_level) {
-								return name;
-							}
-						}
-					}
-				}
-			}
-		} else if (stmt instanceof ast.StmtFor) {
-			const init_expr = stmt.initializer();
-			if (init_expr && init_expr instanceof ast.ExprAssign) {
-				const nameRef = init_expr.name();
-				if (nameRef) {
-					const name = nameRef.name();
-					if (name && start_name === name.green.text) {
-						const name_level = get_level(name);
-						if (name_level <= start_level) {
-							return name;
-						}
-					}
-				}
-			}
+		if (name && get_level(name) <= start_level) {
+			return name;
 		}
 	}
 
@@ -141,24 +72,15 @@ export function find_references(red_tree: RedNode, offset: number) {
 
 	const start_level = get_level(start_node);
 	const start_offset = start_node.green.get_start_offset();
-	const containing_context = get_containing_context(start_node);
+	const scoping_node = get_containing_scope(start_node);
 
 	const results = get_references(
-		containing_context,
+		scoping_node,
 		start_name,
 		start_offset,
 		start_level,
 		[],
 	);
-
-	if (results) {
-		for (const item of results) {
-			const level = get_level(item);
-			const line = item.green.token.start_loc.line + 1;
-
-			console.log(`${pp_red_element(item)} Ln${line} ${level}`);
-		}
-	}
 
 	return results;
 }
@@ -175,74 +97,11 @@ function get_references(
 
 		let skipName = false;
 
-		const stmt = ast.cast_stmt(child);
-		if (stmt instanceof ast.StmtVariableDecl) {
-			const names = stmt.names();
-			if (names) {
-				for (const nameRef of names) {
-					const name = nameRef.name();
-					if (name && start_name === name.green.text) {
-						const name_level = get_level(name);
-						if (name_level > start_level) {
-							skipName = true;
-						}
-					}
-				}
-			} else {
-				const nameRef = stmt.name();
-				if (nameRef) {
-					const name = nameRef.name();
-					if (name && start_name === name.green.text) {
-						const name_level = get_level(name);
-						if (name_level > start_level) {
-							skipName = true;
-						}
-					}
-				}
-			}
-		} else if (stmt instanceof ast.StmtFunctionDecl) {
-			const nameRef = stmt.name();
-			if (nameRef) {
-				const name = nameRef.name();
-				if (name && start_name === name.green.text) {
-					const name_level = get_level(name);
-					if (name_level > start_level) {
-						skipName = true;
-					}
-				}
-			}
+		const name = get_same_decl_name(child, start_name);
+		if (name && get_level(name) > start_level) {
+			skipName = true;
 
-			const paramList = stmt.params();
-			if (!paramList) {
-				continue;
-			}
-
-			for (const param of paramList.params()) {
-				const param_expr = param.expr();
-				if (param_expr instanceof ast.StmtVariableDecl) {
-					const nameRef = param_expr.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							const name_level = get_level(name);
-							if (name_level > start_level) {
-								skipName = true;
-							}
-						}
-					}
-				} else if (param_expr instanceof ast.StmtFunctionDecl) {
-					const nameRef = param_expr.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							const name_level = get_level(name);
-							if (name_level > start_level) {
-								skipName = true;
-							}
-						}
-					}
-				}
-			}
+			//FIXME: skip scope if there is a matching variable declaration
 		}
 
 		if (!skipName) {
@@ -263,6 +122,92 @@ function get_references(
 	}
 
 	return acc;
+}
+
+function get_same_decl_name(
+	node: RedNode,
+	start_name: string,
+): RedToken | undefined {
+	const stmt = ast.cast_stmt(node);
+	if (stmt instanceof ast.StmtVariableDecl) {
+		const names = stmt.names();
+		if (names) {
+			for (const nameRef of names) {
+				const name = nameRef.name();
+				if (name && start_name === name.green.text) {
+					return name;
+				}
+			}
+		} else {
+			const nameRef = stmt.name();
+			if (nameRef) {
+				const name = nameRef.name();
+				if (name && start_name === name.green.text) {
+					return name;
+				}
+			}
+		}
+	} else if (stmt instanceof ast.StmtFunctionDecl) {
+		const nameRef = stmt.name();
+		if (nameRef) {
+			const name = nameRef.name();
+			if (name && start_name === name.green.text) {
+				return name;
+			}
+		}
+
+		const paramList = stmt.params();
+		if (paramList) {
+			for (const param of paramList.params()) {
+				const param_expr = param.expr();
+				if (param_expr instanceof ast.StmtVariableDecl) {
+					const nameRef = param_expr.name();
+					if (nameRef) {
+						const name = nameRef.name();
+						if (name && start_name === name.green.text) {
+							return name;
+						}
+					}
+				} else if (param_expr instanceof ast.StmtFunctionDecl) {
+					const nameRef = param_expr.name();
+					if (nameRef) {
+						const name = nameRef.name();
+						if (name && start_name === name.green.text) {
+							return name;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return undefined;
+}
+
+function get_same_assign_name(
+	node: RedNode,
+	start_name: string,
+): RedToken | undefined {
+	let result_token = undefined;
+
+	const stmt = ast.cast_stmt(node);
+	if (stmt instanceof ast.StmtExpr) {
+		const expr = stmt.expr();
+		if (expr instanceof ast.ExprAssign) {
+			const op = expr.op();
+			if (op && op.green.token.kind === OTokenKind.Equal) {
+				const nameRef = expr.name();
+				if (nameRef) {
+					const name = nameRef.name();
+					if (name && start_name === name.green.text) {
+						result_token = name;
+					}
+				}
+			}
+		}
+	}
+
+	return result_token;
 }
 
 export function get_functions(
@@ -340,16 +285,17 @@ export function token_at_offset(
 	return undefined;
 }
 
-function get_containing_context(node: RedNode): RedNode {
+function get_containing_scope(node: RedNode): RedNode {
 	for (const parent of node.ancestors()) {
 		const stmt = ast.cast_stmt(parent);
 
 		if (
 			stmt instanceof ast.Root ||
-			stmt instanceof ast.StmtBlock ||
 			stmt instanceof ast.StmtIf ||
 			stmt instanceof ast.StmtFor ||
-			stmt instanceof ast.StmtWhile
+			stmt instanceof ast.StmtWhile ||
+			stmt instanceof ast.StmtBlock ||
+			stmt instanceof ast.StmtFunctionDecl
 		) {
 			return parent;
 		}
@@ -361,10 +307,17 @@ function get_containing_context(node: RedNode): RedNode {
 function get_level(node: RedElement) {
 	let count = 0;
 	for (const item of node.ancestors()) {
-		switch (item.green.kind) {
-			case OTreeKind.StmtBlock:
-			case OTreeKind.ParamList:
-				count++;
+		const stmt = ast.cast_stmt(item);
+
+		if (
+			stmt instanceof ast.Root ||
+			stmt instanceof ast.StmtIf ||
+			stmt instanceof ast.StmtFor ||
+			stmt instanceof ast.StmtWhile ||
+			stmt instanceof ast.StmtBlock ||
+			stmt instanceof ast.StmtFunctionDecl
+		) {
+			count++;
 		}
 	}
 
