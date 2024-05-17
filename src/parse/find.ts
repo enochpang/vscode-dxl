@@ -285,7 +285,7 @@ export function token_at_offset(
 	return undefined;
 }
 
-function get_containing_scope(node: RedNode): RedNode {
+export function get_containing_scope(node: RedNode): RedNode {
 	for (const parent of node.ancestors()) {
 		const stmt = ast.cast_stmt(parent);
 
@@ -295,7 +295,7 @@ function get_containing_scope(node: RedNode): RedNode {
 			stmt instanceof ast.StmtFor ||
 			stmt instanceof ast.StmtWhile ||
 			stmt instanceof ast.StmtBlock ||
-			stmt instanceof ast.StmtFunctionDecl
+			stmt instanceof ast.ParamList
 		) {
 			return parent;
 		}
@@ -304,7 +304,7 @@ function get_containing_scope(node: RedNode): RedNode {
 	return node;
 }
 
-function get_level(node: RedElement) {
+export function get_level(node: RedElement) {
 	let count = 0;
 	for (const item of node.ancestors()) {
 		const stmt = ast.cast_stmt(item);
@@ -315,7 +315,7 @@ function get_level(node: RedElement) {
 			stmt instanceof ast.StmtFor ||
 			stmt instanceof ast.StmtWhile ||
 			stmt instanceof ast.StmtBlock ||
-			stmt instanceof ast.StmtFunctionDecl
+			stmt instanceof ast.ParamList
 		) {
 			count++;
 		}

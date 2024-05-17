@@ -16,6 +16,7 @@ export type Stmt =
 	| StmtReturn
 	| StmtVariableDecl
 	| StmtWhile
+	| ParamList
 	| Param
 	| Root;
 
@@ -44,6 +45,10 @@ export function cast_stmt(node: RedNode): Stmt | undefined {
 	switch (node.green.kind) {
 		case OTreeKind.TreeRoot:
 			return new Root(node);
+		case OTreeKind.ParamList:
+			return new ParamList(node);
+		case OTreeKind.Param:
+			return new Param(node);
 		case OTreeKind.StmtArrayDecl:
 			return new StmtArrayDecl(node);
 		case OTreeKind.StmtBlock:
@@ -997,7 +1002,7 @@ export class ArgList {
 	}
 }
 
-class ParamList {
+export class ParamList {
 	public readonly tag = "ParamList";
 	public node: RedNode;
 

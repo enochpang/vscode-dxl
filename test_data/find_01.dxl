@@ -1,0 +1,22 @@
+int aa
+int bb
+int cc
+
+int add1(int cc) {
+    bb
+    return cc
+}
+
+int sum(int aa, int bb) {
+    int cc
+
+    aa
+    bb
+    cc
+}
+
+sum(cc, bb)
+
+aa
+bb
+cc
