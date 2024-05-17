@@ -76,7 +76,7 @@ export class RedNode {
 			for (const child of parent.children_rev()) {
 				if (
 					child instanceof RedNode &&
-					child.green.get_start_offset() < start_offset
+					child.green.get_start_offset() <= start_offset
 				) {
 					yield child;
 				}
