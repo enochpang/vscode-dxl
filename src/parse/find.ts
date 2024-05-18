@@ -1,10 +1,5 @@
 import * as ast from "./syntax/ast";
-import {
-	type RedElement,
-	RedNode,
-	RedToken,
-	pp_red_element,
-} from "./syntax/red_tree";
+import { type RedElement, RedNode, RedToken } from "./syntax/red_tree";
 import { OTokenKind, OTreeKind } from "./syntax/syntax_kind";
 
 export function find_definition(
@@ -234,6 +229,8 @@ export function node_at_offset(
 	node: RedNode,
 	offset: number,
 ): RedNode | undefined {
+	let result: RedNode | undefined;
+
 	for (const child of node.children()) {
 		if (child instanceof RedNode) {
 			if (
@@ -247,12 +244,12 @@ export function node_at_offset(
 				offset >= child.green.token.offset &&
 				offset <= child.green.token.end_offset
 			) {
-				return node;
+				result = node;
 			}
 		}
 	}
 
-	return undefined;
+	return result;
 }
 
 export function token_at_offset(

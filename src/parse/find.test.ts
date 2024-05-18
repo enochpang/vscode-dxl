@@ -3,8 +3,9 @@ import { describe, expect, test, assert } from "vitest";
 import * as fs from "node:fs";
 import { tokenize } from "./lexer/lexer";
 import { parse } from "./parser/events";
-import { RedNode, pp_red_element } from "./syntax/red_tree";
+import { type RedElement, RedNode } from "./syntax/red_tree";
 import * as find from "./find";
+import { pp_green_element } from "./syntax/green_tree";
 
 describe("find_01", () => {
 	const text = fs.readFileSync("test_data/find_01.dxl", "utf-8");
@@ -27,13 +28,8 @@ describe("find_01", () => {
 
 	describe("token_at_offset", () => {
 		const token_aa_ln1 = find.token_at_offset(red_tree, 5);
-		if (!token_aa_ln1) assert.fail("Could not find token_aa_ln1");
-
 		const token_bb_ln6 = find.token_at_offset(red_tree, 51);
-		if (!token_bb_ln6) assert.fail("Could not find token_bb_ln6");
-
 		const token_aa_ln10 = find.token_at_offset(red_tree, 87);
-		if (!token_aa_ln10) assert.fail("Could not find token_aa_ln10");
 
 		test("token_aa_ln1", () => {
 			expect(pp_red_element(token_aa_ln1)).toMatchInlineSnapshot(
@@ -117,16 +113,9 @@ describe("find_01", () => {
 
 	describe("find_definition", () => {
 		const token_bb_ln2 = find.token_at_offset(red_tree, 13);
-		if (!token_bb_ln2) assert.fail("Could not find token_bb_ln2");
-
 		const token_cc_ln3 = find.token_at_offset(red_tree, 21);
-		if (!token_cc_ln3) assert.fail("Could not find token_cc_ln3");
-
 		const token_cc_ln11 = find.token_at_offset(red_tree, 110);
-		if (!token_cc_ln11) assert.fail("Could not find token_cc_ln11");
-
 		const token_aa_ln10 = find.token_at_offset(red_tree, 87);
-		if (!token_aa_ln10) assert.fail("Could not find token_aa_ln10");
 
 		test("root to root", () => {
 			const node = find.find_definition(red_tree, 168);
@@ -157,22 +146,12 @@ describe("find_01", () => {
 		});
 	});
 
-	// TODO find_references
 	describe("find_references", () => {
 		const token_cc_ln3 = find.token_at_offset(red_tree, 21);
-		if (!token_cc_ln3) assert.fail("Could not find token_cc_ln3");
-
 		const token_cc_ln5 = find.token_at_offset(red_tree, 40);
-		if (!token_cc_ln5) assert.fail("Could not find token_cc_ln5");
-
 		const token_cc_ln7 = find.token_at_offset(red_tree, 66);
-		if (!token_cc_ln7) assert.fail("Could not find token_cc_ln7");
-
 		const token_cc_ln18 = find.token_at_offset(red_tree, 149);
-		if (!token_cc_ln18) assert.fail("Could not find token_cc_ln18");
-
 		const token_cc_ln22 = find.token_at_offset(red_tree, 168);
-		if (!token_cc_ln22) assert.fail("Could not find token_cc_ln22");
 
 		test("cc_ln3", () => {
 			const nodes = find.find_references(red_tree, 21);
@@ -197,3 +176,32 @@ describe("find_01", () => {
 
 	// TODO get_functions
 });
+
+describe("find_02", () => {
+	const text = fs.readFileSync("test_data/find_01.dxl", "utf-8");
+	const lex_items = tokenize(text);
+	const parseResult = parse(lex_items);
+
+	const green_tree = parseResult.tree;
+	if (!green_tree) assert.fail("Could get green_tree");
+
+	const red_tree = new RedNode(green_tree, 0);
+
+	describe("node_at_offset", () => {
+		const node_aa_ln1 = find.node_at_offset(red_tree, 4);
+
+		test("node_ii_initializer", () => {
+			expect(pp_red_element(node_aa_ln1)).toMatchInlineSnapshot(
+				`"Node NAMEREF@4..6"`,
+			);
+		});
+	});
+});
+
+function pp_red_element(node: RedElement | undefined) {
+	if (!node) {
+		return "UNDEFINED";
+	}
+
+	return pp_green_element(node.green);
+}
