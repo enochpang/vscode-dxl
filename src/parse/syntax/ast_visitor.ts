@@ -34,6 +34,7 @@ export type AstVisitor<R> = {
 	expr_write(kind: ast.ExprWrite): R;
 	expr_literal(kind: ast.ExprLiteral): R;
 	param(kind: ast.Param): R;
+	paramlist(kind: ast.ParamList): R;
 	root(kind: ast.Root): R;
 };
 
@@ -101,6 +102,8 @@ export function visit<R>(node: ast.AstNode, v: AstVisitor<R>): R {
 			return v.expr_write(node);
 		case "ExprLiteral":
 			return v.expr_literal(node);
+		case "ParamList":
+			return v.paramlist(node);
 		case "Param":
 			return v.param(node);
 		case "Root":

@@ -88,23 +88,22 @@ export function find_references(red_tree: RedNode, offset: number) {
 function get_references(
 	node: RedNode,
 	start_name: string,
-	offset_skip: number,
+	offset: number,
 	start_level: number,
 	acc: RedToken[],
 ) {
+	let offset_skip = offset;
+
 	for (const child of node.children_nodes()) {
 		if (child.green.get_end_offset() <= offset_skip) continue;
 
-		let skipName = false;
-
 		const name = get_same_decl_name(child, start_name);
 		if (name && get_level(name) > start_level) {
-			skipName = true;
-
-			//FIXME: skip scope if there is a matching variable declaration
-		}
-
-		if (!skipName) {
+			const scoping_node = get_containing_scope(child);
+			if (scoping_node.green.kind !== OTreeKind.TreeRoot) {
+				offset_skip = scoping_node.green.get_end_offset();
+			}
+		} else {
 			const expr = ast.cast_expr(child);
 			if (expr instanceof ast.ExprNameRef) {
 				const name = expr.name();
@@ -113,7 +112,7 @@ function get_references(
 				}
 			}
 
-			get_references(child, start_name, offset_skip, start_level, acc);
+			get_references(child, start_name, offset, start_level, acc);
 		}
 	}
 
