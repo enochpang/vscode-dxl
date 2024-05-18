@@ -1,7 +1,9 @@
 .vscode/
+node_modules/
 samples/
 src/
 out/
+test_data/
 .gitattributes
 .gitignore
 biome.json

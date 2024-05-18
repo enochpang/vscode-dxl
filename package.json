@@ -2,7 +2,7 @@
 	"name": "vscode-dxl",
 	"displayName": "vscode-dxl",
 	"description": "DXL support for VS Code",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"publisher": "enochpang",
 	"repository": "https://github.com/enochpang/vscode-dxl",
 	"author": "Enoch Pang",
