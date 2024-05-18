@@ -109,10 +109,6 @@ function get_references(
 			if (expr instanceof ast.ExprNameRef) {
 				const name = expr.name();
 				if (name && name.green.text === start_name) {
-					const name_level = get_level(name);
-					if (name_level < start_level) {
-						break;
-					}
 					acc.push(name);
 				}
 			}
@@ -295,7 +291,7 @@ export function get_containing_scope(node: RedNode): RedNode {
 			stmt instanceof ast.StmtFor ||
 			stmt instanceof ast.StmtWhile ||
 			stmt instanceof ast.StmtBlock ||
-			stmt instanceof ast.ParamList
+			stmt instanceof ast.StmtFunctionDecl
 		) {
 			return parent;
 		}

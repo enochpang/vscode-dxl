@@ -106,7 +106,7 @@ describe("find_01", () => {
 		test("scope in param", () => {
 			const scope_node = find.get_containing_scope(node_aa_ln10);
 			expect(pp_red_element(scope_node)).toMatchInlineSnapshot(
-				`"Node PARAMLIST@82..96"`,
+				`"Node STMTFUNCDECL@74..140"`,
 			);
 		});
 	});
