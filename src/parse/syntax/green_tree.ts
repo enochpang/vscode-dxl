@@ -52,7 +52,7 @@ export class GreenNode {
 		this.end_offset = last_child.token.end_offset;
 	}
 
-	get_start_loc(): TextPosition {
+	public get_start_loc(): TextPosition {
 		if (this.start_loc === undefined) {
 			this.init();
 		}
@@ -60,7 +60,7 @@ export class GreenNode {
 		return this.start_loc;
 	}
 
-	get_end_loc(): TextPosition {
+	public get_end_loc(): TextPosition {
 		if (this.end_loc === undefined) {
 			this.init();
 		}
@@ -68,7 +68,7 @@ export class GreenNode {
 		return this.end_loc;
 	}
 
-	get_start_offset(): number {
+	public get_start_offset(): number {
 		if (this.start_offset === undefined) {
 			this.init();
 		}
@@ -76,12 +76,16 @@ export class GreenNode {
 		return this.start_offset;
 	}
 
-	get_end_offset(): number {
+	public get_end_offset(): number {
 		if (this.start_offset === undefined) {
 			this.init();
 		}
 
 		return this.end_offset;
+	}
+
+	public getRange(): TextRange {
+		return new TextRange(this.get_start_loc(), this.get_end_loc());
 	}
 }
 
@@ -134,6 +138,10 @@ export class Token {
 		this.end_loc = endLoc;
 	}
 
+	public getRange(): TextRange {
+		return new TextRange(this.start_loc, this.end_loc);
+	}
+
 	public is_trivia(): boolean {
 		switch (this.kind) {
 			case OTokenKind.Comment:
@@ -155,6 +163,19 @@ export class Token {
 			default:
 				return false;
 		}
+	}
+}
+
+/**
+ * Represents an ordered pair of two positions
+ */
+export class TextRange {
+	public start: TextPosition;
+	public end: TextPosition;
+
+	constructor(start: TextPosition, end: TextPosition) {
+		this.start = start;
+		this.end = end;
 	}
 }
 
