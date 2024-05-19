@@ -200,31 +200,6 @@ function get_same_assign_name(
 	return result_token;
 }
 
-export function get_functions(
-	red_tree: RedNode,
-): [ast.StmtFunctionDecl, RedToken][] {
-	const res: [ast.StmtFunctionDecl, RedToken][] = [];
-
-	const ast_tree = ast.cast_root(red_tree);
-	const stmts = ast_tree?.stmts();
-
-	if (stmts) {
-		for (const stmt of stmts) {
-			if (stmt instanceof ast.StmtFunctionDecl) {
-				const nameRef = stmt.name();
-				if (nameRef) {
-					const name = nameRef.name();
-					if (name) {
-						res.push([stmt, name]);
-					}
-				}
-			}
-		}
-	}
-
-	return res;
-}
-
 export function node_at_offset(
 	node: RedNode,
 	offset: number,

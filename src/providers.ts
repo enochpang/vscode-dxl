@@ -14,29 +14,30 @@ export class DxlDocumentSymbolProvider {
 
 			const tree = get_parsedFile(document);
 			if (tree) {
-				const stmts = dxl.find.get_functions(tree);
+				const items = dxl.get_semantic_tokens(tree);
 
-				for (const item of stmts) {
-					const [stmt, name] = item;
-
-					const stmt_start = stmt.node.green.get_start_loc();
-					const stmt_end = stmt.node.green.get_end_loc();
-
-					const name_start = name.green.token.start_loc;
-					const name_end = name.green.token.end_loc;
-
+				for (const item of items) {
 					res.push(
 						new vscode.DocumentSymbol(
-							name.green.text,
+							item.name,
 							"",
 							vscode.SymbolKind.Function,
 							new vscode.Range(
-								new vscode.Position(stmt_start.line, stmt_start.col),
-								new vscode.Position(stmt_end.line, stmt_end.col),
+								new vscode.Position(
+									item.range.start.line,
+									item.range.start.col,
+								),
+								new vscode.Position(item.range.end.line, item.range.end.col),
 							),
 							new vscode.Range(
-								new vscode.Position(name_start.line, name_start.col),
-								new vscode.Position(name_end.line, name_end.col),
+								new vscode.Position(
+									item.selectionRange.start.line,
+									item.selectionRange.start.col,
+								),
+								new vscode.Position(
+									item.selectionRange.end.line,
+									item.selectionRange.end.col,
+								),
 							),
 						),
 					);
