@@ -1,6 +1,12 @@
 import * as vscode from "vscode";
 import * as dxl from "./parse/lib";
 import { get_parsedFile } from "./utils";
+import { OSemanticKind } from "./parse/lib";
+
+export const token_legend = new vscode.SemanticTokensLegend(
+	Object.values(OSemanticKind),
+	Object.values(dxl.OSemanticModifierKind),
+);
 
 export class DxlDocumentSymbolProvider {
 	provideDocumentSymbols(
@@ -14,7 +20,7 @@ export class DxlDocumentSymbolProvider {
 
 			const tree = get_parsedFile(document);
 			if (tree) {
-				const items = dxl.get_semantic_tokens(tree);
+				const items = dxl.getSymbols(tree).symbols;
 
 				for (const item of items) {
 					res.push(
@@ -46,6 +52,36 @@ export class DxlDocumentSymbolProvider {
 
 			return resolve(res);
 		});
+	}
+}
+
+export class DxlSemanticTokensProvider
+	implements vscode.DocumentSemanticTokensProvider
+{
+	onDidChangeSemanticTokens?: vscode.Event<void>;
+	provideDocumentSemanticTokens(
+		document: vscode.TextDocument,
+		_token: vscode.CancellationToken,
+	): vscode.ProviderResult<vscode.SemanticTokens> {
+		const tokensBuilder = new vscode.SemanticTokensBuilder(token_legend);
+
+		const tree = get_parsedFile(document);
+		if (tree) {
+			const items = dxl.getSymbols(tree);
+
+			for (const item of items.tokens) {
+				tokensBuilder.push(
+					new vscode.Range(
+						new vscode.Position(item.range.start.line, item.range.start.col),
+						new vscode.Position(item.range.end.line, item.range.end.col),
+					),
+					item.kind,
+					item.modifiers,
+				);
+			}
+		}
+
+		return tokensBuilder.build();
 	}
 }
 
