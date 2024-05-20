@@ -4,21 +4,21 @@ import { OTokenKind, OTreeKind } from "./syntax_kind";
 export type AstNode = Stmt | Expr;
 
 export type Stmt =
+	| Root
+	| Param
+	| ParamList
 	| StmtArrayDecl
 	| StmtBlock
 	| StmtBreak
 	| StmtContinue
 	| StmtExpr
-	| StmtFunctionDecl
 	| StmtFor
 	| StmtForIn
+	| StmtFunctionDecl
 	| StmtIf
 	| StmtReturn
 	| StmtVariableDecl
-	| StmtWhile
-	| ParamList
-	| Param
-	| Root;
+	| StmtWhile;
 
 export type Expr =
 	| ExprAssign
@@ -29,17 +29,17 @@ export type Expr =
 	| ExprGet
 	| ExprGrouping
 	| ExprIndex
+	| ExprLiteral
 	| ExprLogical
+	| ExprNameRef
+	| ExprNameRefList
 	| ExprRange
 	| ExprSet
 	| ExprSetDbe
 	| ExprStringConcat
 	| ExprTernary
-	| ExprNameRefList
-	| ExprNameRef
 	| ExprUnary
-	| ExprWrite
-	| ExprLiteral;
+	| ExprWrite;
 
 export function cast(red: RedNode): AstNode | undefined {
 	const stmt = cast_stmt(red);
@@ -175,7 +175,7 @@ export class StmtArrayDecl {
 		this.red = red;
 	}
 
-	ret_type(): TypeAnnotation | undefined {
+	typing(): TypeAnnotation | undefined {
 		for (const child of this.red.children_nodes()) {
 			const type_annotation_cast = cast_type_annotation(child);
 			if (type_annotation_cast) {
@@ -277,7 +277,7 @@ export class StmtFunctionDecl {
 		this.red = red;
 	}
 
-	ret_type(): TypeAnnotation | undefined {
+	typing(): TypeAnnotation | undefined {
 		for (const child of this.red.children_nodes()) {
 			const type_annotation_cast = cast_type_annotation(child);
 			if (type_annotation_cast) {
@@ -309,7 +309,7 @@ export class StmtFunctionDecl {
 	}
 
 	body(): Stmt | undefined {
-		return nth_stmt(this.red, 0);
+		return nth_stmt(this.red, 1);
 	}
 }
 
@@ -436,7 +436,7 @@ export class StmtVariableDecl {
 		this.red = red;
 	}
 
-	var_type(): TypeAnnotation | undefined {
+	typing(): TypeAnnotation | undefined {
 		for (const child of this.red.children_nodes()) {
 			const type_annotation_cast = cast_type_annotation(child);
 			if (type_annotation_cast) {
@@ -600,7 +600,7 @@ export class ExprCast {
 		this.red = red;
 	}
 
-	ret_type(): TypeAnnotation | undefined {
+	typing(): TypeAnnotation | undefined {
 		for (const child of this.red.children_nodes()) {
 			const type_annotation_cast = cast_type_annotation(child);
 			if (type_annotation_cast) {

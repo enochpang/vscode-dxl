@@ -151,7 +151,7 @@ export function pp_ast(node: ast.AstNode): string {
 				break;
 			}
 			case "ExprCast":
-				sb.push(node.tag, ", ", pp_ast(0, node.ret_type()?.name()));
+				sb.push(node.tag, ", ", pp_ast(0, node.typing()?.name()));
 				sb.push(pp_ast(n + 1, node.expr()));
 				break;
 			case "ExprCompare":
@@ -258,7 +258,7 @@ export function pp_ast(node: ast.AstNode): string {
 				sb.push(
 					pp_ast(n + 1, node.name()),
 					" => ",
-					pp_ast(0, node.ret_type()?.name()),
+					pp_ast(0, node.typing()?.name()),
 				);
 				const paramlist = node.params();
 				if (paramlist) {
@@ -287,7 +287,7 @@ export function pp_ast(node: ast.AstNode): string {
 				sb.push(
 					pp_ast(n + 1, node.name()),
 					" => ",
-					pp_ast(0, node.var_type()?.name()),
+					pp_ast(0, node.typing()?.name()),
 				);
 				sb.push(pp_ast(n + 1, node.value()));
 				break;

@@ -2,12 +2,21 @@ import * as vscode from "vscode";
 import * as providers from "./providers";
 import * as commands from "./commands";
 import { get_parsedFile, remove_parsedFile } from "./utils";
+import { token_legend } from "./providers";
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.languages.registerDocumentSymbolProvider(
 			{ language: "dxl" },
 			new providers.DxlDocumentSymbolProvider(),
+		),
+	);
+
+	context.subscriptions.push(
+		vscode.languages.registerDocumentSemanticTokensProvider(
+			{ language: "dxl" },
+			new providers.DxlSemanticTokensProvider(),
+			token_legend,
 		),
 	);
 
