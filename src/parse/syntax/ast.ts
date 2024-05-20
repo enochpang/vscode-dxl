@@ -1,12 +1,14 @@
 import type { RedNode, RedToken } from "./red_tree";
-import { OTokenKind, OTreeKind } from "./syntax_kind";
+import { type NodeKind, OTokenKind, OTreeKind } from "./syntax_kind";
 
 export type AstNode = Stmt | Expr;
 
 export type Stmt =
 	| Root
-	| Param
+	| ArgList
 	| ParamList
+	| Param
+	| TypeAnnotation
 	| StmtArrayDecl
 	| StmtBlock
 	| StmtBreak
@@ -54,10 +56,14 @@ export function cast_stmt(red: RedNode): Stmt | undefined {
 	switch (red.green.kind) {
 		case OTreeKind.TreeRoot:
 			return new Root(red);
+		case OTreeKind.ArgList:
+			return new ArgList(red);
 		case OTreeKind.ParamList:
 			return new ParamList(red);
 		case OTreeKind.Param:
 			return new Param(red);
+		case OTreeKind.TypeAnnotation:
+			return new TypeAnnotation(red);
 		case OTreeKind.StmtArrayDecl:
 			return new StmtArrayDecl(red);
 		case OTreeKind.StmtBlock:
@@ -129,22 +135,6 @@ export function cast_expr(red: RedNode): Expr | undefined {
 	}
 }
 
-function cast_type_annotation(node: RedNode): TypeAnnotation | undefined {
-	if (node.green.kind === OTreeKind.TypeAnnotation) {
-		return new TypeAnnotation(node);
-	}
-
-	return undefined;
-}
-
-function cast_arglist(red: RedNode): ArgList | undefined {
-	if (red.green.kind === OTreeKind.ArgList) {
-		return new ArgList(red);
-	}
-
-	return undefined;
-}
-
 export class Root {
 	public readonly tag = "Root";
 	public red: RedNode;
@@ -176,11 +166,9 @@ export class StmtArrayDecl {
 	}
 
 	typing(): TypeAnnotation | undefined {
-		for (const child of this.red.children_nodes()) {
-			const type_annotation_cast = cast_type_annotation(child);
-			if (type_annotation_cast) {
-				return type_annotation_cast;
-			}
+		const stmt = nth_stmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
 		}
 
 		return undefined;
@@ -196,7 +184,7 @@ export class StmtArrayDecl {
 	}
 
 	count(): Expr | undefined {
-		const stmt = nth_stmt(this.red, 0);
+		const stmt = nth_stmt(this.red, 1);
 		if (stmt && stmt.tag === "StmtExpr") {
 			return stmt.expr();
 		}
@@ -206,9 +194,9 @@ export class StmtArrayDecl {
 
 	args(): ArgList | undefined {
 		for (const child of this.red.children_nodes()) {
-			const arglist_cast = cast_arglist(child);
-			if (arglist_cast) {
-				return arglist_cast;
+			const stmt_cast = cast_stmt(child);
+			if (stmt_cast instanceof ArgList) {
+				return stmt_cast;
 			}
 		}
 
@@ -245,6 +233,16 @@ export class StmtBreak {
 	constructor(red: RedNode) {
 		this.red = red;
 	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwBreak) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class StmtContinue {
@@ -253,6 +251,16 @@ export class StmtContinue {
 
 	constructor(red: RedNode) {
 		this.red = red;
+	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwContinue) {
+				return child;
+			}
+		}
+
+		return undefined;
 	}
 }
 
@@ -278,11 +286,9 @@ export class StmtFunctionDecl {
 	}
 
 	typing(): TypeAnnotation | undefined {
-		for (const child of this.red.children_nodes()) {
-			const type_annotation_cast = cast_type_annotation(child);
-			if (type_annotation_cast) {
-				return type_annotation_cast;
-			}
+		const stmt = nth_stmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
 		}
 
 		return undefined;
@@ -309,7 +315,7 @@ export class StmtFunctionDecl {
 	}
 
 	body(): Stmt | undefined {
-		return nth_stmt(this.red, 1);
+		return nth_stmt(this.red, 2);
 	}
 }
 
@@ -351,6 +357,16 @@ export class StmtFor {
 	body(): Stmt | undefined {
 		return nth_stmt(this.red, 3);
 	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwFor) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class StmtForIn {
@@ -382,6 +398,36 @@ export class StmtForIn {
 	body(): Stmt | undefined {
 		return nth_stmt(this.red, 2);
 	}
+
+	keyword1(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwFor) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
+
+	keyword2(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwIn) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
+
+	keyword3(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwDo) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class StmtIf {
@@ -408,6 +454,26 @@ export class StmtIf {
 	else_branch(): Stmt | undefined {
 		return nth_stmt(this.red, 2);
 	}
+
+	keyword1(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwIf) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
+
+	keyword2(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwElse) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class StmtReturn {
@@ -426,6 +492,16 @@ export class StmtReturn {
 
 		return undefined;
 	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwReturn) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class StmtVariableDecl {
@@ -437,18 +513,16 @@ export class StmtVariableDecl {
 	}
 
 	typing(): TypeAnnotation | undefined {
-		for (const child of this.red.children_nodes()) {
-			const type_annotation_cast = cast_type_annotation(child);
-			if (type_annotation_cast) {
-				return type_annotation_cast;
-			}
+		const stmt = nth_stmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
 		}
 
 		return undefined;
 	}
 
 	value(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
+		const stmt_cast = nth_stmt(this.red, 1);
 		if (stmt_cast && stmt_cast instanceof StmtExpr) {
 			return stmt_cast.expr();
 		}
@@ -494,6 +568,16 @@ export class StmtWhile {
 
 	body(): Stmt | undefined {
 		return nth_stmt(this.red, 1);
+	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.children_tokens()) {
+			if (child.green.token.kind === OTokenKind.KwWhile) {
+				return child;
+			}
+		}
+
+		return undefined;
 	}
 }
 
@@ -582,9 +666,9 @@ export class ExprCall {
 
 	args(): ArgList | undefined {
 		for (const child of this.red.children_nodes()) {
-			const arglist_cast = cast_arglist(child);
-			if (arglist_cast) {
-				return arglist_cast;
+			const stmt_cast = cast_stmt(child);
+			if (stmt_cast instanceof ArgList) {
+				return stmt_cast;
 			}
 		}
 
@@ -601,11 +685,9 @@ export class ExprCast {
 	}
 
 	typing(): TypeAnnotation | undefined {
-		for (const child of this.red.children_nodes()) {
-			const type_annotation_cast = cast_type_annotation(child);
-			if (type_annotation_cast) {
-				return type_annotation_cast;
-			}
+		const stmt = nth_stmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
 		}
 
 		return undefined;
