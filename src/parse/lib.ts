@@ -1,7 +1,7 @@
 import * as ast from "./syntax/ast";
 import { tokenize } from "./lexer/lexer";
 import { type ParseResult, parse } from "./parser/events";
-import { RedNode } from "./syntax/red_tree";
+import { RedNode, type RedToken } from "./syntax/red_tree";
 import type { TextRange } from "./syntax/green_tree";
 import { OTokenKind } from "./syntax/syntax_kind";
 
@@ -60,6 +60,16 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 	const tokens: DxlSemanticToken[] = [];
 	const symbols: DxlSymbol[] = [];
 
+	function addKeyword(keyword: RedToken | undefined) {
+		if (keyword) {
+			tokens.push({
+				kind: OSemanticKind.Keyword,
+				modifiers: [],
+				range: keyword.green.token.getRange(),
+			});
+		}
+	}
+
 	function loop(ast_node: ast.AstNode | undefined) {
 		if (!ast_node) {
 			return;
@@ -85,18 +95,20 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 
 				break;
 			}
-			case "StmtArrayDecl": {
-				const type_ref = ast_node.typing();
-				if (type_ref) {
-					const type_name = type_ref.name();
-					if (type_name) {
-						tokens.push({
-							kind: OSemanticKind.Type,
-							modifiers: [],
-							range: type_name.green.token.getRange(),
-						});
-					}
+			case "TypeAnnotation": {
+				const type_name = ast_node.name();
+				if (type_name) {
+					tokens.push({
+						kind: OSemanticKind.Type,
+						modifiers: [],
+						range: type_name.green.token.getRange(),
+					});
 				}
+
+				break;
+			}
+			case "StmtArrayDecl": {
+				loop(ast_node.typing());
 
 				const name_ref = ast_node.name();
 				if (name_ref) {
@@ -132,6 +144,8 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "StmtFor": {
+				addKeyword(ast_node.keyword());
+
 				loop(ast_node.initializer());
 				loop(ast_node.condition());
 				loop(ast_node.increment());
@@ -139,23 +153,17 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "StmtForIn": {
+				addKeyword(ast_node.keyword1());
+				addKeyword(ast_node.keyword2());
+				addKeyword(ast_node.keyword3());
+
 				loop(ast_node.item());
 				loop(ast_node.parent());
 				loop(ast_node.body());
 				break;
 			}
 			case "StmtFunctionDecl": {
-				const type_ref = ast_node.typing();
-				if (type_ref) {
-					const type_name = type_ref.name();
-					if (type_name) {
-						tokens.push({
-							kind: OSemanticKind.Type,
-							modifiers: [],
-							range: type_name.green.token.getRange(),
-						});
-					}
-				}
+				loop(ast_node.typing());
 
 				const name_ref = ast_node.name();
 				if (name_ref) {
@@ -182,27 +190,22 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "StmtIf": {
+				addKeyword(ast_node.keyword1());
+				addKeyword(ast_node.keyword2());
+
 				loop(ast_node.condition());
 				loop(ast_node.then_branch());
 				loop(ast_node.else_branch());
 				break;
 			}
 			case "StmtReturn": {
+				addKeyword(ast_node.keyword());
+
 				loop(ast_node.expr());
 				break;
 			}
 			case "StmtVariableDecl": {
-				const type_ref = ast_node.typing();
-				if (type_ref) {
-					const type_name = type_ref.name();
-					if (type_name) {
-						tokens.push({
-							kind: OSemanticKind.Type,
-							modifiers: [],
-							range: type_name.green.token.getRange(),
-						});
-					}
-				}
+				loop(ast_node.typing());
 
 				const name_ref = ast_node.name();
 				if (name_ref) {
@@ -218,6 +221,8 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "StmtWhile": {
+				addKeyword(ast_node.keyword());
+
 				loop(ast_node.condition());
 				loop(ast_node.body());
 				break;
@@ -267,18 +272,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "ExprCast": {
-				const type_ref = ast_node.typing();
-				if (type_ref) {
-					const type_name = type_ref.name();
-					if (type_name) {
-						tokens.push({
-							kind: OSemanticKind.Type,
-							modifiers: [],
-							range: type_name.green.token.getRange(),
-						});
-					}
-				}
-
+				loop(ast_node.typing());
 				loop(ast_node.expr());
 				break;
 			}
