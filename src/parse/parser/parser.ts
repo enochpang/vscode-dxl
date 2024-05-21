@@ -54,6 +54,10 @@ export class Parser {
 	}
 
 	private parse_declaration() {
+		if (this.peek().kind === OTokenKind.KwConst) {
+			this.bump_as(OTreeKind.WarningNode);
+		}
+
 		if (this.peek_item().is_type_specifier()) {
 			const m = this.open();
 
@@ -167,10 +171,12 @@ export class Parser {
 			this.parse_expression();
 		} else if (this.consume_if(OTokenKind.Lbracket)) {
 			if (this.consume_if(OTokenKind.Rbracket)) {
-				if (this.expect(OTokenKind.Equal) && this.expect(OTokenKind.Lcurly)) {
-					this.parse_expr_list(OTokenKind.Rcurly);
+				if (this.consume_if(OTokenKind.Equal)) {
+					if (this.expect(OTokenKind.Lcurly)) {
+						this.parse_expr_list(OTokenKind.Rcurly);
 
-					this.expect(OTokenKind.Rcurly);
+						this.expect(OTokenKind.Rcurly);
+					}
 				}
 			} else {
 				this.parse_expression();
@@ -442,10 +448,12 @@ export class Parser {
 				lhs = this.close(m, OTreeKind.ExprUnary);
 				break;
 			}
-
 			case OTokenKind.Lparen:
 				lhs = this.parse_grouping_expr();
 				break;
+			case OTokenKind.Semicolon:
+				this.bump();
+				return;
 			default: {
 				this.add_error(
 					this.peek(),
@@ -469,6 +477,8 @@ export class Parser {
 					case OTokenKind.Ident:
 					case OTokenKind.KwModule:
 					case OTokenKind.KwNull:
+					case OTokenKind.KwTrue:
+					case OTokenKind.KwFalse:
 						return true;
 				}
 			}
@@ -528,6 +538,7 @@ export class Parser {
 				case OTokenKind.LessEqual:
 				case OTokenKind.Bar:
 				case OTokenKind.BarBar:
+				case OTokenKind.Ampr:
 				case OTokenKind.AmprAmpr:
 					lhs = this.parse_infix_expr(lhs);
 					break;
@@ -1043,6 +1054,7 @@ function get_precedence(kind: TokenKind) {
 			return 11;
 		case OTokenKind.Star:
 		case OTokenKind.Fslash:
+		case OTokenKind.Percent:
 			return 12;
 		case OTokenKind.Bang:
 			return BP.Unary;

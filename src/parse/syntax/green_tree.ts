@@ -102,6 +102,7 @@ export class GreenToken {
 		switch (this.token.kind) {
 			case OTokenKind.KwInt:
 			case OTokenKind.KwString:
+			case OTokenKind.KwChar:
 			case OTokenKind.KwVoid:
 			case OTokenKind.KwReal:
 			case OTokenKind.KwBool:
@@ -209,7 +210,7 @@ export const TOKEN_KEYWORD = new Map<string, TokenKind>([
 	["char", OTokenKind.KwChar],
 	["const", OTokenKind.KwConst],
 	["continue", OTokenKind.KwContinue],
-	["default", OTokenKind.KwDefault],
+	// ["default", OTokenKind.KwDefault],
 	["do", OTokenKind.KwDo],
 	["else", OTokenKind.KwElse],
 	["enum", OTokenKind.KwEnum],
@@ -225,7 +226,7 @@ export const TOKEN_KEYWORD = new Map<string, TokenKind>([
 	["pragma", OTokenKind.KwPragma],
 	["real", OTokenKind.KwReal],
 	["return", OTokenKind.KwReturn],
-	["sizeof", OTokenKind.KwSizeof],
+	// ["sizeof", OTokenKind.KwSizeof],
 	["static", OTokenKind.KwStatic],
 	["string", OTokenKind.KwString],
 	["struct", OTokenKind.KwStruct],

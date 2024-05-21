@@ -63,7 +63,7 @@ export const OTokenKind = {
 	KwChar: "KWCHAR",
 	KwConst: "KWCONST",
 	KwContinue: "KWCONTINUE",
-	KwDefault: "KWDEFAULT",
+	// KwDefault: "KWDEFAULT",
 	KwDo: "KWDO",
 	KwElse: "KWELSE",
 	KwEnum: "KWENUM",
@@ -80,7 +80,7 @@ export const OTokenKind = {
 	KwPragma: "KWPRAGMA",
 	KwReal: "KWREAL",
 	KwReturn: "KWRETURN",
-	KwSizeof: "KWSIZEOF",
+	// KwSizeof: "KWSIZEOF",
 	KwStatic: "KWSTATIC",
 	KwString: "KWSTRING",
 	KwStruct: "KWSTRUCT",
@@ -152,6 +152,7 @@ export const OTreeKind = {
 	NameRef: "NAMEREF",
 	NameRefList: "NAMEREFLIST",
 	ErrorNode: "ERRORNODE",
+	WarningNode: "WARNINGNODE",
 };
 
 /**

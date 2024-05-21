@@ -304,7 +304,7 @@ export function pp_ast(node: ast.AstNode): string {
 				break;
 			case "Param":
 				sb.push(node.tag);
-				sb.push(pp_ast(n + 1, node.expr()));
+				sb.push(pp_ast(n + 1, node.decl()));
 				break;
 			case "Root":
 				sb.push(node.tag);
