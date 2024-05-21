@@ -246,16 +246,32 @@ exports[`parse current Object 1`] = `
         Leaf IDENT@8..14 "Object""
 `;
 
+exports[`parse dbe->"left"->"flush"->dbe2 1`] = `
+"Node TREEROOT@0..26
+  Node STMTEXPR@0..26
+    Node EXPRSETDBE@0..26
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "dbe"
+      Leaf MINUSGREAT@3..5 "->"
+      Node EXPRLITERAL@5..11
+        Leaf STRING@5..11 ""left""
+      Leaf MINUSGREAT@11..13 "->"
+      Node EXPRLITERAL@13..20
+        Leaf STRING@13..20 ""flush""
+      Leaf MINUSGREAT@20..22 "->"
+      Node EXPRLITERAL@22..26
+        Leaf IDENT@22..26 "dbe2""
+`;
+
 exports[`parse dbe->"left"->"form" 1`] = `
 "Node TREEROOT@0..19
   Node STMTEXPR@0..19
     Node EXPRSETDBE@0..19
-      Node EXPRSETDBE@0..11
-        Node NAMEREF@0..3
-          Leaf IDENT@0..3 "dbe"
-        Leaf MINUSGREAT@3..5 "->"
-        Node EXPRLITERAL@5..11
-          Leaf STRING@5..11 ""left""
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "dbe"
+      Leaf MINUSGREAT@3..5 "->"
+      Node EXPRLITERAL@5..11
+        Leaf STRING@5..11 ""left""
       Leaf MINUSGREAT@11..13 "->"
       Node EXPRLITERAL@13..19
         Leaf STRING@13..19 ""form"""
@@ -310,11 +326,13 @@ exports[`parse for lnk in obj<-"*" do {} 1`] = `
       Node NAMEREF@4..7
         Leaf IDENT@4..7 "lnk"
     Leaf KWIN@8..10 "in"
-    Node STMTEXPR@11..14
-      Node NAMEREF@11..14
-        Leaf IDENT@11..14 "obj"
-    Leaf LESSMINUS@14..16 "<-"
-    Leaf STRING@16..19 ""*""
+    Node STMTEXPR@11..19
+      Node EXPRLINK@11..19
+        Node NAMEREF@11..14
+          Leaf IDENT@11..14 "obj"
+        Leaf LESSMINUS@14..16 "<-"
+        Node EXPRLITERAL@16..19
+          Leaf STRING@16..19 ""*""
     Leaf KWDO@20..22 "do"
     Node STMTBLOCK@23..25
       Leaf LCURLY@23..24 "{"
@@ -771,6 +789,28 @@ exports[`parse int sum(int, int) 1`] = `
           Node TYPEANNOTATION@13..16
             Leaf KWINT@13..16 "int"
     Leaf RPAREN@16..17 ")""
+`;
+
+exports[`parse lnk<-"*" 1`] = `
+"Node TREEROOT@0..8
+  Node STMTEXPR@0..8
+    Node EXPRLINK@0..8
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "lnk"
+      Leaf LESSMINUS@3..5 "<-"
+      Node EXPRLITERAL@5..8
+        Leaf STRING@5..8 ""*"""
+`;
+
+exports[`parse lnk->"*" 1`] = `
+"Node TREEROOT@0..8
+  Node STMTEXPR@0..8
+    Node EXPRLINK@0..8
+      Node NAMEREF@0..3
+        Leaf IDENT@0..3 "lnk"
+      Leaf MINUSGREAT@3..5 "->"
+      Node EXPRLITERAL@5..8
+        Leaf STRING@5..8 ""*"""
 `;
 
 exports[`parse major(b) "" minor(b) "" 1`] = `

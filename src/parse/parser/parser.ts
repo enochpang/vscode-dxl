@@ -332,10 +332,6 @@ export class Parser {
 				}
 			}
 
-			if (this.consume_if(OTokenKind.LessMinus)) {
-				this.expect(OTokenKind.String);
-			}
-
 			this.expect(OTokenKind.KwDo);
 
 			this.parse_declaration(); // The body
@@ -556,6 +552,7 @@ export class Parser {
 					lhs = this.parse_obj_expr(lhs);
 					break;
 				case OTokenKind.MinusGreat:
+				case OTokenKind.LessMinus:
 					lhs = this.parse_dbe_expr(lhs);
 					break;
 				case OTokenKind.GreatGreat:
@@ -750,14 +747,30 @@ export class Parser {
 
 		this.bump();
 
-		if (
-			this.peek().kind === OTokenKind.String ||
-			this.peek().kind === OTokenKind.Ident
-		) {
+		if (this.peek().kind === OTokenKind.String) {
 			this.bump_as(OTreeKind.ExprLiteral);
 		}
 
-		return this.close(m, OTreeKind.ExprSetDbe);
+		if (this.consume_if(OTokenKind.MinusGreat)) {
+			if (this.peek().kind === OTokenKind.String) {
+				this.bump_as(OTreeKind.ExprLiteral);
+
+				if (this.peek().kind === OTokenKind.MinusGreat) {
+					this.bump();
+
+					if (
+						this.peek().kind === OTokenKind.String ||
+						this.peek().kind === OTokenKind.Ident
+					) {
+						this.bump_as(OTreeKind.ExprLiteral);
+					}
+				}
+			}
+
+			return this.close(m, OTreeKind.ExprSetDbe);
+		}
+
+		return this.close(m, OTreeKind.ExprLink);
 	}
 
 	private parse_set_expr(lhs: MarkClosed): MarkClosed {
@@ -1068,6 +1081,7 @@ function get_precedence(kind: TokenKind) {
 			return 15;
 		case OTokenKind.Period:
 		case OTokenKind.MinusGreat:
+		case OTokenKind.LessMinus:
 		case OTokenKind.LessLess:
 		case OTokenKind.GreatGreat:
 			return 17;

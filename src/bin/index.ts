@@ -13,17 +13,17 @@ for (let i = 0; i < parseResult.errors.length; i++) {
 
 const green_tree = parseResult.tree;
 if (green_tree) {
-	// console.log(dxl.pp_cst(green_tree));
+	console.log(dxl.pp_cst(green_tree));
 
-	const red_tree = new syntax.RedNode(green_tree, 0);
-	const nodes = dxl.find.find_references(red_tree, 5);
+	// const red_tree = new syntax.RedNode(green_tree, 0);
+	// const nodes = dxl.find.find_references(red_tree, 5);
 
-	if (nodes) {
-		console.log("==========");
-		for (const node of nodes) {
-			console.log(syntax.pp_red_element(node));
-		}
-	}
+	// if (nodes) {
+	// 	console.log("==========");
+	// 	for (const node of nodes) {
+	// 		console.log(syntax.pp_red_element(node));
+	// 	}
+	// }
 }
 
 console.log();

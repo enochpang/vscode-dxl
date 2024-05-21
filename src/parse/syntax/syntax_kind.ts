@@ -139,6 +139,7 @@ export const OTreeKind = {
 	ExprRange: "EXPRRANGE",
 	ExprSet: "EXPRSET",
 	ExprSetDbe: "EXPRSETDBE",
+	ExprLink: "EXPRLINK",
 	ExprStringConcat: "EXPRSTRINGCONCAT",
 	ExprTernary: "EXPRTERNARY",
 	ExprUnary: "EXPRUNARY",

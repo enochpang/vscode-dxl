@@ -349,6 +349,11 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				}
 				break;
 			}
+			case "ExprLink": {
+				loop(ast_node.lhs());
+				loop(ast_node.rhs());
+				break;
+			}
 			case "ExprLogical": {
 				loop(ast_node.lhs());
 				loop(ast_node.rhs());
@@ -412,8 +417,9 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "ExprSetDbe": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
+				loop(ast_node.side());
+				loop(ast_node.attachment());
+				loop(ast_node.other());
 				break;
 			}
 			case "ExprStringConcat": {
