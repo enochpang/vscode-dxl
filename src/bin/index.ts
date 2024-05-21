@@ -16,7 +16,7 @@ if (green_tree) {
 	// console.log(dxl.pp_cst(green_tree));
 
 	const red_tree = new syntax.RedNode(green_tree, 0);
-	const nodes = dxl.find.find_references(red_tree, 40);
+	const nodes = dxl.find.find_references(red_tree, 5);
 
 	if (nodes) {
 		console.log("==========");

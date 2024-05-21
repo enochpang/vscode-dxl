@@ -155,7 +155,7 @@ describe("find_01", () => {
 
 		test("cc_ln3", () => {
 			const nodes = find.find_references(red_tree, 21);
-			if (!nodes) assert.fail("Could not find node");
+			if (!nodes) assert.fail("Could not find nodes");
 
 			expect(nodes.map((x) => pp_red_element(x))).toEqual(
 				[token_cc_ln3, token_cc_ln18, token_cc_ln22].map((x) =>
@@ -166,7 +166,7 @@ describe("find_01", () => {
 
 		test("cc_ln5", () => {
 			const nodes = find.find_references(red_tree, 40);
-			if (!nodes) assert.fail("Could not find node");
+			if (!nodes) assert.fail("Could not find nodes");
 
 			expect(nodes.map((x) => pp_red_element(x))).toEqual(
 				[token_cc_ln5, token_cc_ln7].map((x) => pp_red_element(x)),
@@ -214,10 +214,35 @@ describe("find_03", () => {
 
 		test("add1_ln1", () => {
 			const nodes = find.find_references(red_tree, 5);
-			if (!nodes) assert.fail("Could not find node");
+			if (!nodes) assert.fail("Could not find nodes");
 
 			expect(nodes.map((x) => pp_red_element(x))).toEqual(
 				[token_add1_ln1, token_add1_ln5].map((x) => pp_red_element(x)),
+			);
+		});
+	});
+});
+
+describe("find_04", () => {
+	const text = fs.readFileSync("test_data/find_04.dxl", "utf-8");
+	const lex_items = tokenize(text);
+	const parseResult = parse(lex_items);
+
+	const green_tree = parseResult.tree;
+	if (!green_tree) assert.fail("Could get green_tree");
+
+	const red_tree = new RedNode(green_tree, 0);
+
+	describe("find_references", () => {
+		const token_obj_ln1 = find.token_at_offset(red_tree, 5);
+		const token_obj_ln2 = find.token_at_offset(red_tree, 26);
+
+		test("obj_ln1", () => {
+			const nodes = find.find_references(red_tree, 5);
+			if (!nodes) assert.fail("Could not find nodes");
+
+			expect(nodes.map((x) => pp_red_element(x))).toEqual(
+				[token_obj_ln1, token_obj_ln2].map((x) => pp_red_element(x)),
 			);
 		});
 	});
