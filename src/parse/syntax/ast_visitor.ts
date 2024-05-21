@@ -197,8 +197,8 @@ export function pp_ast(node: ast.AstNode): string {
 				break;
 			case "ExprSetDbe":
 				sb.push(node.tag);
-				sb.push(pp_ast(n + 1, node.lhs()));
-				sb.push(pp_ast(n + 1, node.rhs()));
+				sb.push(pp_ast(n + 1, node.side()));
+				sb.push(pp_ast(n + 1, node.attachment()));
 				break;
 			case "ExprStringConcat":
 				sb.push(node.tag);
