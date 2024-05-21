@@ -1,0 +1,6 @@
+int add1() {
+}
+
+int sum() {
+    add1()
+}

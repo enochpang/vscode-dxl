@@ -102,7 +102,7 @@ describe("find_01", () => {
 		test("scope in param", () => {
 			const scope_node = find.get_containing_scope(node_aa_ln10);
 			expect(pp_red_element(scope_node)).toMatchInlineSnapshot(
-				`"Node STMTFUNCDECL@74..140"`,
+				`"Node PARAMLIST@82..96"`,
 			);
 		});
 	});
@@ -193,6 +193,31 @@ describe("find_02", () => {
 		test("node_ii_initializer", () => {
 			expect(pp_red_element(node_aa_ln1)).toMatchInlineSnapshot(
 				`"Node NAMEREF@4..6"`,
+			);
+		});
+	});
+});
+
+describe("find_03", () => {
+	const text = fs.readFileSync("test_data/find_03.dxl", "utf-8");
+	const lex_items = tokenize(text);
+	const parseResult = parse(lex_items);
+
+	const green_tree = parseResult.tree;
+	if (!green_tree) assert.fail("Could get green_tree");
+
+	const red_tree = new RedNode(green_tree, 0);
+
+	describe("find_references", () => {
+		const token_add1_ln1 = find.token_at_offset(red_tree, 5);
+		const token_add1_ln5 = find.token_at_offset(red_tree, 37);
+
+		test("add1_ln1", () => {
+			const nodes = find.find_references(red_tree, 5);
+			if (!nodes) assert.fail("Could not find node");
+
+			expect(nodes.map((x) => pp_red_element(x))).toEqual(
+				[token_add1_ln1, token_add1_ln5].map((x) => pp_red_element(x)),
 			);
 		});
 	});

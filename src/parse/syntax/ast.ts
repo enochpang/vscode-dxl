@@ -1097,12 +1097,14 @@ export class Param {
 		this.red = red;
 	}
 
-	expr(): Stmt | undefined {
+	decl(): Stmt | undefined {
 		for (const child of this.red.children_nodes()) {
 			if (child.green.kind === OTreeKind.StmtVarDecl) {
 				return new StmtVariableDecl(child);
 			} else if (child.green.kind === OTreeKind.StmtFuncDecl) {
 				return new StmtFunctionDecl(child);
+			} else if (child.green.kind === OTreeKind.StmtArrayDecl) {
+				return new StmtArrayDecl(child);
 			}
 		}
 

@@ -84,7 +84,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				break;
 			}
 			case "Param": {
-				loop(ast_node.expr());
+				loop(ast_node.decl());
 				break;
 			}
 			case "ParamList": {

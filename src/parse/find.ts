@@ -1,5 +1,10 @@
 import * as ast from "./syntax/ast";
-import { type RedElement, RedNode, RedToken } from "./syntax/red_tree";
+import {
+	type RedElement,
+	RedNode,
+	RedToken,
+	pp_red_element,
+} from "./syntax/red_tree";
 import { OTokenKind, OTreeKind } from "./syntax/syntax_kind";
 
 export function find_definition(
@@ -67,7 +72,15 @@ export function find_references(red_tree: RedNode, offset: number) {
 
 	const start_level = get_level(start_node);
 	const start_offset = start_node.green.get_start_offset();
-	const scoping_node = get_containing_scope(start_node);
+	let scoping_node = get_containing_scope(start_node);
+
+	if (
+		scoping_node.parent &&
+		(scoping_node.green.kind === OTreeKind.StmtFuncDecl ||
+			scoping_node.green.kind === OTreeKind.ParamList)
+	) {
+		scoping_node = scoping_node.parent;
+	}
 
 	const results = get_references(
 		scoping_node,
@@ -137,6 +150,14 @@ function get_same_decl_name(
 				}
 			}
 		}
+	} else if (stmt instanceof ast.StmtArrayDecl) {
+		const nameRef = stmt.name();
+		if (nameRef) {
+			const name = nameRef.name();
+			if (name && start_name === name.green.text) {
+				return name;
+			}
+		}
 	} else if (stmt instanceof ast.StmtFunctionDecl) {
 		const nameRef = stmt.name();
 		if (nameRef) {
@@ -149,17 +170,26 @@ function get_same_decl_name(
 		const paramList = stmt.params();
 		if (paramList) {
 			for (const param of paramList.params()) {
-				const param_expr = param.expr();
-				if (param_expr instanceof ast.StmtVariableDecl) {
-					const nameRef = param_expr.name();
+				const param_decl = param.decl();
+
+				if (param_decl instanceof ast.StmtVariableDecl) {
+					const nameRef = param_decl.name();
 					if (nameRef) {
 						const name = nameRef.name();
 						if (name && start_name === name.green.text) {
 							return name;
 						}
 					}
-				} else if (param_expr instanceof ast.StmtFunctionDecl) {
-					const nameRef = param_expr.name();
+				} else if (param_decl instanceof ast.StmtArrayDecl) {
+					const nameRef = param_decl.name();
+					if (nameRef) {
+						const name = nameRef.name();
+						if (name && start_name === name.green.text) {
+							return name;
+						}
+					}
+				} else if (param_decl instanceof ast.StmtFunctionDecl) {
+					const nameRef = param_decl.name();
 					if (nameRef) {
 						const name = nameRef.name();
 						if (name && start_name === name.green.text) {
@@ -262,7 +292,8 @@ export function get_containing_scope(node: RedNode): RedNode {
 			stmt instanceof ast.StmtFor ||
 			stmt instanceof ast.StmtWhile ||
 			stmt instanceof ast.StmtBlock ||
-			stmt instanceof ast.StmtFunctionDecl
+			stmt instanceof ast.StmtFunctionDecl ||
+			stmt instanceof ast.ParamList
 		) {
 			return parent;
 		}
