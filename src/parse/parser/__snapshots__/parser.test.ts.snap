@@ -302,6 +302,25 @@ exports[`parse for (i = 0; i < 4; i++) {
       Leaf RCURLY@36..37 "}""
 `;
 
+exports[`parse for lnk in obj<-"*" do {} 1`] = `
+"Node TREEROOT@0..25
+  Node STMTFORIN@0..25
+    Leaf KWFOR@0..3 "for"
+    Node STMTEXPR@4..7
+      Node NAMEREF@4..7
+        Leaf IDENT@4..7 "lnk"
+    Leaf KWIN@8..10 "in"
+    Node STMTEXPR@11..14
+      Node NAMEREF@11..14
+        Leaf IDENT@11..14 "obj"
+    Leaf LESSMINUS@14..16 "<-"
+    Leaf STRING@16..19 ""*""
+    Leaf KWDO@20..22 "do"
+    Node STMTBLOCK@23..25
+      Leaf LCURLY@23..24 "{"
+      Leaf RCURLY@24..25 "}""
+`;
+
 exports[`parse for obj in mod do {} 1`] = `
 "Node TREEROOT@0..20
   Node STMTFORIN@0..20

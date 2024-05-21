@@ -332,6 +332,10 @@ export class Parser {
 				}
 			}
 
+			if (this.consume_if(OTokenKind.LessMinus)) {
+				this.expect(OTokenKind.String);
+			}
+
 			this.expect(OTokenKind.KwDo);
 
 			this.parse_declaration(); // The body

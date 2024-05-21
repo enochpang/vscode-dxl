@@ -45,6 +45,7 @@ check_parse("while (a < 2) {\n    a + 1\n}");
 check_parse("while (a < 2) {\n    a + 1\n    break\n}");
 check_parse("for (i = 0; i < 4; i++) {\n    a + 1\n}");
 check_parse("for obj in mod do {}");
+check_parse('for lnk in obj<-"*" do {}');
 check_parse("int a = 2");
 check_parse("int a");
 check_parse("int sum(int a, int b) {\n    return a + b\n}");
