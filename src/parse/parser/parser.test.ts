@@ -72,9 +72,9 @@ check_parse("++i");
 check_parse("if i == j then j = 22 {}");
 check_parse("while (a==2 and b==3) {}");
 check_parse("if (true) { a } else b");
-
-// Error cases
-check_parse("int");
+check_parse("stream -> buf");
+check_parse(`trigger("t1", project->all->module->all)`);
+check_parse(`trigger("t1", project->module->"2")`);
 
 function check_parse(text: string) {
 	test(`parse ${text}`, () => {

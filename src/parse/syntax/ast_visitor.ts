@@ -25,7 +25,7 @@ export type AstVisitor<R> = {
 	expr_logical(kind: ast.ExprLogical): R;
 	expr_range(kind: ast.ExprRange): R;
 	expr_set(kind: ast.ExprSet): R;
-	expr_set_dbe(kind: ast.ExprSetDbe): R;
+	expr_set_dbe(kind: ast.ExprArrow): R;
 	expr_string_concat(kind: ast.ExprStringConcat): R;
 	expr_ternary(kind: ast.ExprTernary): R;
 	expr_variable_ref_list(kind: ast.ExprNameRefList): R;

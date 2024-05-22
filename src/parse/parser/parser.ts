@@ -193,6 +193,10 @@ export class Parser {
 				if (this.peek().kind === OTokenKind.Ident) {
 					this.bump_as(OTreeKind.NameRef);
 				}
+
+				if (this.consume_if(OTokenKind.Equal)) {
+					this.parse_expression();
+				}
 			}
 			this.close(m_list, OTreeKind.NameRefList);
 		}
@@ -570,7 +574,7 @@ export class Parser {
 					break;
 				case OTokenKind.MinusGreat:
 				case OTokenKind.LessMinus:
-					lhs = this.parse_dbe_expr(lhs);
+					lhs = this.parse_arrow_expr(lhs);
 					break;
 				case OTokenKind.GreatGreat:
 				case OTokenKind.LessLess:
@@ -759,35 +763,21 @@ export class Parser {
 		return this.close(m, OTreeKind.ExprGet);
 	}
 
-	private parse_dbe_expr(lhs: MarkClosed): MarkClosed {
+	private parse_arrow_expr(lhs: MarkClosed): MarkClosed {
 		const m = this.open_before(lhs);
 
 		this.bump();
 
-		if (this.peek().kind === OTokenKind.String) {
+		if (
+			this.peek().kind === OTokenKind.String ||
+			this.peek().kind === OTokenKind.KwModule
+		) {
 			this.bump_as(OTreeKind.ExprLiteral);
+		} else if (this.peek().kind === OTokenKind.Ident) {
+			this.bump_as(OTreeKind.NameRef);
 		}
 
-		if (this.consume_if(OTokenKind.MinusGreat)) {
-			if (this.peek().kind === OTokenKind.String) {
-				this.bump_as(OTreeKind.ExprLiteral);
-
-				if (this.peek().kind === OTokenKind.MinusGreat) {
-					this.bump();
-
-					if (
-						this.peek().kind === OTokenKind.String ||
-						this.peek().kind === OTokenKind.Ident
-					) {
-						this.bump_as(OTreeKind.ExprLiteral);
-					}
-				}
-			}
-
-			return this.close(m, OTreeKind.ExprSetDbe);
-		}
-
-		return this.close(m, OTreeKind.ExprLink);
+		return this.close(m, OTreeKind.ExprArrow);
 	}
 
 	private parse_set_expr(lhs: MarkClosed): MarkClosed {
