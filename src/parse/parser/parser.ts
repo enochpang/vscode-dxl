@@ -185,7 +185,9 @@ export class Parser {
 
 			this.close(m, OTreeKind.StmtArrayDecl);
 			return;
-		} else if (m_name && this.peek().kind === OTokenKind.Comma) {
+		}
+
+		if (m_name && this.peek().kind === OTokenKind.Comma) {
 			const m_list = this.open_before(m_name);
 			while (this.peek().kind === OTokenKind.Comma) {
 				this.bump();

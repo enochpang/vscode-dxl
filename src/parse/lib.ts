@@ -207,6 +207,13 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			case "StmtVariableDecl": {
 				loop(ast_node.typing());
 
+				const nameRefs = ast_node.names();
+				if (nameRefs) {
+					for (const nameRef of nameRefs) {
+						loop(nameRef);
+					}
+				}
+
 				const name_ref = ast_node.name();
 				if (name_ref) {
 					const name = name_ref.name();
@@ -370,6 +377,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				const names = ast_node.names();
 				if (names) {
 					for (const name of names) {
+						console.log(name);
 						loop(name);
 					}
 				}
