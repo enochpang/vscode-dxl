@@ -2,12 +2,12 @@
 	"name": "vscode-dxl",
 	"displayName": "vscode-dxl",
 	"description": "DXL support for VS Code",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"publisher": "enochpang",
 	"repository": "https://github.com/enochpang/vscode-dxl",
 	"author": "Enoch Pang",
 	"engines": {
-		"vscode": "^1.80.0"
+		"vscode": "^1.77.0"
 	},
 	"categories": [
 		"Other"
@@ -44,8 +44,9 @@
 		"test": "vitest"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^1.7.3",
 		"@types/node": "^18.19.31",
-		"@types/vscode": "^1.80.0",
+		"@types/vscode": "^1.77.0",
 		"esbuild": "^0.20.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.4.5",
