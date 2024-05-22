@@ -21,6 +21,13 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	context.subscriptions.push(
+		vscode.languages.registerRenameProvider(
+			{ language: "dxl" },
+			new providers.DxlRenameProvider(),
+		),
+	);
+
+	context.subscriptions.push(
 		vscode.languages.registerDefinitionProvider(
 			{ language: "dxl" },
 			new providers.DxlDefinitionProvider(),

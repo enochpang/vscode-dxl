@@ -85,6 +85,42 @@ export class DxlSemanticTokensProvider
 	}
 }
 
+export class DxlRenameProvider implements vscode.RenameProvider {
+	provideRenameEdits(
+		document: vscode.TextDocument,
+		position: vscode.Position,
+		newName: string,
+		_token: vscode.CancellationToken,
+	): vscode.ProviderResult<vscode.WorkspaceEdit> {
+		const tree = get_parsedFile(document);
+		if (tree) {
+			const offset = document.offsetAt(position);
+			const references = dxl.find.find_references(tree, offset);
+			if (references) {
+				const workspaceEdit = new vscode.WorkspaceEdit();
+				for (const reference of references) {
+					const token = reference.green.token;
+					const start = token.start_loc;
+					const end = token.end_loc;
+
+					workspaceEdit.replace(
+						document.uri,
+						new vscode.Range(
+							new vscode.Position(start.line, start.col),
+							new vscode.Position(end.line, end.col),
+						),
+						newName,
+					);
+				}
+
+				return workspaceEdit;
+			}
+		}
+
+		throw new Error("Method not implemented.");
+	}
+}
+
 export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 	provideDefinition(
 		document: vscode.TextDocument,
