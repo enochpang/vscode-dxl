@@ -68,6 +68,10 @@ check_parse("styleCentered|styleFixed");
 check_parse("!null ad");
 check_parse("string s1, s2, s3");
 check_parse("from + start 0");
+check_parse("++i");
+check_parse("if i == j then j = 22 {}");
+check_parse("while (a==2 and b==3) {}");
+check_parse("if (true) { a } else b");
 
 // Error cases
 check_parse("int");
