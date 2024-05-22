@@ -258,29 +258,32 @@ exports[`parse current Object 1`] = `
 exports[`parse dbe->"left"->"flush"->dbe2 1`] = `
 "Node TREEROOT@0..26
   Node STMTEXPR@0..26
-    Node EXPRSETDBE@0..26
-      Node NAMEREF@0..3
-        Leaf IDENT@0..3 "dbe"
-      Leaf MINUSGREAT@3..5 "->"
-      Node EXPRLITERAL@5..11
-        Leaf STRING@5..11 ""left""
-      Leaf MINUSGREAT@11..13 "->"
-      Node EXPRLITERAL@13..20
-        Leaf STRING@13..20 ""flush""
+    Node EXPRARROW@0..26
+      Node EXPRARROW@0..20
+        Node EXPRARROW@0..11
+          Node NAMEREF@0..3
+            Leaf IDENT@0..3 "dbe"
+          Leaf MINUSGREAT@3..5 "->"
+          Node EXPRLITERAL@5..11
+            Leaf STRING@5..11 ""left""
+        Leaf MINUSGREAT@11..13 "->"
+        Node EXPRLITERAL@13..20
+          Leaf STRING@13..20 ""flush""
       Leaf MINUSGREAT@20..22 "->"
-      Node EXPRLITERAL@22..26
+      Node NAMEREF@22..26
         Leaf IDENT@22..26 "dbe2""
 `;
 
 exports[`parse dbe->"left"->"form" 1`] = `
 "Node TREEROOT@0..19
   Node STMTEXPR@0..19
-    Node EXPRSETDBE@0..19
-      Node NAMEREF@0..3
-        Leaf IDENT@0..3 "dbe"
-      Leaf MINUSGREAT@3..5 "->"
-      Node EXPRLITERAL@5..11
-        Leaf STRING@5..11 ""left""
+    Node EXPRARROW@0..19
+      Node EXPRARROW@0..11
+        Node NAMEREF@0..3
+          Leaf IDENT@0..3 "dbe"
+        Leaf MINUSGREAT@3..5 "->"
+        Node EXPRLITERAL@5..11
+          Leaf STRING@5..11 ""left""
       Leaf MINUSGREAT@11..13 "->"
       Node EXPRLITERAL@13..19
         Leaf STRING@13..19 ""form"""
@@ -336,7 +339,7 @@ exports[`parse for lnk in obj<-"*" do {} 1`] = `
         Leaf IDENT@4..7 "lnk"
     Leaf KWIN@8..10 "in"
     Node STMTEXPR@11..19
-      Node EXPRLINK@11..19
+      Node EXPRARROW@11..19
         Node NAMEREF@11..14
           Leaf IDENT@11..14 "obj"
         Leaf LESSMINUS@14..16 "<-"
@@ -624,13 +627,6 @@ exports[`parse if i == j then j = 22 {} 1`] = `
     Leaf RCURLY@23..24 "}""
 `;
 
-exports[`parse int 1`] = `
-"Node TREEROOT@0..3
-  Node ERRORNODE@0..3
-    Node TYPEANNOTATION@0..3
-      Leaf KWINT@0..3 "int""
-`;
-
 exports[`parse int a = 2 1`] = `
 "Node TREEROOT@0..9
   Node STMTVARDECL@0..9
@@ -848,7 +844,7 @@ exports[`parse int sum(int, int) 1`] = `
 exports[`parse lnk<-"*" 1`] = `
 "Node TREEROOT@0..8
   Node STMTEXPR@0..8
-    Node EXPRLINK@0..8
+    Node EXPRARROW@0..8
       Node NAMEREF@0..3
         Leaf IDENT@0..3 "lnk"
       Leaf LESSMINUS@3..5 "<-"
@@ -859,7 +855,7 @@ exports[`parse lnk<-"*" 1`] = `
 exports[`parse lnk->"*" 1`] = `
 "Node TREEROOT@0..8
   Node STMTEXPR@0..8
-    Node EXPRLINK@0..8
+    Node EXPRARROW@0..8
       Node NAMEREF@0..3
         Leaf IDENT@0..3 "lnk"
       Leaf MINUSGREAT@3..5 "->"
@@ -1048,6 +1044,17 @@ exports[`parse str[0:2] 1`] = `
       Leaf RBRACKET@7..8 "]""
 `;
 
+exports[`parse stream -> buf 1`] = `
+"Node TREEROOT@0..13
+  Node STMTEXPR@0..13
+    Node EXPRARROW@0..13
+      Node NAMEREF@0..6
+        Leaf IDENT@0..6 "stream"
+      Leaf MINUSGREAT@7..9 "->"
+      Node NAMEREF@10..13
+        Leaf IDENT@10..13 "buf""
+`;
+
 exports[`parse string s1, s2, s3 1`] = `
 "Node TREEROOT@0..17
   Node STMTVARDECL@0..17
@@ -1089,6 +1096,58 @@ exports[`parse sum(1, 2) 1`] = `
         Node EXPRLITERAL@7..8
           Leaf INTEGER@7..8 "2"
       Leaf RPAREN@8..9 ")""
+`;
+
+exports[`parse trigger("t1", project->all->module->all) 1`] = `
+"Node TREEROOT@0..40
+  Node STMTEXPR@0..40
+    Node EXPRCALL@0..40
+      Node NAMEREF@0..7
+        Leaf IDENT@0..7 "trigger"
+      Leaf LPAREN@7..8 "("
+      Node ARGLIST@8..39
+        Node EXPRLITERAL@8..12
+          Leaf STRING@8..12 ""t1""
+        Leaf COMMA@12..13 ","
+        Node EXPRARROW@14..39
+          Node EXPRARROW@14..34
+            Node EXPRARROW@14..26
+              Node NAMEREF@14..21
+                Leaf IDENT@14..21 "project"
+              Leaf MINUSGREAT@21..23 "->"
+              Node NAMEREF@23..26
+                Leaf IDENT@23..26 "all"
+            Leaf MINUSGREAT@26..28 "->"
+            Node EXPRLITERAL@28..34
+              Leaf KWMODULE@28..34 "module"
+          Leaf MINUSGREAT@34..36 "->"
+          Node NAMEREF@36..39
+            Leaf IDENT@36..39 "all"
+      Leaf RPAREN@39..40 ")""
+`;
+
+exports[`parse trigger("t1", project->module->"2") 1`] = `
+"Node TREEROOT@0..35
+  Node STMTEXPR@0..35
+    Node EXPRCALL@0..35
+      Node NAMEREF@0..7
+        Leaf IDENT@0..7 "trigger"
+      Leaf LPAREN@7..8 "("
+      Node ARGLIST@8..34
+        Node EXPRLITERAL@8..12
+          Leaf STRING@8..12 ""t1""
+        Leaf COMMA@12..13 ","
+        Node EXPRARROW@14..34
+          Node EXPRARROW@14..29
+            Node NAMEREF@14..21
+              Leaf IDENT@14..21 "project"
+            Leaf MINUSGREAT@21..23 "->"
+            Node EXPRLITERAL@23..29
+              Leaf KWMODULE@23..29 "module"
+          Leaf MINUSGREAT@29..31 "->"
+          Node EXPRLITERAL@31..34
+            Leaf STRING@31..34 ""2""
+      Leaf RPAREN@34..35 ")""
 `;
 
 exports[`parse true || false 1`] = `

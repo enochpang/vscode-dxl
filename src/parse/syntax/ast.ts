@@ -32,13 +32,12 @@ export type Expr =
 	| ExprGrouping
 	| ExprIndex
 	| ExprLiteral
-	| ExprLink
 	| ExprLogical
 	| ExprNameRef
 	| ExprNameRefList
 	| ExprRange
 	| ExprSet
-	| ExprSetDbe
+	| ExprArrow
 	| ExprStringConcat
 	| ExprTernary
 	| ExprUnary
@@ -110,16 +109,14 @@ export function cast_expr(red: RedNode): Expr | undefined {
 			return new ExprIndex(red);
 		case OTreeKind.ExprLiteral:
 			return new ExprLiteral(red);
-		case OTreeKind.ExprLink:
-			return new ExprLink(red);
 		case OTreeKind.ExprLogical:
 			return new ExprLogical(red);
 		case OTreeKind.ExprRange:
 			return new ExprRange(red);
 		case OTreeKind.ExprSet:
 			return new ExprSet(red);
-		case OTreeKind.ExprSetDbe:
-			return new ExprSetDbe(red);
+		case OTreeKind.ExprArrow:
+			return new ExprArrow(red);
 		case OTreeKind.ExprStringConcat:
 			return new ExprStringConcat(red);
 		case OTreeKind.ExprTernary:
@@ -901,24 +898,20 @@ export class ExprSet {
 	}
 }
 
-export class ExprSetDbe {
-	public readonly tag = "ExprSetDbe";
+export class ExprArrow {
+	public readonly tag = "ExprArrow";
 	public red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	side(): Expr | undefined {
+	lhs(): Expr | undefined {
 		return nth_expr(this.red, 0);
 	}
 
-	attachment(): Expr | undefined {
+	rhs(): Expr | undefined {
 		return nth_expr(this.red, 1);
-	}
-
-	other(): Expr | undefined {
-		return nth_expr(this.red, 2);
 	}
 }
 
