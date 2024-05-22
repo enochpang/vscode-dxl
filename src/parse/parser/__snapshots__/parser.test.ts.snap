@@ -649,6 +649,46 @@ exports[`parse int a 1`] = `
       Leaf IDENT@4..5 "a""
 `;
 
+exports[`parse int a, b=0, c 1`] = `
+"Node TREEROOT@0..13
+  Node STMTVARDECL@0..13
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREFLIST@4..13
+      Node NAMEREF@4..5
+        Leaf IDENT@4..5 "a"
+      Leaf COMMA@5..6 ","
+      Node NAMEREF@7..8
+        Leaf IDENT@7..8 "b"
+      Leaf EQUAL@8..9 "="
+      Node STMTEXPR@9..10
+        Node EXPRLITERAL@9..10
+          Leaf INTEGER@9..10 "0"
+      Leaf COMMA@10..11 ","
+      Node NAMEREF@12..13
+        Leaf IDENT@12..13 "c""
+`;
+
+exports[`parse int a=0, b, c 1`] = `
+"Node TREEROOT@0..13
+  Node STMTVARDECL@0..13
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREFLIST@4..13
+      Node NAMEREF@4..5
+        Leaf IDENT@4..5 "a"
+      Leaf EQUAL@5..6 "="
+      Node STMTEXPR@6..7
+        Node EXPRLITERAL@6..7
+          Leaf INTEGER@6..7 "0"
+      Leaf COMMA@7..8 ","
+      Node NAMEREF@9..10
+        Leaf IDENT@9..10 "b"
+      Leaf COMMA@10..11 ","
+      Node NAMEREF@12..13
+        Leaf IDENT@12..13 "c""
+`;
+
 exports[`parse int acc(int base, int f(int, int)) {} 1`] = `
 "Node TREEROOT@0..37
   Node STMTFUNCDECL@0..37

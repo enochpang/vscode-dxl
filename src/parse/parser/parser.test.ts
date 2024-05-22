@@ -75,6 +75,8 @@ check_parse("if (true) { a } else b");
 check_parse("stream -> buf");
 check_parse(`trigger("t1", project->all->module->all)`);
 check_parse(`trigger("t1", project->module->"2")`);
+check_parse("int a=0, b, c");
+check_parse("int a, b=0, c");
 
 function check_parse(text: string) {
 	test(`parse ${text}`, () => {
