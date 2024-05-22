@@ -76,6 +76,15 @@ exports[`parse (int key sk) 1`] = `
       Leaf RPAREN@11..12 ")""
 `;
 
+exports[`parse ++i 1`] = `
+"Node TREEROOT@0..3
+  Node STMTEXPR@0..3
+    Node EXPRUNARY@0..3
+      Leaf PLUSPLUS@0..2 "++"
+      Node NAMEREF@2..3
+        Leaf IDENT@2..3 "i""
+`;
+
 exports[`parse -1 * 2 1`] = `
 "Node TREEROOT@0..6
   Node STMTEXPR@0..6
@@ -552,6 +561,27 @@ exports[`parse if (isDeleted module(modVersion)) {} 1`] = `
       Leaf RCURLY@35..36 "}""
 `;
 
+exports[`parse if (true) { a } else b 1`] = `
+"Node TREEROOT@0..22
+  Node STMTIF@0..22
+    Leaf KWIF@0..2 "if"
+    Leaf LPAREN@3..4 "("
+    Node STMTEXPR@4..8
+      Node EXPRLITERAL@4..8
+        Leaf KWTRUE@4..8 "true"
+    Leaf RPAREN@8..9 ")"
+    Node STMTBLOCK@10..15
+      Leaf LCURLY@10..11 "{"
+      Node STMTEXPR@12..13
+        Node NAMEREF@12..13
+          Leaf IDENT@12..13 "a"
+      Leaf RCURLY@14..15 "}"
+    Leaf KWELSE@16..20 "else"
+    Node STMTEXPR@21..22
+      Node NAMEREF@21..22
+        Leaf IDENT@21..22 "b""
+`;
+
 exports[`parse if (true) 1 else 2 1`] = `
 "Node TREEROOT@0..18
   Node STMTIF@0..18
@@ -568,6 +598,30 @@ exports[`parse if (true) 1 else 2 1`] = `
     Node STMTEXPR@17..18
       Node EXPRLITERAL@17..18
         Leaf INTEGER@17..18 "2""
+`;
+
+exports[`parse if i == j then j = 22 {} 1`] = `
+"Node TREEROOT@0..24
+  Node STMTIF@0..21
+    Leaf KWIF@0..2 "if"
+    Node STMTEXPR@3..9
+      Node EXPRCOMPARE@3..9
+        Node NAMEREF@3..4
+          Leaf IDENT@3..4 "i"
+        Leaf EQUALEQUAL@5..7 "=="
+        Node NAMEREF@8..9
+          Leaf IDENT@8..9 "j"
+    Leaf KWTHEN@10..14 "then"
+    Node STMTEXPR@15..21
+      Node EXPRASSIGN@15..21
+        Node NAMEREF@15..16
+          Leaf IDENT@15..16 "j"
+        Leaf EQUAL@17..18 "="
+        Node EXPRLITERAL@19..21
+          Leaf INTEGER@19..21 "22"
+  Node STMTBLOCK@22..24
+    Leaf LCURLY@22..23 "{"
+    Leaf RCURLY@23..24 "}""
 `;
 
 exports[`parse int 1`] = `
@@ -1119,4 +1173,30 @@ exports[`parse while (a) last-- 1`] = `
         Node NAMEREF@10..14
           Leaf IDENT@10..14 "last"
         Leaf MINUSMINUS@14..16 "--""
+`;
+
+exports[`parse while (a==2 and b==3) {} 1`] = `
+"Node TREEROOT@0..24
+  Node STMTWHILE@0..24
+    Leaf KWWHILE@0..5 "while"
+    Leaf LPAREN@6..7 "("
+    Node STMTEXPR@7..20
+      Node EXPRBINARY@7..20
+        Node EXPRCOMPARE@7..11
+          Node NAMEREF@7..8
+            Leaf IDENT@7..8 "a"
+          Leaf EQUALEQUAL@8..10 "=="
+          Node EXPRLITERAL@10..11
+            Leaf INTEGER@10..11 "2"
+        Leaf KWAND@12..15 "and"
+        Node EXPRCOMPARE@16..20
+          Node NAMEREF@16..17
+            Leaf IDENT@16..17 "b"
+          Leaf EQUALEQUAL@17..19 "=="
+          Node EXPRLITERAL@19..20
+            Leaf INTEGER@19..20 "3"
+    Leaf RPAREN@20..21 ")"
+    Node STMTBLOCK@22..24
+      Leaf LCURLY@22..23 "{"
+      Leaf RCURLY@23..24 "}""
 `;

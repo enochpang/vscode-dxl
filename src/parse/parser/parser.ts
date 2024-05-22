@@ -253,7 +253,7 @@ export class Parser {
 
 		this.expect(OTokenKind.KwIf);
 
-		if (this.expect(OTokenKind.Lparen)) {
+		if (this.consume_if(OTokenKind.Lparen)) {
 			this.parse_expression(); // The condition
 
 			if (this.expect(OTokenKind.Rparen)) {
@@ -264,7 +264,11 @@ export class Parser {
 						if (this.peek().kind === OTokenKind.KwIf) {
 							this.parse_if_stmt();
 						} else {
-							this.parse_block_stmt();
+							if (this.peek().kind === OTokenKind.Lcurly) {
+								this.parse_block_stmt();
+							} else {
+								this.parse_statement();
+							}
 						}
 					}
 				} else {
@@ -274,6 +278,12 @@ export class Parser {
 						this.parse_statement();
 					}
 				}
+			}
+		} else {
+			this.parse_expression();
+
+			if (this.consume_if(OTokenKind.KwThen)) {
+				this.parse_expression();
 			}
 		}
 
@@ -317,7 +327,11 @@ export class Parser {
 					this.parse_expression(); // The increment
 
 					if (this.expect(OTokenKind.Rparen)) {
-						this.parse_block_stmt(); // The body
+						if (this.peek().kind === OTokenKind.Lcurly) {
+							this.parse_block_stmt();
+						} else {
+							this.parse_statement();
+						}
 					}
 				}
 			}
@@ -441,7 +455,8 @@ export class Parser {
 				break;
 			}
 			case OTokenKind.Bang:
-			case OTokenKind.Minus: {
+			case OTokenKind.Minus:
+			case OTokenKind.PlusPlus: {
 				const m = this.open();
 				this.bump();
 				this.expr_bp(BP.Unary);
@@ -540,6 +555,8 @@ export class Parser {
 				case OTokenKind.BarBar:
 				case OTokenKind.Ampr:
 				case OTokenKind.AmprAmpr:
+				case OTokenKind.KwAnd:
+				case OTokenKind.KwOr:
 					lhs = this.parse_infix_expr(lhs);
 					break;
 				case OTokenKind.Qmark:
@@ -1050,8 +1067,10 @@ function get_precedence(kind: TokenKind) {
 		case OTokenKind.Qmark:
 			return 2;
 		case OTokenKind.BarBar:
+		case OTokenKind.KwOr:
 			return 3;
 		case OTokenKind.AmprAmpr:
+		case OTokenKind.KwAnd:
 			return 4;
 		case OTokenKind.Bar:
 			return 5;
