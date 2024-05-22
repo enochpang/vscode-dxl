@@ -605,7 +605,9 @@ export class Parser {
 							lhs.kind === OTreeKind.ExprLiteral ||
 							lhs.kind === OTreeKind.ExprStringConcat ||
 							lhs.kind === OTreeKind.ExprCall) &&
-						this.peek().kind === OTokenKind.Ident
+						(this.peek().kind === OTokenKind.Ident ||
+							this.peek().kind === OTokenKind.Integer ||
+							this.peek().kind === OTokenKind.Real)
 					) {
 						lhs = this.parse_string_expr(lhs);
 					} else {
@@ -752,7 +754,8 @@ export class Parser {
 		if (
 			this.peek().kind === OTokenKind.String ||
 			this.peek().kind === OTokenKind.Ident ||
-			this.peek().kind === OTokenKind.KwObject
+			this.peek().kind === OTokenKind.KwObject ||
+			this.peek().kind === OTokenKind.KwModule
 		) {
 			this.bump_as(OTreeKind.ExprLiteral);
 

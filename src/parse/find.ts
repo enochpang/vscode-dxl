@@ -199,14 +199,6 @@ function get_same_decl_name(
 				}
 			}
 		}
-	} else if (stmt instanceof ast.StmtForIn) {
-		const item = stmt.item();
-		if (item && item instanceof ast.ExprNameRef) {
-			const name = item.name();
-			if (name && start_name === name.green.text) {
-				return name;
-			}
-		}
 	}
 
 	return undefined;
