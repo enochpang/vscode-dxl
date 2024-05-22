@@ -1,3 +1,4 @@
+Object obj
 for obj in mod do {
     obj
 }
