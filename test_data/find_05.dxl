@@ -1,0 +1,7 @@
+void parse(Buffer buf) {
+    void advance(Buffer buf) {
+        buf
+    }
+
+    buf
+}

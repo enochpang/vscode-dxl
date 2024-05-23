@@ -729,6 +729,29 @@ exports[`parse int acc(int base, int f(int, int)) {} 1`] = `
       Leaf RCURLY@36..37 "}""
 `;
 
+exports[`parse int arr[2] = {1, 2} 1`] = `
+"Node TREEROOT@0..19
+  Node STMTARRAYDECL@0..19
+    Node TYPEANNOTATION@0..3
+      Leaf KWINT@0..3 "int"
+    Node NAMEREF@4..7
+      Leaf IDENT@4..7 "arr"
+    Leaf LBRACKET@7..8 "["
+    Node STMTEXPR@8..9
+      Node EXPRLITERAL@8..9
+        Leaf INTEGER@8..9 "2"
+    Leaf RBRACKET@9..10 "]"
+    Leaf EQUAL@11..12 "="
+    Leaf LCURLY@13..14 "{"
+    Node ARGLIST@14..18
+      Node EXPRLITERAL@14..15
+        Leaf INTEGER@14..15 "1"
+      Leaf COMMA@15..16 ","
+      Node EXPRLITERAL@17..18
+        Leaf INTEGER@17..18 "2"
+    Leaf RCURLY@18..19 "}""
+`;
+
 exports[`parse int nums[] = {1, 2, 3} 1`] = `
 "Node TREEROOT@0..22
   Node STMTARRAYDECL@0..22

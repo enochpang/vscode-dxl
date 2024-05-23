@@ -58,6 +58,7 @@ check_parse("int sum(int, int)");
 check_parse("int sum(int a, b)");
 check_parse("int nums[] = {1, 2, 3}");
 check_parse("int nums[3]");
+check_parse("int arr[2] = {1, 2}");
 check_parse("pragma runLim, 0");
 check_parse('pragma encoding, "utf-8"');
 check_parse('#include "file.txt"');
