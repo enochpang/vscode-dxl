@@ -25,7 +25,7 @@ export type AstVisitor<R> = {
 	expr_logical(kind: ast.ExprLogical): R;
 	expr_range(kind: ast.ExprRange): R;
 	expr_set(kind: ast.ExprSet): R;
-	expr_set_dbe(kind: ast.ExprArrow): R;
+	expr_arrow(kind: ast.ExprArrow): R;
 	expr_string_concat(kind: ast.ExprStringConcat): R;
 	expr_ternary(kind: ast.ExprTernary): R;
 	expr_variable_ref_list(kind: ast.ExprNameRefList): R;
@@ -88,8 +88,8 @@ export function visit<R>(node: ast.AstNode, v: AstVisitor<R>): R {
 			return v.expr_range(node);
 		case "ExprSet":
 			return v.expr_set(node);
-		case "ExprSetDbe":
-			return v.expr_set_dbe(node);
+		case "ExprArrow":
+			return v.expr_arrow(node);
 		case "ExprStringConcat":
 			return v.expr_string_concat(node);
 		case "ExprTernary":
@@ -195,10 +195,10 @@ export function pp_ast(node: ast.AstNode): string {
 				sb.push(pp_ast(n + 1, node.property()));
 				sb.push(pp_ast(n + 1, node.value()));
 				break;
-			case "ExprSetDbe":
+			case "ExprArrow":
 				sb.push(node.tag);
-				sb.push(pp_ast(n + 1, node.side()));
-				sb.push(pp_ast(n + 1, node.attachment()));
+				sb.push(pp_ast(n + 1, node.lhs()));
+				sb.push(pp_ast(n + 1, node.rhs()));
 				break;
 			case "ExprStringConcat":
 				sb.push(node.tag);

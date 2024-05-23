@@ -251,6 +251,31 @@ describe("find_04", () => {
 	});
 });
 
+describe("find_04", () => {
+	const text = fs.readFileSync("test_data/find_05.dxl", "utf-8");
+	const lex_items = tokenize(text);
+	const parseResult = parse(lex_items);
+
+	const green_tree = parseResult.tree;
+	if (!green_tree) assert.fail("Could get green_tree");
+
+	const red_tree = new RedNode(green_tree, 0);
+
+	describe("find_references", () => {
+		const token_obj_ln1 = find.token_at_offset(red_tree, 19);
+		const token_obj_ln6 = find.token_at_offset(red_tree, 85);
+
+		test("buf_ln1", () => {
+			const nodes = find.find_references(red_tree, 19);
+			if (!nodes) assert.fail("Could not find nodes");
+
+			expect(nodes.map((x) => pp_red_element(x))).toEqual(
+				[token_obj_ln1, token_obj_ln6].map((x) => pp_red_element(x)),
+			);
+		});
+	});
+});
+
 function pp_red_element(node: RedElement | undefined) {
 	if (!node) {
 		return "UNDEFINED";

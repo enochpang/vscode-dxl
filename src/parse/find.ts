@@ -166,35 +166,32 @@ function get_same_decl_name(
 				return name;
 			}
 		}
+	} else if (stmt instanceof ast.ParamList) {
+		for (const param of stmt.params()) {
+			const param_decl = param.decl();
 
-		const paramList = stmt.params();
-		if (paramList) {
-			for (const param of paramList.params()) {
-				const param_decl = param.decl();
-
-				if (param_decl instanceof ast.StmtVariableDecl) {
-					const nameRef = param_decl.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							return name;
-						}
+			if (param_decl instanceof ast.StmtVariableDecl) {
+				const nameRef = param_decl.name();
+				if (nameRef) {
+					const name = nameRef.name();
+					if (name && start_name === name.green.text) {
+						return name;
 					}
-				} else if (param_decl instanceof ast.StmtArrayDecl) {
-					const nameRef = param_decl.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							return name;
-						}
+				}
+			} else if (param_decl instanceof ast.StmtArrayDecl) {
+				const nameRef = param_decl.name();
+				if (nameRef) {
+					const name = nameRef.name();
+					if (name && start_name === name.green.text) {
+						return name;
 					}
-				} else if (param_decl instanceof ast.StmtFunctionDecl) {
-					const nameRef = param_decl.name();
-					if (nameRef) {
-						const name = nameRef.name();
-						if (name && start_name === name.green.text) {
-							return name;
-						}
+				}
+			} else if (param_decl instanceof ast.StmtFunctionDecl) {
+				const nameRef = param_decl.name();
+				if (nameRef) {
+					const name = nameRef.name();
+					if (name && start_name === name.green.text) {
+						return name;
 					}
 				}
 			}

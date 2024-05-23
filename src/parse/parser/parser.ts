@@ -54,7 +54,10 @@ export class Parser {
 	}
 
 	private parse_declaration() {
-		if (this.peek().kind === OTokenKind.KwConst) {
+		if (
+			this.peek().kind === OTokenKind.KwConst ||
+			this.peek().kind === OTokenKind.KwStatic
+		) {
 			this.bump_as(OTreeKind.WarningNode);
 		}
 
@@ -170,17 +173,17 @@ export class Parser {
 		if (this.consume_if(OTokenKind.Equal)) {
 			this.parse_expression();
 		} else if (this.consume_if(OTokenKind.Lbracket)) {
-			if (this.consume_if(OTokenKind.Rbracket)) {
-				if (this.consume_if(OTokenKind.Equal)) {
-					if (this.expect(OTokenKind.Lcurly)) {
-						this.parse_expr_list(OTokenKind.Rcurly);
-
-						this.expect(OTokenKind.Rcurly);
-					}
-				}
-			} else {
+			if (!this.consume_if(OTokenKind.Rbracket)) {
 				this.parse_expression();
 				this.expect(OTokenKind.Rbracket);
+			}
+
+			if (this.consume_if(OTokenKind.Equal)) {
+				if (this.expect(OTokenKind.Lcurly)) {
+					this.parse_expr_list(OTokenKind.Rcurly);
+
+					this.expect(OTokenKind.Rcurly);
+				}
 			}
 
 			this.close(m, OTreeKind.StmtArrayDecl);
@@ -277,6 +280,8 @@ export class Parser {
 							}
 						}
 					}
+				} else if (this.consume_if(OTokenKind.KwThen)) {
+					this.parse_expression();
 				} else {
 					this.parse_statement();
 
@@ -462,6 +467,8 @@ export class Parser {
 			}
 			case OTokenKind.Bang:
 			case OTokenKind.Minus:
+			case OTokenKind.Tilde:
+			case OTokenKind.MinusMinus:
 			case OTokenKind.PlusPlus: {
 				const m = this.open();
 				this.bump();
@@ -533,19 +540,20 @@ export class Parser {
 				break;
 			}
 
-			// Prefix expression
 			switch (this.peek().kind) {
 				case OTokenKind.PlusPlus:
 				case OTokenKind.MinusMinus: {
-					const m = this.open_before(lhs);
-					this.bump();
-					lhs = this.close(m, OTreeKind.ExprUnary);
+					//FIXME: special case for function call without parenthesis and unary argument
+					if (this.nth(1).kind === OTokenKind.Ident) {
+						lhs = this.parse_call_expr(lhs);
+					} else {
+						const m = this.open_before(lhs);
+						this.bump();
+						lhs = this.close(m, OTreeKind.ExprUnary);
+					}
 
-					continue;
+					break;
 				}
-			}
-
-			switch (this.peek().kind) {
 				case OTokenKind.Plus:
 				case OTokenKind.Minus:
 				case OTokenKind.Star:
@@ -704,6 +712,7 @@ export class Parser {
 			this.expect(OTokenKind.Rparen);
 		} else {
 			const m_arg = this.open();
+
 			this.expr_bp(BP.LOWEST);
 			this.close(m_arg, OTreeKind.ArgList);
 		}
@@ -775,7 +784,8 @@ export class Parser {
 
 		if (
 			this.peek().kind === OTokenKind.String ||
-			this.peek().kind === OTokenKind.KwModule
+			this.peek().kind === OTokenKind.KwModule ||
+			this.peek().kind === OTokenKind.KwObject
 		) {
 			this.bump_as(OTreeKind.ExprLiteral);
 		} else if (this.peek().kind === OTokenKind.Ident) {
@@ -825,6 +835,9 @@ export class Parser {
 			if (this.peek_item().is_type_specifier()) {
 				this.bump();
 			} else {
+				if (this.peek().kind === OTokenKind.Ampr) {
+					this.bump();
+				}
 				this.expr_bp(BP.LOWEST);
 			}
 
