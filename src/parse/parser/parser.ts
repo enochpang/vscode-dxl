@@ -338,15 +338,17 @@ export class Parser {
 			if (this.expect(OTokenKind.Semicolon)) {
 				this.parse_expression(); // The condition
 
-				if (this.expect(OTokenKind.Semicolon)) {
-					this.parse_expression(); // The increment
+				if (this.peek().kind !== OTokenKind.Rparen) {
+					if (this.expect(OTokenKind.Semicolon)) {
+						this.parse_expression(); // The increment
+					}
+				}
 
-					if (this.expect(OTokenKind.Rparen)) {
-						if (this.peek().kind === OTokenKind.Lcurly) {
-							this.parse_block_stmt();
-						} else {
-							this.parse_statement();
-						}
+				if (this.expect(OTokenKind.Rparen)) {
+					if (this.peek().kind === OTokenKind.Lcurly) {
+						this.parse_block_stmt();
+					} else {
+						this.parse_statement();
 					}
 				}
 			}
@@ -466,7 +468,12 @@ export class Parser {
 			case OTokenKind.Ident:
 			case OTokenKind.KwObject:
 			case OTokenKind.KwModule: {
-				lhs = this.bump_as(OTreeKind.NameRef);
+				if (this.peek_item().is_type_specifier()) {
+					lhs = this.bump_as(OTreeKind.TypeAnnotation);
+				} else {
+					lhs = this.bump_as(OTreeKind.NameRef);
+				}
+
 				break;
 			}
 			case OTokenKind.Bang:
@@ -610,7 +617,16 @@ export class Parser {
 					}
 					break;
 				default:
-					if (lhs.kind === OTreeKind.NameRef || lhs.kind === OTreeKind.Null) {
+					if (lhs.kind === OTreeKind.TypeAnnotation) {
+						const m = this.open_before(lhs);
+						if (this.peek().kind === OTokenKind.Ident) {
+							this.bump_as(OTreeKind.NameRef);
+						}
+						this.close(m, OTreeKind.ExprCast);
+					} else if (
+						lhs.kind === OTreeKind.NameRef ||
+						lhs.kind === OTreeKind.Null
+					) {
 						lhs = this.parse_call_expr(lhs);
 					} else if (
 						(lhs.kind === OTreeKind.ExprGrouping ||
@@ -836,14 +852,7 @@ export class Parser {
 		const m = this.open();
 
 		while (this.peek().kind !== end_kind && !this.eof()) {
-			if (this.peek_item().is_type_specifier()) {
-				this.bump();
-			} else {
-				if (this.peek().kind === OTokenKind.Ampr) {
-					this.bump();
-				}
-				this.expr_bp(BP.LOWEST);
-			}
+			this.expr_bp(BP.LOWEST);
 
 			if (this.peek().kind === OTokenKind.Comma) {
 				this.bump();

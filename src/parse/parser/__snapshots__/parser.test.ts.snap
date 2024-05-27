@@ -1250,6 +1250,22 @@ exports[`parse true || false 1`] = `
         Leaf KWFALSE@8..13 "false""
 `;
 
+exports[`parse views(Module mod) 1`] = `
+"Node TREEROOT@0..17
+  Node STMTEXPR@0..17
+    Node EXPRCALL@0..17
+      Node NAMEREF@0..5
+        Leaf IDENT@0..5 "views"
+      Leaf LPAREN@5..6 "("
+      Node ARGLIST@6..16
+        Node EXPRCAST@6..16
+          Node TYPEANNOTATION@6..12
+            Leaf IDENT@6..12 "Module"
+          Node NAMEREF@13..16
+            Leaf IDENT@13..16 "mod"
+      Leaf RPAREN@16..17 ")""
+`;
+
 exports[`parse while (a < 2) {
     a + 1
     break

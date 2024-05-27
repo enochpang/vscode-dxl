@@ -319,6 +319,7 @@ export class StmtFunctionDecl {
 	}
 }
 
+//FIXME: possible to not have all three parts
 export class StmtFor {
 	public readonly tag = "StmtFor";
 	public red: RedNode;
