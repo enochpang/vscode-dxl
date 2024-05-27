@@ -43,6 +43,7 @@ check_parse("if (a < 2) return 2");
 check_parse("if (a < 2) continue");
 check_parse("if (a < 2) { a + 1 } else { b + 2 }");
 check_parse("if (a) { 1 } else if (b) { 2 }");
+check_parse("if (a) b = 1; else b = 2;");
 check_parse("if (isDeleted module(modVersion)) {}");
 check_parse("while (a < 2) {\n    a + 1\n}");
 check_parse("while (a < 2) {\n    a + 1\n    break\n}");

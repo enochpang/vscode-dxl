@@ -238,6 +238,10 @@ export class Parser {
 				this.parse_expression();
 				break;
 		}
+
+		if (this.peek().kind === OTokenKind.Semicolon) {
+			this.skip();
+		}
 	}
 
 	private parse_block_stmt() {
