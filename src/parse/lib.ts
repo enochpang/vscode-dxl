@@ -1,9 +1,8 @@
 import * as ast from "./syntax/ast";
 import { tokenize } from "./lexer/lexer";
-import { type ParseResult, parse } from "./parser/events";
-import { RedNode, type RedToken } from "./syntax/red_tree";
-import type { TextRange } from "./syntax/green_tree";
+import { RedNode, type RedToken, type Range } from "./syntax/red_tree";
 import { OTokenKind } from "./syntax/syntax_kind";
+import { type ParseResult, parse } from "./parser/lib";
 
 export const OSemanticKind = {
 	Function: "function",
@@ -32,7 +31,7 @@ export type SemanticModifierKind =
 export type DxlSemanticToken = {
 	kind: SemanticKind;
 	modifiers: SemanticModifierKind[];
-	range: TextRange;
+	range: Range;
 };
 
 export const OSymbolKind = {
@@ -46,8 +45,8 @@ export type SymbolKind = (typeof OSymbolKind)[keyof typeof OSymbolKind];
 
 export type DxlSymbol = {
 	kind: SymbolKind;
-	range: TextRange;
-	selectionRange: TextRange;
+	range: Range;
+	selectionRange: Range;
 	name: string;
 };
 
@@ -65,7 +64,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			tokens.push({
 				kind: OSemanticKind.Keyword,
 				modifiers: [],
-				range: keyword.green.token.getRange(),
+				range: keyword.getRange(),
 			});
 		}
 	}
@@ -95,13 +94,22 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 
 				break;
 			}
+			case "ArgList": {
+				const arglist = ast_node.args();
+				if (arglist) {
+					for (const arg of arglist) {
+						loop(arg);
+					}
+				}
+				break;
+			}
 			case "TypeAnnotation": {
 				const type_name = ast_node.name();
 				if (type_name) {
 					tokens.push({
 						kind: OSemanticKind.Type,
 						modifiers: [],
-						range: type_name.green.token.getRange(),
+						range: type_name.getRange(),
 					});
 				}
 
@@ -117,19 +125,12 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
 
 				loop(ast_node.count());
-
-				const arglist = ast_node.args();
-				if (arglist) {
-					for (const arg of arglist.args()) {
-						loop(arg);
-					}
-				}
 
 				break;
 			}
@@ -137,10 +138,6 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				for (const stmt of ast_node.stmts()) {
 					loop(stmt);
 				}
-				break;
-			}
-			case "StmtExpr": {
-				loop(ast_node.expr());
 				break;
 			}
 			case "StmtFor": {
@@ -171,15 +168,15 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					if (name) {
 						symbols.push({
 							kind: OSymbolKind.Function,
-							range: ast_node.red.green.getRange(),
-							selectionRange: name.green.token.getRange(),
+							range: ast_node.red.getRange(),
+							selectionRange: name.getRange(),
 							name: name.green.text,
 						});
 
 						tokens.push({
 							kind: OSemanticKind.Function,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -194,8 +191,8 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				addKeyword(ast_node.keyword2());
 
 				loop(ast_node.condition());
-				loop(ast_node.then_branch());
-				loop(ast_node.else_branch());
+				loop(ast_node.thenBranch());
+				loop(ast_node.elseBranch());
 				break;
 			}
 			case "StmtReturn": {
@@ -221,7 +218,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -242,7 +239,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -264,7 +261,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Function,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -296,7 +293,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -317,7 +314,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -331,7 +328,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				if (value) {
 					const modifiers: SemanticModifierKind[] = [];
 					let kind: SemanticKind | undefined;
-					switch (value.green.token.kind) {
+					switch (value.getKind()) {
 						case OTokenKind.String:
 							kind = OSemanticKind.String;
 							break;
@@ -350,7 +347,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: kind,
 							modifiers: modifiers,
-							range: value.green.token.getRange(),
+							range: value.getRange(),
 						});
 					}
 				}
@@ -367,7 +364,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					tokens.push({
 						kind: OSemanticKind.Variable,
 						modifiers: [],
-						range: name.green.token.getRange(),
+						range: name.getRange(),
 					});
 				}
 
@@ -391,13 +388,13 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
 
-				loop(ast_node.start_index());
-				loop(ast_node.end_index());
+				loop(ast_node.startIndex());
+				loop(ast_node.endIndex());
 
 				break;
 			}
@@ -409,7 +406,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getRange(),
 						});
 					}
 				}
@@ -431,11 +428,11 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			}
 			case "ExprTernary": {
 				loop(ast_node.condition());
-				loop(ast_node.then_branch());
-				loop(ast_node.else_branch());
+				loop(ast_node.thenBranch());
+				loop(ast_node.elseBranch());
 				break;
 			}
-			case "ExprUnary": {
+			case "ExprPostfix": {
 				loop(ast_node.expr());
 				break;
 			}
@@ -458,14 +455,14 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 }
 
 export function get_red_tree(text: string): ParseResult<RedNode> | undefined {
-	const lex_items = tokenize(text);
-	const res = parse(lex_items);
+	const lex_result = tokenize(text);
+	const parse_result = parse(lex_result);
 
-	if (res.tree) {
-		const red_tree = new RedNode(res.tree, 0);
+	if (parse_result.tree) {
+		const red_tree = new RedNode(parse_result.tree, 0);
 		return {
 			tree: red_tree,
-			errors: res.errors,
+			errors: parse_result.errors,
 		};
 	}
 
@@ -473,6 +470,7 @@ export function get_red_tree(text: string): ParseResult<RedNode> | undefined {
 }
 
 export { tokenize } from "./lexer/lexer";
-export { parse } from "./parser/events";
-export { pp_cst } from "./syntax/green_tree";
+export { parse } from "./parser/lib";
+export { ppGreenTree } from "./syntax/green_tree";
+export { ppRedTree } from "./syntax/red_tree";
 export * as find from "./find";
