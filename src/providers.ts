@@ -29,21 +29,12 @@ export class DxlDocumentSymbolProvider {
 							"",
 							vscode.SymbolKind.Function,
 							new vscode.Range(
-								new vscode.Position(
-									item.range.start.line,
-									item.range.start.col,
-								),
-								new vscode.Position(item.range.end.line, item.range.end.col),
+								document.positionAt(item.range.start),
+								document.positionAt(item.range.end),
 							),
 							new vscode.Range(
-								new vscode.Position(
-									item.selectionRange.start.line,
-									item.selectionRange.start.col,
-								),
-								new vscode.Position(
-									item.selectionRange.end.line,
-									item.selectionRange.end.col,
-								),
+								document.positionAt(item.range.start),
+								document.positionAt(item.range.end),
 							),
 						),
 					);
@@ -72,8 +63,8 @@ export class DxlSemanticTokensProvider
 			for (const item of items.tokens) {
 				tokensBuilder.push(
 					new vscode.Range(
-						new vscode.Position(item.range.start.line, item.range.start.col),
-						new vscode.Position(item.range.end.line, item.range.end.col),
+						document.positionAt(item.range.start),
+						document.positionAt(item.range.end),
 					),
 					item.kind,
 					item.modifiers,
@@ -95,19 +86,17 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 		const tree = get_parsedFile(document);
 		if (tree) {
 			const offset = document.offsetAt(position);
-			const references = dxl.find.find_references(tree, offset);
+			const references = dxl.find.findReferences(tree, offset);
 			if (references) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
 				for (const reference of references) {
-					const token = reference.green.token;
-					const start = token.start_loc;
-					const end = token.end_loc;
+					const range = reference.getRange();
 
 					workspaceEdit.replace(
 						document.uri,
 						new vscode.Range(
-							new vscode.Position(start.line, start.col),
-							new vscode.Position(end.line, end.col),
+							document.positionAt(range.start),
+							document.positionAt(range.end),
 						),
 						newName,
 					);
@@ -130,16 +119,15 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 		const tree = get_parsedFile(document);
 		if (tree) {
 			const offset = document.offsetAt(position);
-			const result = dxl.find.find_definition(tree, offset);
+			const result = dxl.find.findDefinition(tree, offset);
 			if (result) {
-				const token = result.green.token;
-				const start = token.start_loc;
-				const end = token.end_loc;
+				const range = result.getRange();
+
 				const location = new vscode.Location(
 					document.uri,
 					new vscode.Range(
-						new vscode.Position(start.line, start.col),
-						new vscode.Position(end.line, end.col),
+						document.positionAt(range.start),
+						document.positionAt(range.end),
 					),
 				);
 
@@ -163,17 +151,16 @@ export class DxlReferenceProvider implements vscode.ReferenceProvider {
 		const tree = get_parsedFile(document);
 		if (tree) {
 			const offset = document.offsetAt(position);
-			const results = dxl.find.find_references(tree, offset);
+			const results = dxl.find.findReferences(tree, offset);
 			if (results) {
 				for (const result of results) {
-					const token = result.green.token;
-					const start = token.start_loc;
-					const end = token.end_loc;
+					const range = result.getRange();
+
 					const location = new vscode.Location(
 						document.uri,
 						new vscode.Range(
-							new vscode.Position(start.line, start.col),
-							new vscode.Position(end.line, end.col),
+							document.positionAt(range.start),
+							document.positionAt(range.end),
 						),
 					);
 

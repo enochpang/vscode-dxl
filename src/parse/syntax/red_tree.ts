@@ -1,50 +1,55 @@
-import { GreenNode, GreenToken, pp_green_element } from "./green_tree";
+import { GreenNode, GreenToken } from "./green_tree";
+import { OTokenKind, type SyntaxKind } from "./syntax_kind";
+
+export interface Range {
+	start: number;
+	end: number;
+}
 
 export type RedElement = RedNode | RedToken;
 
 export class RedNode {
 	public green: GreenNode;
-	public index: number;
+	public offset: number;
 	public parent: RedNode | undefined;
 
-	constructor(green: GreenNode, index: number) {
+	constructor(green: GreenNode, offset: number) {
 		this.green = green;
-		this.index = index;
+		this.offset = offset;
 	}
 
-	public *children(): Generator<RedElement> {
+	getKind(): SyntaxKind {
+		return this.green.kind;
+	}
+
+	getRange(): Range {
+		return {
+			start: this.offset,
+			end: this.offset + this.green.getLength(),
+		};
+	}
+
+	*children(): Generator<RedElement> {
+		let offset_sum = this.offset;
+
 		for (let i = 0; i < this.green.children.length; i++) {
 			const child = this.green.children[i];
 
 			if (child instanceof GreenNode) {
-				const syntax_node = new RedNode(child, i);
+				const syntax_node = new RedNode(child, offset_sum);
 				syntax_node.parent = this;
 				yield syntax_node;
 			} else if (child instanceof GreenToken) {
-				const syntax_token = new RedToken(child, i);
+				const syntax_token = new RedToken(child, offset_sum);
 				syntax_token.parent = this;
 				yield syntax_token;
 			}
+
+			offset_sum += child.getLength();
 		}
 	}
 
-	public *children_rev(): Generator<RedElement> {
-		for (let i = this.green.children.length - 1; i >= 0; i--) {
-			const child = this.green.children[i];
-
-			if (child instanceof GreenNode) {
-				const syntax_node = new RedNode(child, i);
-				syntax_node.parent = this;
-				yield syntax_node;
-			} else if (child instanceof GreenToken) {
-				const syntax_token = new RedToken(child, i);
-				syntax_token.parent = this;
-				yield syntax_token;
-			}
-		}
-	}
-
-	public *children_nodes(): Generator<RedNode> {
+	*childrenNodes(): Generator<RedNode> {
 		for (const child of this.children()) {
 			if (child instanceof RedNode) {
 				yield child;
@@ -52,7 +57,7 @@ export class RedNode {
 		}
 	}
 
-	public *children_tokens(): Generator<RedToken> {
+	*childrenTokens(): Generator<RedToken> {
 		for (const child of this.children()) {
 			if (child instanceof RedToken) {
 				yield child;
@@ -60,7 +65,7 @@ export class RedNode {
 		}
 	}
 
-	public *ancestors(): Generator<RedNode> {
+	*ancestors(): Generator<RedNode> {
 		let parent = this.parent;
 
 		while (parent) {
@@ -69,33 +74,35 @@ export class RedNode {
 		}
 	}
 
-	public *previous(): Generator<RedNode> {
-		const start_offset = this.green.get_start_offset();
-
-		for (const parent of this.ancestors()) {
-			for (const child of parent.children_rev()) {
-				if (
-					child instanceof RedNode &&
-					child.green.get_start_offset() <= start_offset
-				) {
-					yield child;
-				}
-			}
-		}
+	toString() {
+		const kind = this.getKind();
+		const range = this.getRange();
+		return `Node ${kind}@${range.start}..${range.end}`;
 	}
 }
 
 export class RedToken {
 	public green: GreenToken;
-	public index: number;
+	public offset: number;
 	public parent: RedNode | undefined;
 
-	constructor(green: GreenToken, index: number) {
+	constructor(green: GreenToken, offset: number) {
 		this.green = green;
-		this.index = index;
+		this.offset = offset;
 	}
 
-	public *ancestors(): Generator<RedNode> {
+	getKind(): SyntaxKind {
+		return this.green.kind;
+	}
+
+	getRange(): Range {
+		return {
+			start: this.offset,
+			end: this.offset + this.green.getLength(),
+		};
+	}
+
+	*ancestors(): Generator<RedNode> {
 		let parent = this.parent;
 
 		while (parent) {
@@ -103,8 +110,35 @@ export class RedToken {
 			parent = parent.parent;
 		}
 	}
+
+	toString() {
+		const kind = this.getKind();
+		const range = this.getRange();
+		const text = this.green.text;
+
+		if (kind === OTokenKind.Eol || kind === OTokenKind.End) {
+			return `Leaf ${kind}@${range.start}..${range.end}`;
+		} else {
+			return `Leaf ${kind}@${range.start}..${range.end} "${text}"`;
+		}
+	}
 }
 
-export function pp_red_element(elem: RedElement): string {
-	return pp_green_element(elem.green);
+export function ppRedTree(node: RedNode): string {
+	function loop(n: number, red: RedElement): string {
+		if (red instanceof RedToken) {
+			return red.toString();
+		} else {
+			let res = red.toString();
+
+			for (const child of red.children()) {
+				res += `\n${" ".repeat(2 * n)}`;
+				res += loop(n + 1, child);
+			}
+
+			return res;
+		}
+	}
+
+	return loop(1, node);
 }

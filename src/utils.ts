@@ -34,10 +34,10 @@ export function get_parsedFile(
 
 			const diagnostic = new vscode.Diagnostic(
 				new vscode.Range(
-					new vscode.Position(err.tok.start_loc.line, err.tok.start_loc.col),
-					new vscode.Position(err.tok.end_loc.line, err.tok.end_loc.col),
+					document.positionAt(err.offset),
+					document.positionAt(err.offset),
 				),
-				err.msg,
+				err.message,
 				vscode.DiagnosticSeverity.Error,
 			);
 
