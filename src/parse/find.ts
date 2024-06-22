@@ -62,13 +62,13 @@ export function findReferences(red_tree: RedNode, offset: number) {
 		let offset_skip = offset;
 
 		for (const child of node.childrenNodes()) {
-			if (child.getRange().end <= offset_skip) continue;
+			if (child.getOffsetRange().end <= offset_skip) continue;
 
 			const name = getSameDeclName(child, start_name);
 			if (name && getLevel(name) > start_level) {
 				const scoping_node = getContainingScope(child);
 				if (scoping_node.getKind() !== ONodeKind.TreeRoot) {
-					offset_skip = scoping_node.getRange().end;
+					offset_skip = scoping_node.getOffsetRange().end;
 				}
 			} else {
 				const expr = ast.castExpr(child);
@@ -107,7 +107,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 	}
 
 	const start_level = getLevel(start_node);
-	const start_offset = start_node.getRange().start;
+	const start_offset = start_node.getOffsetRange().start;
 	let scoping_node = getContainingScope(start_node);
 
 	if (
@@ -132,7 +132,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 export function elementsToOffset(node: RedNode, offset: number) {
 	function loop(node: RedNode, offset: number, acc: RedElement[]) {
 		for (const child of node.children()) {
-			const range = child.getRange();
+			const range = child.getOffsetRange();
 
 			if (range.start > offset) {
 				break;
@@ -259,7 +259,7 @@ export function nodeAtOffset(
 	let result: RedNode | undefined;
 
 	for (const child of node.children()) {
-		const range = child.getRange();
+		const range = child.getOffsetRange();
 
 		if (child instanceof RedNode) {
 			if (offset >= range.start && offset <= range.end) {
@@ -280,7 +280,7 @@ export function tokenAtOffset(
 	offset: number,
 ): RedToken | undefined {
 	for (const child of node.children()) {
-		const range = child.getRange();
+		const range = child.getOffsetRange();
 
 		if (child instanceof RedNode) {
 			if (offset >= range.start && offset <= range.end) {

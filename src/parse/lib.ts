@@ -1,6 +1,6 @@
 import * as ast from "./syntax/ast";
 import { tokenize } from "./lexer/lexer";
-import { RedNode, type RedToken, type Range } from "./syntax/red_tree";
+import { RedNode, type RedToken, type OffsetRange } from "./syntax/red_tree";
 import { OTokenKind } from "./syntax/syntax_kind";
 import { type ParseResult, parse } from "./parser/lib";
 
@@ -33,7 +33,7 @@ export type SemanticModifierKind =
 export type DxlSemanticToken = {
 	kind: SemanticKind;
 	modifiers: SemanticModifierKind[];
-	range: Range;
+	range: OffsetRange;
 };
 
 export const OSymbolKind = {
@@ -47,8 +47,8 @@ export type SymbolKind = (typeof OSymbolKind)[keyof typeof OSymbolKind];
 
 export type DxlSymbol = {
 	kind: SymbolKind;
-	range: Range;
-	selectionRange: Range;
+	range: OffsetRange;
+	selectionRange: OffsetRange;
 	name: string;
 };
 
@@ -66,7 +66,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			tokens.push({
 				kind: OSemanticKind.Keyword,
 				modifiers: [],
-				range: keyword.getRange(),
+				range: keyword.getOffsetRange(),
 			});
 		}
 	}
@@ -76,16 +76,15 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			return;
 		}
 
-		//FIXME: semantic token ranes cannot span multiple lines
-		// for (const red of node.red.children()) {
-		// 	if (red.getKind() === OTokenKind.Comment) {
-		// 		tokens.push({
-		// 			kind: OSemanticKind.Comment,
-		// 			modifiers: [],
-		// 			range: red.getRange(),
-		// 		});
-		// 	}
-		// }
+		for (const red of node.red.children()) {
+			if (red.getKind() === OTokenKind.Comment) {
+				tokens.push({
+					kind: OSemanticKind.Comment,
+					modifiers: [],
+					range: red.getOffsetRange(),
+				});
+			}
+		}
 
 		if (node) {
 			switch (node.tag) {
@@ -116,7 +115,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Type,
 							modifiers: [],
-							range: type_name.getRange(),
+							range: type_name.getOffsetRange(),
 						});
 					}
 					break;
@@ -164,15 +163,15 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						if (name) {
 							symbols.push({
 								kind: OSymbolKind.Function,
-								range: node.red.getRange(),
-								selectionRange: name.getRange(),
+								range: node.red.getOffsetRange(),
+								selectionRange: name.getOffsetRange(),
 								name: name.green.text,
 							});
 
 							tokens.push({
 								kind: OSemanticKind.Function,
 								modifiers: [],
-								range: name.getRange(),
+								range: name.getOffsetRange(),
 							});
 						}
 					}
@@ -234,7 +233,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 							tokens.push({
 								kind: OSemanticKind.Function,
 								modifiers: [],
-								range: name.getRange(),
+								range: name.getOffsetRange(),
 							});
 						}
 					}
@@ -264,7 +263,6 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				case "ExprLiteral": {
 					const value = node.parse();
 					if (value) {
-						const modifiers: SemanticModifierKind[] = [];
 						let kind: SemanticKind | undefined;
 						switch (value.getKind()) {
 							case OTokenKind.String:
@@ -274,18 +272,13 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 							case OTokenKind.Real:
 								kind = OSemanticKind.Number;
 								break;
-							case OTokenKind.KwTrue:
-							case OTokenKind.KwFalse:
-								kind = OSemanticKind.Variable;
-								modifiers.push(OSemanticModifierKind.Readonly);
-								break;
 						}
 
 						if (kind) {
 							tokens.push({
 								kind: kind,
-								modifiers: modifiers,
-								range: value.getRange(),
+								modifiers: [],
+								range: value.getOffsetRange(),
 							});
 						}
 					}
@@ -301,7 +294,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.getRange(),
+							range: name.getOffsetRange(),
 						});
 					}
 					break;
@@ -338,6 +331,8 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					loop(node.elseBranch());
 					break;
 				case "ExprWrite":
+					loop(node.lhs());
+					loop(node.rhs());
 					break;
 			}
 		}
