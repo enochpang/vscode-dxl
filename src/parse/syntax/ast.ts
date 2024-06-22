@@ -6,6 +6,7 @@ export type AstNode = Stmt | Expr;
 export type Stmt =
 	| Root
 	| ArgList
+	| Arg
 	| ParamList
 	| Param
 	| TypeAnnotation
@@ -57,6 +58,8 @@ export function castStmt(red: RedNode): Stmt | undefined {
 			return new Root(red);
 		case ONodeKind.ArgList:
 			return new ArgList(red);
+		case ONodeKind.Arg:
+			return new Arg(red);
 		case ONodeKind.ParamList:
 			return new ParamList(red);
 		case ONodeKind.Param:
@@ -147,6 +150,103 @@ export class Root {
 		}
 
 		return items;
+	}
+}
+
+export class ArgList {
+	public readonly tag = "ArgList";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	args(): Expr[] {
+		const items: Expr[] = [];
+
+		for (const child of this.red.childrenNodes()) {
+			const expr_cast = castExpr(child);
+			if (expr_cast) {
+				items.push(expr_cast);
+			}
+		}
+
+		return items;
+	}
+}
+
+export class Arg {
+	public readonly tag = "Arg";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+}
+
+export class ParamList {
+	public readonly tag = "ParamList";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	params(): Param[] {
+		const items: Param[] = [];
+
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
+			if (stmt_cast && stmt_cast instanceof Param) {
+				items.push(stmt_cast);
+			}
+		}
+
+		return items;
+	}
+}
+
+export class Param {
+	public readonly tag = "Param";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	decl(): Stmt | undefined {
+		for (const child of this.red.childrenNodes()) {
+			if (child.green.kind === ONodeKind.StmtVarDecl) {
+				return new StmtVariableDecl(child);
+			} else if (child.green.kind === ONodeKind.StmtFuncDecl) {
+				return new StmtFunctionDecl(child);
+			} else if (child.green.kind === ONodeKind.StmtArrayDecl) {
+				return new StmtArrayDecl(child);
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class TypeAnnotation {
+	public readonly tag = "TypeAnnotation";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	name(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			return child;
+		}
+
+		return undefined;
 	}
 }
 
@@ -254,61 +354,6 @@ export class StmtContinue {
 		}
 
 		return undefined;
-	}
-}
-
-export class StmtExpr {
-	public readonly tag = "StmtExpr";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	expr(): Expr | undefined {
-		return nthExpr(this.red, 0);
-	}
-}
-
-export class StmtFunctionDecl {
-	public readonly tag = "StmtFunctionDecl";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	typing(): TypeAnnotation | undefined {
-		const stmt = nthStmt(this.red, 0);
-		if (stmt instanceof TypeAnnotation) {
-			return stmt;
-		}
-
-		return undefined;
-	}
-
-	name(): ExprNameRef | undefined {
-		const expr = nthExpr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
-		}
-
-		return undefined;
-	}
-
-	params(): ParamList | undefined {
-		for (const child of this.red.childrenNodes()) {
-			const stmt_cast = castStmt(child);
-			if (stmt_cast && stmt_cast instanceof ParamList) {
-				return stmt_cast;
-			}
-		}
-
-		return undefined;
-	}
-
-	body(): Stmt | undefined {
-		return nthStmt(this.red, 2);
 	}
 }
 
@@ -420,6 +465,48 @@ export class StmtForIn {
 		}
 
 		return undefined;
+	}
+}
+
+export class StmtFunctionDecl {
+	public readonly tag = "StmtFunctionDecl";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	typing(): TypeAnnotation | undefined {
+		const stmt = nthStmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
+		}
+
+		return undefined;
+	}
+
+	name(): ExprNameRef | undefined {
+		const expr = nthExpr(this.red, 0);
+		if (expr instanceof ExprNameRef) {
+			return expr;
+		}
+
+		return undefined;
+	}
+
+	params(): ParamList | undefined {
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
+			if (stmt_cast && stmt_cast instanceof ParamList) {
+				return stmt_cast;
+			}
+		}
+
+		return undefined;
+	}
+
+	body(): Stmt | undefined {
+		return nthStmt(this.red, 2);
 	}
 }
 
@@ -798,29 +885,17 @@ export class ExprIndex {
 	}
 }
 
-export class ExprLink {
-	public readonly tag = "ExprLink";
+export class ExprLiteral {
+	public readonly tag = "ExprLiteral";
 	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	lhs(): Expr | undefined {
-		return nthExpr(this.red, 0);
-	}
-
-	rhs(): Expr | undefined {
-		return nthExpr(this.red, 1);
-	}
-
-	op(): RedToken | undefined {
+	parse(): RedToken | undefined {
 		for (const child of this.red.childrenTokens()) {
-			switch (child.getKind()) {
-				case OTokenKind.MinusGreat:
-				case OTokenKind.LessMinus:
-					return child;
-			}
+			return child;
 		}
 
 		return undefined;
@@ -848,6 +923,76 @@ export class ExprLogical {
 			switch (child.getKind()) {
 				case OTokenKind.BarBar:
 				case OTokenKind.AmprAmpr:
+					return child;
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class ExprNameRef {
+	public readonly tag = "ExprNameRef";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	name(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			return child;
+		}
+
+		return undefined;
+	}
+}
+
+export class ExprNameRefList {
+	public readonly tag = "ExprNameRefList";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	names(): ExprNameRef[] | undefined {
+		const name_refs: ExprNameRef[] = [];
+
+		for (const child of this.red.childrenNodes()) {
+			const expr = castExpr(child);
+			if (expr instanceof ExprNameRef) {
+				name_refs.push(expr);
+			}
+		}
+
+		if (name_refs.length > 0) {
+			return name_refs;
+		} else {
+			return undefined;
+		}
+	}
+}
+
+export class ExprPostfix {
+	public readonly tag = "ExprPostfix";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+
+	op(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
+				case OTokenKind.Bang:
+				case OTokenKind.Minus:
+				case OTokenKind.PlusPlus:
+				case OTokenKind.MinusMinus:
 					return child;
 			}
 		}
@@ -946,76 +1091,6 @@ export class ExprTernary {
 	}
 }
 
-export class ExprNameRef {
-	public readonly tag = "ExprNameRef";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	name(): RedToken | undefined {
-		for (const child of this.red.childrenTokens()) {
-			return child;
-		}
-
-		return undefined;
-	}
-}
-
-export class ExprNameRefList {
-	public readonly tag = "ExprNameRefList";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	names(): ExprNameRef[] | undefined {
-		const name_refs: ExprNameRef[] = [];
-
-		for (const child of this.red.childrenNodes()) {
-			const expr = castExpr(child);
-			if (expr instanceof ExprNameRef) {
-				name_refs.push(expr);
-			}
-		}
-
-		if (name_refs.length > 0) {
-			return name_refs;
-		} else {
-			return undefined;
-		}
-	}
-}
-
-export class ExprPostfix {
-	public readonly tag = "ExprPostfix";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	expr(): Expr | undefined {
-		return nthExpr(this.red, 0);
-	}
-
-	op(): RedToken | undefined {
-		for (const child of this.red.childrenTokens()) {
-			switch (child.getKind()) {
-				case OTokenKind.Bang:
-				case OTokenKind.Minus:
-				case OTokenKind.PlusPlus:
-				case OTokenKind.MinusMinus:
-					return child;
-			}
-		}
-
-		return undefined;
-	}
-}
-
 export class ExprWrite {
 	public readonly tag = "ExprWrite";
 	public readonly red: RedNode;
@@ -1030,107 +1105,6 @@ export class ExprWrite {
 
 	rhs(): Expr | undefined {
 		return nthExpr(this.red, 1);
-	}
-}
-
-export class ExprLiteral {
-	public readonly tag = "ExprLiteral";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	parse(): RedToken | undefined {
-		for (const child of this.red.childrenTokens()) {
-			return child;
-		}
-
-		return undefined;
-	}
-}
-
-export class TypeAnnotation {
-	public readonly tag = "TypeAnnotation";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	name(): RedToken | undefined {
-		for (const child of this.red.childrenTokens()) {
-			return child;
-		}
-
-		return undefined;
-	}
-}
-
-export class ArgList {
-	public readonly tag = "ArgList";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	args(): Expr[] {
-		const items: Expr[] = [];
-
-		for (const child of this.red.childrenNodes()) {
-			const expr_cast = castExpr(child);
-			if (expr_cast) {
-				items.push(expr_cast);
-			}
-		}
-
-		return items;
-	}
-}
-
-export class ParamList {
-	public readonly tag = "ParamList";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	params(): Param[] {
-		const items: Param[] = [];
-
-		for (const child of this.red.childrenNodes()) {
-			const stmt_cast = castStmt(child);
-			if (stmt_cast && stmt_cast instanceof Param) {
-				items.push(stmt_cast);
-			}
-		}
-
-		return items;
-	}
-}
-
-export class Param {
-	public readonly tag = "Param";
-	public readonly red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	decl(): Stmt | undefined {
-		for (const child of this.red.childrenNodes()) {
-			if (child.green.kind === ONodeKind.StmtVarDecl) {
-				return new StmtVariableDecl(child);
-			} else if (child.green.kind === ONodeKind.StmtFuncDecl) {
-				return new StmtFunctionDecl(child);
-			} else if (child.green.kind === ONodeKind.StmtArrayDecl) {
-				return new StmtArrayDecl(child);
-			}
-		}
-
-		return undefined;
 	}
 }
 
