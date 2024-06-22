@@ -226,10 +226,22 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					loop(node.lhs());
 					loop(node.rhs());
 					break;
-				case "ExprCall":
-					loop(node.name());
+				case "ExprCall": {
+					const name_ref = node.name();
+					if (name_ref) {
+						const name = name_ref.name();
+						if (name) {
+							tokens.push({
+								kind: OSemanticKind.Function,
+								modifiers: [],
+								range: name.getRange(),
+							});
+						}
+					}
+
 					loop(node.args());
 					break;
+				}
 				case "ExprCast":
 					loop(node.typing());
 					loop(node.expr());
