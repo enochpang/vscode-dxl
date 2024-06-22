@@ -1,7 +1,7 @@
 import { GreenNode, GreenToken } from "./green_tree";
 import { OTokenKind, type SyntaxKind } from "./syntax_kind";
 
-export interface Range {
+export interface OffsetRange {
 	start: number;
 	end: number;
 }
@@ -22,7 +22,7 @@ export class RedNode {
 		return this.green.kind;
 	}
 
-	getRange(): Range {
+	getOffsetRange(): OffsetRange {
 		return {
 			start: this.offset,
 			end: this.offset + this.green.getLength(),
@@ -76,7 +76,7 @@ export class RedNode {
 
 	toString() {
 		const kind = this.getKind();
-		const range = this.getRange();
+		const range = this.getOffsetRange();
 		return `Node ${kind}@${range.start}..${range.end}`;
 	}
 }
@@ -95,7 +95,7 @@ export class RedToken {
 		return this.green.kind;
 	}
 
-	getRange(): Range {
+	getOffsetRange(): OffsetRange {
 		return {
 			start: this.offset,
 			end: this.offset + this.green.getLength(),
@@ -113,7 +113,7 @@ export class RedToken {
 
 	toString() {
 		const kind = this.getKind();
-		const range = this.getRange();
+		const range = this.getOffsetRange();
 		const text = this.green.text;
 
 		if (kind === OTokenKind.Eol || kind === OTokenKind.End) {

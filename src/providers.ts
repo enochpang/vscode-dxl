@@ -31,8 +31,8 @@ export class DxlDocumentSymbolProvider {
 								document.positionAt(item.range.end),
 							),
 							new vscode.Range(
-								document.positionAt(item.range.start),
-								document.positionAt(item.range.end),
+								document.positionAt(item.selectionRange.start),
+								document.positionAt(item.selectionRange.end),
 							),
 						),
 					);
@@ -57,14 +57,33 @@ export class DxlSemanticTokensProvider
 		const parsed = getParsedDocument(document);
 		if (parsed) {
 			for (const item of parsed.tokens) {
-				tokensBuilder.push(
-					new vscode.Range(
-						document.positionAt(item.range.start),
-						document.positionAt(item.range.end),
-					),
-					item.kind,
-					item.modifiers,
+				const range = new vscode.Range(
+					document.positionAt(item.range.start),
+					document.positionAt(item.range.end),
 				);
+
+				// Semantic tokens can only span a single line.
+				if (range.start.line !== range.end.line) {
+					let new_start_offset = item.range.start;
+
+					const text = document.getText(range);
+					const lines = text.split("\n");
+					for (const line of lines) {
+						const line_length = line.length;
+						const new_end_offset = new_start_offset + line_length;
+
+						const new_range = new vscode.Range(
+							document.positionAt(new_start_offset),
+							document.positionAt(new_end_offset),
+						);
+
+						tokensBuilder.push(new_range, item.kind, item.modifiers);
+
+						new_start_offset = new_end_offset + 1;
+					}
+				} else {
+					tokensBuilder.push(range, item.kind, item.modifiers);
+				}
 			}
 		}
 
@@ -76,7 +95,7 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 	provideRenameEdits(
 		document: vscode.TextDocument,
 		position: vscode.Position,
-		newName: string,
+		new_name: string,
 		_token: vscode.CancellationToken,
 	): vscode.ProviderResult<vscode.WorkspaceEdit> {
 		const parsed = getParsedDocument(document);
@@ -86,7 +105,7 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 			if (references) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
 				for (const reference of references) {
-					const range = reference.getRange();
+					const range = reference.getOffsetRange();
 
 					workspaceEdit.replace(
 						document.uri,
@@ -94,7 +113,7 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 							document.positionAt(range.start),
 							document.positionAt(range.end),
 						),
-						newName,
+						new_name,
 					);
 				}
 
@@ -117,7 +136,7 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 			const offset = document.offsetAt(position);
 			const result = dxl.find.findDefinition(parsed.tree, offset);
 			if (result) {
-				const range = result.getRange();
+				const range = result.getOffsetRange();
 
 				const location = new vscode.Location(
 					document.uri,
@@ -150,7 +169,7 @@ export class DxlReferenceProvider implements vscode.ReferenceProvider {
 			const results = dxl.find.findReferences(parsed.tree, offset);
 			if (results) {
 				for (const result of results) {
-					const range = result.getRange();
+					const range = result.getOffsetRange();
 
 					const location = new vscode.Location(
 						document.uri,
