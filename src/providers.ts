@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as dxl from "./parse/lib";
-import { get_parsedFile } from "./utils";
+import { getParsedDocument } from "./utils";
 import { OSemanticKind } from "./parse/lib";
 
 export const token_legend = new vscode.SemanticTokensLegend(
@@ -18,11 +18,9 @@ export class DxlDocumentSymbolProvider {
 		return new Promise((resolve, _reject) => {
 			const res: vscode.DocumentSymbol[] = [];
 
-			const tree = get_parsedFile(document);
-			if (tree) {
-				const items = dxl.getSymbols(tree).symbols;
-
-				for (const item of items) {
+			const parsed = getParsedDocument(document);
+			if (parsed) {
+				for (const item of parsed.symbols) {
 					res.push(
 						new vscode.DocumentSymbol(
 							item.name,
@@ -56,11 +54,9 @@ export class DxlSemanticTokensProvider
 	): vscode.ProviderResult<vscode.SemanticTokens> {
 		const tokensBuilder = new vscode.SemanticTokensBuilder(token_legend);
 
-		const tree = get_parsedFile(document);
-		if (tree) {
-			const items = dxl.getSymbols(tree);
-
-			for (const item of items.tokens) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
+			for (const item of parsed.tokens) {
 				tokensBuilder.push(
 					new vscode.Range(
 						document.positionAt(item.range.start),
@@ -83,10 +79,10 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 		newName: string,
 		_token: vscode.CancellationToken,
 	): vscode.ProviderResult<vscode.WorkspaceEdit> {
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const references = dxl.find.findReferences(tree, offset);
+			const references = dxl.find.findReferences(parsed.tree, offset);
 			if (references) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
 				for (const reference of references) {
@@ -116,10 +112,10 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 		position: vscode.Position,
 		_token: vscode.CancellationToken,
 	): vscode.ProviderResult<vscode.Definition | vscode.LocationLink[]> {
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const result = dxl.find.findDefinition(tree, offset);
+			const result = dxl.find.findDefinition(parsed.tree, offset);
 			if (result) {
 				const range = result.getRange();
 
@@ -148,10 +144,10 @@ export class DxlReferenceProvider implements vscode.ReferenceProvider {
 	): vscode.ProviderResult<vscode.Location[]> {
 		const locations: vscode.Location[] = [];
 
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const results = dxl.find.findReferences(tree, offset);
+			const results = dxl.find.findReferences(parsed.tree, offset);
 			if (results) {
 				for (const result of results) {
 					const range = result.getRange();
