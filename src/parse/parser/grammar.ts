@@ -411,9 +411,9 @@ function parseForStmt(p: Parser) {
 }
 
 function parseExpression(p: Parser) {
-	// const m = p.open();
+	const m = p.open();
 	expr_bp(p, 0);
-	// p.close(m, ONodeKind.StmtExpr);
+	p.close(m, ONodeKind.StmtExpr);
 }
 
 function expr_bp(p: Parser, min_bp: number) {

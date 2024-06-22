@@ -1,3 +1,4 @@
+import exp from "node:constants";
 import type { RedNode, RedToken } from "./red_tree";
 import { OTokenKind, ONodeKind } from "./syntax_kind";
 
@@ -14,6 +15,7 @@ export type Stmt =
 	| StmtBlock
 	| StmtBreak
 	| StmtContinue
+	| StmtExpr
 	| StmtFor
 	| StmtForIn
 	| StmtFunctionDecl
@@ -70,6 +72,8 @@ export function castStmt(red: RedNode): Stmt | undefined {
 			return new StmtArrayDecl(red);
 		case ONodeKind.StmtBlock:
 			return new StmtBlock(red);
+		case ONodeKind.StmtExpr:
+			return new StmtExpr(red);
 		case ONodeKind.StmtFor:
 			return new StmtFor(red);
 		case ONodeKind.StmtForIn:
@@ -161,13 +165,13 @@ export class ArgList {
 		this.red = red;
 	}
 
-	args(): Expr[] {
-		const items: Expr[] = [];
+	args(): Stmt[] {
+		const items: Stmt[] = [];
 
 		for (const child of this.red.childrenNodes()) {
-			const expr_cast = castExpr(child);
-			if (expr_cast) {
-				items.push(expr_cast);
+			const stmt_cast = castStmt(child);
+			if (stmt_cast) {
+				items.push(stmt_cast);
 			}
 		}
 
@@ -184,7 +188,12 @@ export class Arg {
 	}
 
 	expr(): Expr | undefined {
-		return nthExpr(this.red, 0);
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
+		}
+
+		return undefined;
 	}
 }
 
@@ -277,9 +286,9 @@ export class StmtArrayDecl {
 	}
 
 	count(): Expr | undefined {
-		const expr = nthExpr(this.red, 1);
-		if (expr) {
-			return expr;
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
@@ -316,6 +325,19 @@ export class StmtBlock {
 		}
 
 		return items;
+	}
+}
+
+export class StmtExpr {
+	public readonly tag = "StmtExpr";
+	public red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		return nthExpr(this.red, 0);
 	}
 }
 
@@ -366,34 +388,40 @@ export class StmtFor {
 	}
 
 	initializer(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 0);
-		if (expr_cast && expr_cast instanceof ExprAssignment) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr instanceof ExprAssignment) {
+				return expr;
+			}
 		}
 
 		return undefined;
 	}
 
 	condition(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 1);
-		if (expr_cast && expr_cast instanceof ExprCompare) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr instanceof ExprCompare) {
+				return expr;
+			}
 		}
 
 		return undefined;
 	}
 
 	increment(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 2);
-		if (expr_cast) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 2);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	body(): Stmt | undefined {
-		return nthStmt(this.red, 0);
+		return nthStmt(this.red, 3);
 	}
 
 	keyword(): RedToken | undefined {
@@ -416,18 +444,18 @@ export class StmtForIn {
 	}
 
 	item(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 0);
-		if (expr_cast) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	parent(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 1);
-		if (expr_cast) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
@@ -519,20 +547,20 @@ export class StmtIf {
 	}
 
 	condition(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 0);
-		if (expr_cast && expr_cast instanceof ExprCompare) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	thenBranch(): Stmt | undefined {
-		return nthStmt(this.red, 0);
+		return nthStmt(this.red, 1);
 	}
 
 	elseBranch(): Stmt | undefined {
-		return nthStmt(this.red, 1);
+		return nthStmt(this.red, 2);
 	}
 
 	keyword1(): RedToken | undefined {
@@ -565,9 +593,9 @@ export class StmtReturn {
 	}
 
 	expr(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 0);
-		if (expr_cast) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
@@ -620,9 +648,9 @@ export class StmtVariableDecl {
 	}
 
 	value(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 1);
-		if (expr_cast) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
@@ -638,9 +666,12 @@ export class StmtWhile {
 	}
 
 	condition(): Expr | undefined {
-		const expr_cast = nthExpr(this.red, 0);
-		if (expr_cast && expr_cast instanceof ExprCompare) {
-			return expr_cast;
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr && expr instanceof ExprCompare) {
+				return expr;
+			}
 		}
 
 		return undefined;
