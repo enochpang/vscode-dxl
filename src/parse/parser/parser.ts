@@ -1,4 +1,4 @@
-import { strict as assert } from "node:assert";
+import assert from "node:assert/strict";
 
 import type { GreenToken } from "../syntax/green_tree";
 import {
