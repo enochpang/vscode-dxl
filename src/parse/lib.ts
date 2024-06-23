@@ -165,7 +165,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 								kind: OSymbolKind.Function,
 								range: node.red.getOffsetRange(),
 								selectionRange: name.getOffsetRange(),
-								name: name.green.text,
+								name: name.getText(),
 							});
 
 							tokens.push({

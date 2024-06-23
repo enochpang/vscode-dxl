@@ -14,7 +14,7 @@ export function findDefinition(
 	let start_name: string | undefined;
 	const start_expr = ast.castExpr(start_node);
 	if (start_expr instanceof ast.ExprNameRef) {
-		start_name = start_expr.name()?.green.text;
+		start_name = start_expr.name()?.getText();
 	}
 
 	if (!start_name) {
@@ -74,7 +74,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 				const expr = ast.castExpr(child);
 				if (expr instanceof ast.ExprNameRef) {
 					const name = expr.name();
-					if (name && name.green.text === start_name) {
+					if (name && name.getText() === start_name) {
 						acc.push(name);
 					}
 				}
@@ -94,7 +94,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 	let start_name: string | undefined;
 	const start_expr = ast.castExpr(start_node);
 	if (start_expr instanceof ast.ExprNameRef) {
-		start_name = start_expr.name()?.green.text;
+		start_name = start_expr.name()?.getText();
 	}
 
 	if (!start_name) {
@@ -165,7 +165,7 @@ function getSameDeclName(
 		if (names) {
 			for (const name_ref of names) {
 				const name = name_ref.name();
-				if (name && start_name === name.green.text) {
+				if (name && start_name === name.getText()) {
 					return name;
 				}
 			}
@@ -173,7 +173,7 @@ function getSameDeclName(
 			const name_ref = stmt.name();
 			if (name_ref) {
 				const name = name_ref.name();
-				if (name && start_name === name.green.text) {
+				if (name && start_name === name.getText()) {
 					return name;
 				}
 			}
@@ -182,7 +182,7 @@ function getSameDeclName(
 		const name_ref = stmt.name();
 		if (name_ref) {
 			const name = name_ref.name();
-			if (name && start_name === name.green.text) {
+			if (name && start_name === name.getText()) {
 				return name;
 			}
 		}
@@ -190,7 +190,7 @@ function getSameDeclName(
 		const name_ref = stmt.name();
 		if (name_ref) {
 			const name = name_ref.name();
-			if (name && start_name === name.green.text) {
+			if (name && start_name === name.getText()) {
 				return name;
 			}
 		}
@@ -202,7 +202,7 @@ function getSameDeclName(
 				const name_ref = param_decl.name();
 				if (name_ref) {
 					const name = name_ref.name();
-					if (name && start_name === name.green.text) {
+					if (name && start_name === name.getText()) {
 						return name;
 					}
 				}
@@ -210,7 +210,7 @@ function getSameDeclName(
 				const name_ref = param_decl.name();
 				if (name_ref) {
 					const name = name_ref.name();
-					if (name && start_name === name.green.text) {
+					if (name && start_name === name.getText()) {
 						return name;
 					}
 				}
@@ -218,7 +218,7 @@ function getSameDeclName(
 				const name_ref = param_decl.name();
 				if (name_ref) {
 					const name = name_ref.name();
-					if (name && start_name === name.green.text) {
+					if (name && start_name === name.getText()) {
 						return name;
 					}
 				}
@@ -242,7 +242,7 @@ function getSameAssignName(
 			const name_ref = expr.name();
 			if (name_ref) {
 				const name = name_ref.name();
-				if (name && start_name === name.green.text) {
+				if (name && start_name === name.getText()) {
 					result_token = name;
 				}
 			}

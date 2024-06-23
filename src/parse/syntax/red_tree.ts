@@ -9,8 +9,8 @@ export interface OffsetRange {
 export type RedElement = RedNode | RedToken;
 
 export class RedNode {
-	public green: GreenNode;
-	public offset: number;
+	private readonly green: GreenNode;
+	private readonly offset: number;
 	public parent: RedNode | undefined;
 
 	constructor(green: GreenNode, offset: number) {
@@ -82,8 +82,8 @@ export class RedNode {
 }
 
 export class RedToken {
-	public green: GreenToken;
-	public offset: number;
+	private readonly green: GreenToken;
+	private readonly offset: number;
 	public parent: RedNode | undefined;
 
 	constructor(green: GreenToken, offset: number) {
@@ -93,6 +93,10 @@ export class RedToken {
 
 	getKind(): SyntaxKind {
 		return this.green.kind;
+	}
+
+	getText(): string {
+		return this.green.text;
 	}
 
 	getOffsetRange(): OffsetRange {
