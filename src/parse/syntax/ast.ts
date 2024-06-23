@@ -55,7 +55,7 @@ export function cast(red: RedNode): AstNode | undefined {
 }
 
 export function castStmt(red: RedNode): Stmt | undefined {
-	switch (red.green.kind) {
+	switch (red.getKind()) {
 		case ONodeKind.TreeRoot:
 			return new Root(red);
 		case ONodeKind.ArgList:
@@ -94,7 +94,7 @@ export function castStmt(red: RedNode): Stmt | undefined {
 }
 
 export function castExpr(red: RedNode): Expr | undefined {
-	switch (red.green.kind) {
+	switch (red.getKind()) {
 		case ONodeKind.ExprAssignment:
 			return new ExprAssignment(red);
 		case ONodeKind.ExprBinary:
@@ -229,11 +229,11 @@ export class Param {
 
 	decl(): Stmt | undefined {
 		for (const child of this.red.childrenNodes()) {
-			if (child.green.kind === ONodeKind.StmtVarDecl) {
+			if (child.getKind() === ONodeKind.StmtVarDecl) {
 				return new StmtVariableDecl(child);
-			} else if (child.green.kind === ONodeKind.StmtFuncDecl) {
+			} else if (child.getKind() === ONodeKind.StmtFuncDecl) {
 				return new StmtFunctionDecl(child);
-			} else if (child.green.kind === ONodeKind.StmtArrayDecl) {
+			} else if (child.getKind() === ONodeKind.StmtArrayDecl) {
 				return new StmtArrayDecl(child);
 			}
 		}

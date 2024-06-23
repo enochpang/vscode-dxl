@@ -3,9 +3,9 @@ import { BUILTIN_TYPES, OTokenKind, type SyntaxKind } from "./syntax_kind";
 export type GreenElement = GreenNode | GreenToken;
 
 export class GreenNode {
-	public kind: SyntaxKind;
-	public children: GreenElement[];
-	private length: number;
+	public readonly kind: SyntaxKind;
+	public readonly children: GreenElement[];
+	private readonly length: number;
 
 	constructor(kind: SyntaxKind, children: GreenElement[]) {
 		this.kind = kind;
@@ -28,8 +28,8 @@ export class GreenNode {
 }
 
 export class GreenToken {
-	public kind: SyntaxKind;
-	public text: string;
+	public readonly kind: SyntaxKind;
+	public readonly text: string;
 
 	constructor(kind: SyntaxKind, text: string) {
 		this.kind = kind;
