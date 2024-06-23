@@ -1,4 +1,4 @@
-import { strict as assert } from "node:assert";
+import assert from "node:assert/strict";
 
 import type { GreenNode } from "../syntax/green_tree";
 import type { NodeKind } from "../syntax/syntax_kind";
