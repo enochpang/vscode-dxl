@@ -28,7 +28,7 @@ export function getParsedDocument(
 
 	diagnostic_collection.clear();
 
-	const res = dxl.get_red_tree(document.getText());
+	const res = dxl.getRedTree(document.getText());
 	if (res) {
 		const diagnostics: vscode.Diagnostic[] = [];
 		for (let i = 0; i < res.errors.length; i++) {

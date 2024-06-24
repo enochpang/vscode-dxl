@@ -534,6 +534,57 @@ exports[`parse for obj in mod do {} 1`] = `
       Leaf RCURLY "}""
 `;
 
+exports[`parse fun(null) 1`] = `
+"Node TREEROOT
+  Node STMTEXPR
+    Node EXPRCALL
+      Node NAMEREF
+        Leaf IDENT "fun"
+      Node ARGLIST
+        Leaf LPAREN "("
+        Node ARG
+          Node STMTEXPR
+            Node NULL
+              Leaf KWNULL "null"
+        Leaf RPAREN ")""
+`;
+
+exports[`parse func("" val) 1`] = `
+"Node TREEROOT
+  Node STMTEXPR
+    Node EXPRCALL
+      Node NAMEREF
+        Leaf IDENT "func"
+      Node ARGLIST
+        Leaf LPAREN "("
+        Node ARG
+          Node STMTEXPR
+            Node EXPRSTRINGCONCAT
+              Node EXPRLITERAL
+                Leaf STRING """"
+              Leaf SPACES " "
+              Node NAMEREF
+                Leaf IDENT "val"
+        Leaf RPAREN ")""
+`;
+
+exports[`parse func(++i) 1`] = `
+"Node TREEROOT
+  Node STMTEXPR
+    Node EXPRCALL
+      Node NAMEREF
+        Leaf IDENT "func"
+      Node ARGLIST
+        Leaf LPAREN "("
+        Node ARG
+          Node STMTEXPR
+            Node EXPRPREFIX
+              Leaf PLUSPLUS "++"
+              Node NAMEREF
+                Leaf IDENT "i"
+        Leaf RPAREN ")""
+`;
+
 exports[`parse i++ 1`] = `
 "Node TREEROOT
   Node STMTEXPR
