@@ -7,16 +7,6 @@ import {
 } from "../syntax/syntax_kind";
 import type { MarkClosed, MarkOpened, Parser } from "./parser";
 
-const expr_start = [
-	OTokenKind.Ident,
-	OTokenKind.String,
-	OTokenKind.Integer,
-	OTokenKind.Real,
-	OTokenKind.KwTrue,
-	OTokenKind.KwFalse,
-	OTokenKind.Lparen,
-];
-
 export function parseDeclaration(p: Parser) {
 	if (p.atAny([OTokenKind.KwConst, OTokenKind.KwStatic])) {
 		p.bumpAs(ONodeKind.WarningNode);
@@ -45,7 +35,9 @@ export function parseDeclaration(p: Parser) {
 
 	parseStatement(p);
 
-	p.consume(OTokenKind.End);
+	if (p.peek().isStmtEnd()) {
+		p.bump();
+	}
 }
 
 function parseParam(p: Parser) {
@@ -206,7 +198,9 @@ function parseStatement(p: Parser) {
 			break;
 	}
 
-	p.consume(OTokenKind.End);
+	if (p.peek().isStmtEnd()) {
+		p.bump();
+	}
 }
 
 function parseBlockStmt(p: Parser) {
@@ -526,6 +520,7 @@ function expr_bp(p: Parser, min_bp: number) {
 			case OTokenKind.Star:
 			case OTokenKind.Fslash:
 			case OTokenKind.Percent:
+			case OTokenKind.Ampr:
 				lhs = parseInfixExpr(p, lhs, rbp, ONodeKind.ExprBinary);
 				break;
 			case OTokenKind.EqualEqual:
@@ -559,7 +554,13 @@ function expr_bp(p: Parser, min_bp: number) {
 				lhs = parseWriteExpr(p, lhs, rbp);
 				break;
 			default:
-				if (lhs.kind === ONodeKind.ExprStringConcat && p.at(OTokenKind.Ident)) {
+				if (
+					(lhs.kind === ONodeKind.ExprStringConcat ||
+						lhs.kind === ONodeKind.ExprGrouping ||
+						lhs.kind === ONodeKind.ExprLiteral ||
+						lhs.kind === ONodeKind.ExprCall) &&
+					p.atAny([OTokenKind.Ident, OTokenKind.Integer, OTokenKind.Real])
+				) {
 					lhs = parseStringExpr(p, lhs, rbp);
 				}
 				break outer;
@@ -599,16 +600,12 @@ function parseCallExpr(p: Parser, lhs: MarkClosed) {
 		p.expect(OTokenKind.Lparen);
 
 		while (!p.at(OTokenKind.Rparen) && !p.eof()) {
-			if (p.atAny(expr_start)) {
-				const m_arg = p.open();
-				parseExpression(p);
-				if (!p.at(OTokenKind.Rparen)) {
-					p.expect(OTokenKind.Comma);
-				}
-				p.close(m_arg, ONodeKind.Arg);
-			} else {
-				break;
+			const m_arg = p.open();
+			parseExpression(p);
+			if (!p.at(OTokenKind.Rparen)) {
+				p.expect(OTokenKind.Comma);
 			}
+			p.close(m_arg, ONodeKind.Arg);
 		}
 
 		p.expect(OTokenKind.Rparen);

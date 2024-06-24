@@ -347,7 +347,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 	};
 }
 
-export function get_red_tree(text: string): ParseResult<RedNode> | undefined {
+export function getRedTree(text: string): ParseResult<RedNode> | undefined {
 	const lex_result = tokenize(text);
 	const parse_result = parse(lex_result);
 
