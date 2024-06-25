@@ -14,7 +14,9 @@ for (let i = 0; i < parse_result.errors.length; i++) {
 const green_tree = parse_result.tree;
 if (green_tree) {
 	const red_tree = new syntax.RedNode(green_tree, 0);
-	console.log(dxl.ppRedTree(red_tree));
+	// console.log(dxl.ppRedTree(red_tree));
+
+	dxl.getSymbols(red_tree);
 }
 
 console.log();

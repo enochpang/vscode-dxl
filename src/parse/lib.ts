@@ -124,7 +124,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					loop(node.typing());
 					loop(node.name());
 					loop(node.count());
-					loop(node.args());
+					loop(node.argList());
 					break;
 				case "StmtBlock":
 					for (const child of node.stmts()) {
@@ -238,7 +238,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 						}
 					}
 
-					loop(node.args());
+					loop(node.argList());
 					break;
 				}
 				case "ExprCast":

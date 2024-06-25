@@ -1,4 +1,3 @@
-import exp from "node:constants";
 import type { RedNode, RedToken } from "./red_tree";
 import { OTokenKind, ONodeKind } from "./syntax_kind";
 
@@ -169,7 +168,7 @@ export class ArgList {
 
 		for (const child of this.red.childrenNodes()) {
 			const stmt_cast = castStmt(child);
-			if (stmt_cast) {
+			if (stmt_cast && stmt_cast instanceof Arg) {
 				items.push(stmt_cast);
 			}
 		}
@@ -293,12 +292,10 @@ export class StmtArrayDecl {
 		return undefined;
 	}
 
-	args(): ArgList | undefined {
-		for (const child of this.red.childrenNodes()) {
-			const stmt_cast = castStmt(child);
-			if (stmt_cast instanceof ArgList) {
-				return stmt_cast;
-			}
+	argList(): ArgList | undefined {
+		const stmt_cast = nthStmt(this.red, 0);
+		if (stmt_cast && stmt_cast instanceof ArgList) {
+			return stmt_cast;
 		}
 
 		return undefined;
@@ -795,20 +792,18 @@ export class ExprCall {
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nthExpr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
+		const expr_cast = nthExpr(this.red, 0);
+		if (expr_cast instanceof ExprNameRef) {
+			return expr_cast;
 		}
 
 		return undefined;
 	}
 
-	args(): ArgList | undefined {
-		for (const child of this.red.childrenNodes()) {
-			const stmt_cast = castStmt(child);
-			if (stmt_cast instanceof ArgList) {
-				return stmt_cast;
-			}
+	argList(): ArgList | undefined {
+		const stmt_cast = nthStmt(this.red, 0);
+		if (stmt_cast && stmt_cast instanceof ArgList) {
+			return stmt_cast;
 		}
 
 		return undefined;

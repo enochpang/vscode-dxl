@@ -66,15 +66,14 @@ exports[`parse (1 + 2) * 3 1`] = `
     Node EXPRBINARY
       Node EXPRGROUPING
         Leaf LPAREN "("
-        Node STMTEXPR
-          Node EXPRBINARY
-            Node EXPRLITERAL
-              Leaf INTEGER "1"
-            Leaf SPACES " "
-            Leaf PLUS "+"
-            Leaf SPACES " "
-            Node EXPRLITERAL
-              Leaf INTEGER "2"
+        Node EXPRBINARY
+          Node EXPRLITERAL
+            Leaf INTEGER "1"
+          Leaf SPACES " "
+          Leaf PLUS "+"
+          Leaf SPACES " "
+          Node EXPRLITERAL
+            Leaf INTEGER "2"
         Leaf RPAREN ")"
       Leaf SPACES " "
       Leaf STAR "*"
@@ -90,10 +89,9 @@ exports[`parse (Object current) 1`] = `
       Leaf LPAREN "("
       Node TYPEREF
         Leaf IDENT "Object"
-      Node STMTEXPR
-        Leaf SPACES " "
-        Node NAMEREF
-          Leaf IDENT "current"
+      Leaf SPACES " "
+      Node NAMEREF
+        Leaf IDENT "current"
       Leaf RPAREN ")""
 `;
 
@@ -103,15 +101,14 @@ exports[`parse (a < b) ? 1 : 2 1`] = `
     Node EXPRTERNARY
       Node EXPRGROUPING
         Leaf LPAREN "("
-        Node STMTEXPR
-          Node EXPRCOMPARE
-            Node NAMEREF
-              Leaf IDENT "a"
-            Leaf SPACES " "
-            Leaf LESS "<"
-            Leaf SPACES " "
-            Node NAMEREF
-              Leaf IDENT "b"
+        Node EXPRCOMPARE
+          Node NAMEREF
+            Leaf IDENT "a"
+          Leaf SPACES " "
+          Leaf LESS "<"
+          Leaf SPACES " "
+          Node NAMEREF
+            Leaf IDENT "b"
         Leaf RPAREN ")"
       Leaf SPACES " "
       Leaf QMARK "?"
@@ -132,17 +129,16 @@ exports[`parse (int key sk) 1`] = `
       Leaf LPAREN "("
       Node TYPEREF
         Leaf KWINT "int"
-      Node STMTEXPR
+      Leaf SPACES " "
+      Node EXPRCALL
+        Node NAMEREF
+          Leaf IDENT "key"
         Leaf SPACES " "
-        Node EXPRCALL
-          Node NAMEREF
-            Leaf IDENT "key"
-          Leaf SPACES " "
-          Node ARGLIST
-            Node ARG
-              Node STMTEXPR
-                Node NAMEREF
-                  Leaf IDENT "sk"
+        Node ARGLIST
+          Node ARG
+            Node STMTEXPR
+              Node NAMEREF
+                Leaf IDENT "sk"
       Leaf RPAREN ")""
 `;
 
@@ -368,9 +364,8 @@ exports[`parse arr[1] 1`] = `
       Node NAMEREF
         Leaf IDENT "arr"
       Leaf LBRACKET "["
-      Node STMTEXPR
-        Node EXPRLITERAL
-          Leaf INTEGER "1"
+      Node EXPRLITERAL
+        Leaf INTEGER "1"
       Leaf RBRACKET "]""
 `;
 
@@ -1373,9 +1368,8 @@ exports[`parse str[0:] 1`] = `
       Node NAMEREF
         Leaf IDENT "str"
       Leaf LBRACKET "["
-      Node STMTEXPR
-        Node EXPRLITERAL
-          Leaf INTEGER "0"
+      Node EXPRLITERAL
+        Leaf INTEGER "0"
       Leaf COLON ":"
       Leaf RBRACKET "]""
 `;
@@ -1387,13 +1381,11 @@ exports[`parse str[0:2] 1`] = `
       Node NAMEREF
         Leaf IDENT "str"
       Leaf LBRACKET "["
-      Node STMTEXPR
-        Node EXPRLITERAL
-          Leaf INTEGER "0"
+      Node EXPRLITERAL
+        Leaf INTEGER "0"
       Leaf COLON ":"
-      Node STMTEXPR
-        Node EXPRLITERAL
-          Leaf INTEGER "2"
+      Node EXPRLITERAL
+        Leaf INTEGER "2"
       Leaf RBRACKET "]""
 `;
 
