@@ -79,12 +79,14 @@ checkParse("if (a < 2) {b}");
 checkParse("if (true) 1 else 2");
 checkParse("if (true) { a } else b");
 checkParse("if (true) { a + 1 } else { b + 2 }");
+checkParse("if (true)\n\n{} else {}");
 checkParse("if (a) { 1 } else if (b) { 2 }");
 checkParse("if (isDeleted module(modVersion)) {}");
 checkParse("while (a < 2) {}");
 checkParse("while (a) last--");
 checkParse("while (a==2 and b==3) {}");
 checkParse("for (i = 0; i < 4; i++) {}");
+checkParse("for (a<2;a++) {}");
 checkParse("for obj in mod do {}");
 checkParse(`for lnk in obj<-"*" do {}`);
 

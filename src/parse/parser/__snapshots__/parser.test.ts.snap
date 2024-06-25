@@ -446,6 +446,32 @@ exports[`parse foo() "" 1`] = `
         Leaf STRING """""
 `;
 
+exports[`parse for (a<2;a++) {} 1`] = `
+"Node TREEROOT
+  Node STMTFOR
+    Leaf KWFOR "for"
+    Leaf SPACES " "
+    Leaf LPAREN "("
+    Node STMTEXPR
+      Node EXPRCOMPARE
+        Node NAMEREF
+          Leaf IDENT "a"
+        Leaf LESS "<"
+        Node EXPRLITERAL
+          Leaf INTEGER "2"
+    Leaf SEMICOLON ";"
+    Node STMTEXPR
+      Node EXPRPOSTFIX
+        Node NAMEREF
+          Leaf IDENT "a"
+        Leaf PLUSPLUS "++"
+    Leaf RPAREN ")"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
 exports[`parse for (i = 0; i < 4; i++) {} 1`] = `
 "Node TREEROOT
   Node STMTFOR
@@ -685,6 +711,33 @@ exports[`parse if (isDeleted module(modVersion)) {} 1`] = `
                         Leaf IDENT "modVersion"
                   Leaf RPAREN ")"
     Leaf RPAREN ")"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
+exports[`parse if (true)
+
+{} else {} 1`] = `
+"Node TREEROOT
+  Node STMTIF
+    Leaf KWIF "if"
+    Leaf SPACES " "
+    Leaf LPAREN "("
+    Node STMTEXPR
+      Node EXPRLITERAL
+        Leaf KWTRUE "true"
+    Leaf RPAREN ")"
+    Leaf END "
+"
+    Leaf END "
+"
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}"
+    Leaf SPACES " "
+    Leaf KWELSE "else"
     Leaf SPACES " "
     Node STMTBLOCK
       Leaf LCURLY "{"

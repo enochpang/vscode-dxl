@@ -35,7 +35,7 @@ export function parseDeclaration(p: Parser) {
 
 	parseStatement(p);
 
-	if (p.peek().isStmtEnd()) {
+	while (p.peek().isStmtEnd()) {
 		p.bump();
 	}
 }
@@ -198,7 +198,7 @@ function parseStatement(p: Parser) {
 			break;
 	}
 
-	if (p.peek().isStmtEnd()) {
+	while (p.peek().isStmtEnd()) {
 		p.bump();
 	}
 }
@@ -303,7 +303,7 @@ function parseIfStmt(p: Parser) {
 		parseExpression(p); // The condition
 
 		if (p.expect(OTokenKind.Rparen)) {
-			p.consume(OTokenKind.End);
+			while (p.consume(OTokenKind.End)) {}
 
 			if (p.at(OTokenKind.Lcurly)) {
 				parseStatement(p); // The then body
@@ -370,19 +370,19 @@ function parseForStmt(p: Parser) {
 
 		parseExpression(p); // The initializer
 
-		if (p.expect(OTokenKind.Semicolon)) {
+		if (p.consume(OTokenKind.Semicolon)) {
 			parseExpression(p); // The condition
 
-			if (p.expect(OTokenKind.Semicolon)) {
+			if (p.consume(OTokenKind.Semicolon)) {
 				parseExpression(p); // The increment
+			}
+		}
 
-				if (p.expect(OTokenKind.Rparen)) {
-					if (p.at(OTokenKind.Lcurly)) {
-						parseBlockStmt(p);
-					} else {
-						parseStatement(p);
-					}
-				}
+		if (p.expect(OTokenKind.Rparen)) {
+			if (p.at(OTokenKind.Lcurly)) {
+				parseBlockStmt(p);
+			} else {
+				parseStatement(p);
 			}
 		}
 
