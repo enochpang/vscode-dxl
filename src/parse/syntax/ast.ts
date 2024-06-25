@@ -39,8 +39,7 @@ export type Expr =
 	| ExprNameRef
 	| ExprNameRefList
 	| ExprPostfix
-	| ExprRange
-	| ExprSet
+	| ExprPrefix
 	| ExprStringConcat
 	| ExprTernary
 	| ExprWrite;
@@ -707,6 +706,18 @@ export class ExprArrow {
 	rhs(): Expr | undefined {
 		return nthExpr(this.red, 1);
 	}
+
+	op(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
+				case OTokenKind.MinusGreat:
+				case OTokenKind.LessMinus:
+					return child;
+			}
+		}
+
+		return undefined;
+	}
 }
 
 export class ExprAssignment {
@@ -1020,10 +1031,40 @@ export class ExprPostfix {
 	op(): RedToken | undefined {
 		for (const child of this.red.childrenTokens()) {
 			switch (child.getKind()) {
-				case OTokenKind.Bang:
-				case OTokenKind.Minus:
 				case OTokenKind.PlusPlus:
 				case OTokenKind.MinusMinus:
+					return child;
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class ExprPrefix {
+	public readonly tag = "ExprPrefix";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+
+	op(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
+				case OTokenKind.PlusPlus:
+				case OTokenKind.MinusMinus:
+				case OTokenKind.Ampr:
+				case OTokenKind.Plus:
+				case OTokenKind.Minus:
+				case OTokenKind.Tilde:
+				case OTokenKind.Bang:
+				case OTokenKind.KwSizeof:
+				case OTokenKind.KwNull:
 					return child;
 			}
 		}
