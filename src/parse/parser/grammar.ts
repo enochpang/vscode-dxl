@@ -580,7 +580,7 @@ function parseGroupingExpr(p: Parser) {
 		kind = ONodeKind.ExprCast;
 	}
 
-	parseExpression(p);
+	expr_bp(p, 0);
 	p.expect(OTokenKind.Rparen);
 
 	return p.close(m, kind);
@@ -624,11 +624,11 @@ function parseIndexExpr(p: Parser, lhs: MarkClosed): MarkClosed {
 	const m = p.openBefore(lhs);
 
 	p.expect(OTokenKind.Lbracket);
-	parseExpression(p);
+	expr_bp(p, 0);
 
 	if (p.consume(OTokenKind.Colon)) {
 		if (!p.at(OTokenKind.Rbracket)) {
-			parseExpression(p);
+			expr_bp(p, 0);
 		}
 
 		p.expect(OTokenKind.Rbracket);
