@@ -311,15 +311,8 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 				case "ExprPostfix":
 					loop(node.expr());
 					break;
-				case "ExprRange":
-					loop(node.name());
-					loop(node.startIndex());
-					loop(node.endIndex());
-					break;
-				case "ExprSet":
-					loop(node.name());
-					loop(node.property());
-					loop(node.value());
+				case "ExprPrefix":
+					loop(node.expr());
 					break;
 				case "ExprStringConcat":
 					loop(node.lhs());
