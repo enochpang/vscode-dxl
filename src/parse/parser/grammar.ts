@@ -396,6 +396,10 @@ function parseForStmt(p: Parser) {
 			}
 		}
 
+		if (p.consume(OTokenKind.KwBy)) {
+			parseExpression(p);
+		}
+
 		p.expect(OTokenKind.KwDo);
 
 		parseDeclaration(p); // The body
@@ -549,6 +553,9 @@ function expr_bp(p: Parser, min_bp: number) {
 			case OTokenKind.Qmark:
 				lhs = parseTernaryExpr(p, lhs, rbp);
 				break;
+			case OTokenKind.Colon:
+				lhs = parseRangeExpr(p, lhs, rbp);
+				break;
 			case OTokenKind.LessLess:
 			case OTokenKind.GreatGreat:
 				lhs = parseWriteExpr(p, lhs, rbp);
@@ -673,6 +680,18 @@ function parseTernaryExpr(p: Parser, lhs: MarkClosed, bp: number): MarkClosed {
 	return p.close(m, ONodeKind.ExprTernary);
 }
 
+function parseRangeExpr(p: Parser, lhs: MarkClosed, bp: number): MarkClosed {
+	const m = p.openBefore(lhs);
+
+	p.bump();
+
+	if (!p.at(OTokenKind.Rbracket)) {
+		expr_bp(p, bp);
+	}
+
+	return p.close(m, ONodeKind.ExprRange);
+}
+
 function parseInfixExpr(
 	p: Parser,
 	lhs: MarkClosed,
@@ -772,6 +791,7 @@ function infixBindingPower(kind: SyntaxKind): [number, number] {
 		case OTokenKind.GreatGreat:
 			return [3, 2];
 		case OTokenKind.Ident:
+		case OTokenKind.Colon:
 			return [2, 1];
 		default: {
 			return [-1, 0];

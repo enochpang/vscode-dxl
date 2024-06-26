@@ -555,6 +555,66 @@ exports[`parse for obj in mod do {} 1`] = `
       Leaf RCURLY "}""
 `;
 
+exports[`parse for x in 1 : 11 {} 1`] = `
+"Node TREEROOT
+  Node STMTFORIN
+    Leaf KWFOR "for"
+    Leaf SPACES " "
+    Node STMTEXPR
+      Node NAMEREF
+        Leaf IDENT "x"
+      Leaf SPACES " "
+    Leaf KWIN "in"
+    Node STMTEXPR
+      Leaf SPACES " "
+      Node ExprRange
+        Node EXPRLITERAL
+          Leaf INTEGER "1"
+        Leaf SPACES " "
+        Leaf COLON ":"
+        Leaf SPACES " "
+        Node EXPRLITERAL
+          Leaf INTEGER "11"
+        Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
+exports[`parse for x in 1 : 11 by 2 do {} 1`] = `
+"Node TREEROOT
+  Node STMTFORIN
+    Leaf KWFOR "for"
+    Leaf SPACES " "
+    Node STMTEXPR
+      Node NAMEREF
+        Leaf IDENT "x"
+      Leaf SPACES " "
+    Leaf KWIN "in"
+    Node STMTEXPR
+      Leaf SPACES " "
+      Node ExprRange
+        Node EXPRLITERAL
+          Leaf INTEGER "1"
+        Leaf SPACES " "
+        Leaf COLON ":"
+        Leaf SPACES " "
+        Node EXPRLITERAL
+          Leaf INTEGER "11"
+        Leaf SPACES " "
+    Leaf KWBY "by"
+    Node STMTEXPR
+      Leaf SPACES " "
+      Node EXPRLITERAL
+        Leaf INTEGER "2"
+      Leaf SPACES " "
+    Leaf KWDO "do"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
 exports[`parse fun(null) 1`] = `
 "Node TREEROOT
   Node STMTEXPR
@@ -1368,9 +1428,10 @@ exports[`parse str[0:] 1`] = `
       Node NAMEREF
         Leaf IDENT "str"
       Leaf LBRACKET "["
-      Node EXPRLITERAL
-        Leaf INTEGER "0"
-      Leaf COLON ":"
+      Node ExprRange
+        Node EXPRLITERAL
+          Leaf INTEGER "0"
+        Leaf COLON ":"
       Leaf RBRACKET "]""
 `;
 
@@ -1381,11 +1442,12 @@ exports[`parse str[0:2] 1`] = `
       Node NAMEREF
         Leaf IDENT "str"
       Leaf LBRACKET "["
-      Node EXPRLITERAL
-        Leaf INTEGER "0"
-      Leaf COLON ":"
-      Node EXPRLITERAL
-        Leaf INTEGER "2"
+      Node ExprRange
+        Node EXPRLITERAL
+          Leaf INTEGER "0"
+        Leaf COLON ":"
+        Node EXPRLITERAL
+          Leaf INTEGER "2"
       Leaf RBRACKET "]""
 `;
 

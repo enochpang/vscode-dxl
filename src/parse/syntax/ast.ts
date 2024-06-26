@@ -39,6 +39,7 @@ export type Expr =
 	| ExprNameRefList
 	| ExprPostfix
 	| ExprPrefix
+	| ExprRange
 	| ExprStringConcat
 	| ExprTernary
 	| ExprWrite;
@@ -482,6 +483,16 @@ export class StmtForIn {
 	}
 
 	keyword3(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwBy) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
+
+	keyword4(): RedToken | undefined {
 		for (const child of this.red.childrenTokens()) {
 			if (child.getKind() === OTokenKind.KwDo) {
 				return child;
@@ -1076,21 +1087,12 @@ export class ExprRange {
 		this.red = red;
 	}
 
-	name(): ExprNameRef | undefined {
-		const expr = nthExpr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
-		}
-
-		return undefined;
-	}
-
 	startIndex(): Expr | undefined {
-		return nthExpr(this.red, 1);
+		return nthExpr(this.red, 0);
 	}
 
 	endIndex(): Expr | undefined {
-		return nthExpr(this.red, 2);
+		return nthExpr(this.red, 1);
 	}
 }
 
