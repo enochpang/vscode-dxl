@@ -151,6 +151,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					addKeyword(node.keyword1());
 					addKeyword(node.keyword2());
 					addKeyword(node.keyword3());
+					addKeyword(node.keyword4());
 
 					loop(node.item());
 					loop(node.parent());
@@ -313,6 +314,10 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 					break;
 				case "ExprPrefix":
 					loop(node.expr());
+					break;
+				case "ExprRange":
+					loop(node.startIndex());
+					loop(node.endIndex());
 					break;
 				case "ExprStringConcat":
 					loop(node.lhs());

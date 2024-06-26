@@ -89,6 +89,8 @@ checkParse("for (i = 0; i < 4; i++) {}");
 checkParse("for (a<2;a++) {}");
 checkParse("for obj in mod do {}");
 checkParse(`for lnk in obj<-"*" do {}`);
+checkParse("for x in 1 : 11 {}");
+checkParse("for x in 1 : 11 by 2 do {}");
 
 function checkParse(text: string) {
 	test(`parse ${text}`, () => {

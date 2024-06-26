@@ -133,6 +133,7 @@ export const ONodeKind = {
 	ExprLogical: "EXPRLOGICAL",
 	ExprPostfix: "EXPRPOSTFIX",
 	ExprPrefix: "EXPRPREFIX",
+	ExprRange: "ExprRange",
 	ExprStringConcat: "EXPRSTRINGCONCAT",
 	ExprTernary: "EXPRTERNARY",
 	ExprWrite: "EXPRWRITE",
