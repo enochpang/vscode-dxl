@@ -1,11 +1,12 @@
 import type { RedNode, RedToken } from "./red_tree";
-import { type NodeKind, OTokenKind, OTreeKind } from "./syntax_kind";
+import { OTokenKind, ONodeKind } from "./syntax_kind";
 
 export type AstNode = Stmt | Expr;
 
 export type Stmt =
 	| Root
 	| ArgList
+	| Arg
 	| ParamList
 	| Param
 	| TypeAnnotation
@@ -23,7 +24,8 @@ export type Stmt =
 	| StmtWhile;
 
 export type Expr =
-	| ExprAssign
+	| ExprArrow
+	| ExprAssignment
 	| ExprBinary
 	| ExprCall
 	| ExprCast
@@ -35,100 +37,97 @@ export type Expr =
 	| ExprLogical
 	| ExprNameRef
 	| ExprNameRefList
+	| ExprPostfix
+	| ExprPrefix
 	| ExprRange
-	| ExprSet
-	| ExprArrow
 	| ExprStringConcat
 	| ExprTernary
-	| ExprUnary
 	| ExprWrite;
 
 export function cast(red: RedNode): AstNode | undefined {
-	const stmt = cast_stmt(red);
+	const stmt = castStmt(red);
 	if (stmt) {
 		return stmt;
 	} else {
-		return cast_expr(red);
+		return castExpr(red);
 	}
 }
 
-export function cast_stmt(red: RedNode): Stmt | undefined {
-	switch (red.green.kind) {
-		case OTreeKind.TreeRoot:
+export function castStmt(red: RedNode): Stmt | undefined {
+	switch (red.getKind()) {
+		case ONodeKind.TreeRoot:
 			return new Root(red);
-		case OTreeKind.ArgList:
+		case ONodeKind.ArgList:
 			return new ArgList(red);
-		case OTreeKind.ParamList:
+		case ONodeKind.Arg:
+			return new Arg(red);
+		case ONodeKind.ParamList:
 			return new ParamList(red);
-		case OTreeKind.Param:
+		case ONodeKind.Param:
 			return new Param(red);
-		case OTreeKind.TypeAnnotation:
+		case ONodeKind.TypeRef:
 			return new TypeAnnotation(red);
-		case OTreeKind.StmtArrayDecl:
+		case ONodeKind.StmtArrayDecl:
 			return new StmtArrayDecl(red);
-		case OTreeKind.StmtBlock:
+		case ONodeKind.StmtBlock:
 			return new StmtBlock(red);
-		case OTreeKind.StmtExpr:
+		case ONodeKind.StmtExpr:
 			return new StmtExpr(red);
-		case OTreeKind.StmtFor:
+		case ONodeKind.StmtFor:
 			return new StmtFor(red);
-		case OTreeKind.StmtForIn:
+		case ONodeKind.StmtForIn:
 			return new StmtForIn(red);
-		case OTreeKind.StmtFuncDecl:
+		case ONodeKind.StmtFuncDecl:
 			return new StmtFunctionDecl(red);
-		case OTreeKind.StmtIf:
+		case ONodeKind.StmtIf:
 			return new StmtIf(red);
-		case OTreeKind.StmtReturn:
+		case ONodeKind.StmtReturn:
 			return new StmtReturn(red);
-		case OTreeKind.StmtVarDecl:
+		case ONodeKind.StmtVarDecl:
 			return new StmtVariableDecl(red);
-		case OTreeKind.StmtWhile:
+		case ONodeKind.StmtWhile:
 			return new StmtWhile(red);
 		default:
 			return undefined;
 	}
 }
 
-export function cast_expr(red: RedNode): Expr | undefined {
-	switch (red.green.kind) {
-		case OTreeKind.ExprAssign:
-			return new ExprAssign(red);
-		case OTreeKind.ExprBinary:
+export function castExpr(red: RedNode): Expr | undefined {
+	switch (red.getKind()) {
+		case ONodeKind.ExprAssignment:
+			return new ExprAssignment(red);
+		case ONodeKind.ExprBinary:
 			return new ExprBinary(red);
-		case OTreeKind.ExprCall:
+		case ONodeKind.ExprCall:
 			return new ExprCall(red);
-		case OTreeKind.ExprCast:
+		case ONodeKind.ExprCast:
 			return new ExprCast(red);
-		case OTreeKind.ExprCompare:
+		case ONodeKind.ExprCompare:
 			return new ExprCompare(red);
-		case OTreeKind.ExprGet:
+		case ONodeKind.ExprGet:
 			return new ExprGet(red);
-		case OTreeKind.ExprGrouping:
+		case ONodeKind.ExprGrouping:
 			return new ExprGrouping(red);
-		case OTreeKind.ExprIndex:
+		case ONodeKind.ExprIndex:
 			return new ExprIndex(red);
-		case OTreeKind.ExprLiteral:
+		case ONodeKind.ExprLiteral:
 			return new ExprLiteral(red);
-		case OTreeKind.ExprLogical:
+		case ONodeKind.ExprLogical:
 			return new ExprLogical(red);
-		case OTreeKind.ExprRange:
-			return new ExprRange(red);
-		case OTreeKind.ExprSet:
-			return new ExprSet(red);
-		case OTreeKind.ExprArrow:
+		case ONodeKind.ExprArrow:
 			return new ExprArrow(red);
-		case OTreeKind.ExprStringConcat:
+		case ONodeKind.ExprStringConcat:
 			return new ExprStringConcat(red);
-		case OTreeKind.ExprTernary:
+		case ONodeKind.ExprTernary:
 			return new ExprTernary(red);
-		case OTreeKind.ExprUnary:
-			return new ExprUnary(red);
-		case OTreeKind.ExprWrite:
+		case ONodeKind.ExprPostfix:
+			return new ExprPostfix(red);
+		case ONodeKind.ExprWrite:
 			return new ExprWrite(red);
-		case OTreeKind.NameRefList:
+		case ONodeKind.NameRefList:
 			return new ExprNameRefList(red);
-		case OTreeKind.NameRef:
-		case OTreeKind.Null:
+		case ONodeKind.NameRef:
+		case ONodeKind.Null:
 			return new ExprNameRef(red);
 		default:
 			return undefined;
@@ -137,7 +136,7 @@ export function cast_expr(red: RedNode): Expr | undefined {
 
 export class Root {
 	public readonly tag = "Root";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
@@ -146,8 +145,8 @@ export class Root {
 	stmts(): Stmt[] {
 		const items: Stmt[] = [];
 
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
 			if (stmt_cast) {
 				items.push(stmt_cast);
 			}
@@ -157,16 +156,118 @@ export class Root {
 	}
 }
 
+export class ArgList {
+	public readonly tag = "ArgList";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	args(): Stmt[] {
+		const items: Stmt[] = [];
+
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
+			if (stmt_cast && stmt_cast instanceof Arg) {
+				items.push(stmt_cast);
+			}
+		}
+
+		return items;
+	}
+}
+
+export class Arg {
+	public readonly tag = "Arg";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
+		}
+
+		return undefined;
+	}
+}
+
+export class ParamList {
+	public readonly tag = "ParamList";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	params(): Param[] {
+		const items: Param[] = [];
+
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
+			if (stmt_cast && stmt_cast instanceof Param) {
+				items.push(stmt_cast);
+			}
+		}
+
+		return items;
+	}
+}
+
+export class Param {
+	public readonly tag = "Param";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	decl(): Stmt | undefined {
+		for (const child of this.red.childrenNodes()) {
+			if (child.getKind() === ONodeKind.StmtVarDecl) {
+				return new StmtVariableDecl(child);
+			} else if (child.getKind() === ONodeKind.StmtFuncDecl) {
+				return new StmtFunctionDecl(child);
+			} else if (child.getKind() === ONodeKind.StmtArrayDecl) {
+				return new StmtArrayDecl(child);
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class TypeAnnotation {
+	public readonly tag = "TypeAnnotation";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	name(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			return child;
+		}
+
+		return undefined;
+	}
+}
+
 export class StmtArrayDecl {
 	public readonly tag = "StmtArrayDecl";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	typing(): TypeAnnotation | undefined {
-		const stmt = nth_stmt(this.red, 0);
+		const stmt = nthStmt(this.red, 0);
 		if (stmt instanceof TypeAnnotation) {
 			return stmt;
 		}
@@ -175,7 +276,7 @@ export class StmtArrayDecl {
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
+		const expr = nthExpr(this.red, 0);
 		if (expr instanceof ExprNameRef) {
 			return expr;
 		}
@@ -184,7 +285,7 @@ export class StmtArrayDecl {
 	}
 
 	count(): Expr | undefined {
-		const stmt = nth_stmt(this.red, 1);
+		const stmt = nthStmt(this.red, 1);
 		if (stmt && stmt.tag === "StmtExpr") {
 			return stmt.expr();
 		}
@@ -192,12 +293,10 @@ export class StmtArrayDecl {
 		return undefined;
 	}
 
-	args(): ArgList | undefined {
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
-			if (stmt_cast instanceof ArgList) {
-				return stmt_cast;
-			}
+	argList(): ArgList | undefined {
+		const stmt_cast = nthStmt(this.red, 0);
+		if (stmt_cast && stmt_cast instanceof ArgList) {
+			return stmt_cast;
 		}
 
 		return undefined;
@@ -206,7 +305,7 @@ export class StmtArrayDecl {
 
 export class StmtBlock {
 	public readonly tag = "StmtBlock";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
@@ -215,52 +314,14 @@ export class StmtBlock {
 	stmts(): Stmt[] {
 		const items: Stmt[] = [];
 
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
 			if (stmt_cast) {
 				items.push(stmt_cast);
 			}
 		}
 
 		return items;
-	}
-}
-
-export class StmtBreak {
-	public readonly tag = "StmtBreak";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	keyword(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwBreak) {
-				return child;
-			}
-		}
-
-		return undefined;
-	}
-}
-
-export class StmtContinue {
-	public readonly tag = "StmtContinue";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	keyword(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwContinue) {
-				return child;
-			}
-		}
-
-		return undefined;
 	}
 }
 
@@ -273,95 +334,96 @@ export class StmtExpr {
 	}
 
 	expr(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 }
 
-export class StmtFunctionDecl {
-	public readonly tag = "StmtFunctionDecl";
-	public red: RedNode;
+export class StmtBreak {
+	public readonly tag = "StmtBreak";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	typing(): TypeAnnotation | undefined {
-		const stmt = nth_stmt(this.red, 0);
-		if (stmt instanceof TypeAnnotation) {
-			return stmt;
-		}
-
-		return undefined;
-	}
-
-	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
-		}
-
-		return undefined;
-	}
-
-	params(): ParamList | undefined {
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
-			if (stmt_cast && stmt_cast instanceof ParamList) {
-				return stmt_cast;
+	keyword(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwBreak) {
+				return child;
 			}
 		}
 
 		return undefined;
 	}
+}
 
-	body(): Stmt | undefined {
-		return nth_stmt(this.red, 2);
+export class StmtContinue {
+	public readonly tag = "StmtContinue";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	keyword(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwContinue) {
+				return child;
+			}
+		}
+
+		return undefined;
 	}
 }
 
-//FIXME: possible to not have all three parts
 export class StmtFor {
 	public readonly tag = "StmtFor";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	initializer(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr instanceof ExprAssignment) {
+				return expr;
+			}
 		}
 
 		return undefined;
 	}
 
 	condition(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 1);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr instanceof ExprCompare) {
+				return expr;
+			}
 		}
 
 		return undefined;
 	}
 
 	increment(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 2);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 2);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	body(): Stmt | undefined {
-		return nth_stmt(this.red, 3);
+		return nthStmt(this.red, 3);
 	}
 
 	keyword(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwFor) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwFor) {
 				return child;
 			}
 		}
@@ -372,37 +434,37 @@ export class StmtFor {
 
 export class StmtForIn {
 	public readonly tag = "StmtForIn";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	item(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	parent(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 1);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	body(): Stmt | undefined {
-		return nth_stmt(this.red, 2);
+		return nthStmt(this.red, 0);
 	}
 
 	keyword1(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwFor) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwFor) {
 				return child;
 			}
 		}
@@ -411,8 +473,8 @@ export class StmtForIn {
 	}
 
 	keyword2(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwIn) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwIn) {
 				return child;
 			}
 		}
@@ -421,8 +483,18 @@ export class StmtForIn {
 	}
 
 	keyword3(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwDo) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwBy) {
+				return child;
+			}
+		}
+
+		return undefined;
+	}
+
+	keyword4(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwDo) {
 				return child;
 			}
 		}
@@ -431,34 +503,76 @@ export class StmtForIn {
 	}
 }
 
+export class StmtFunctionDecl {
+	public readonly tag = "StmtFunctionDecl";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	typing(): TypeAnnotation | undefined {
+		const stmt = nthStmt(this.red, 0);
+		if (stmt instanceof TypeAnnotation) {
+			return stmt;
+		}
+
+		return undefined;
+	}
+
+	name(): ExprNameRef | undefined {
+		const expr = nthExpr(this.red, 0);
+		if (expr instanceof ExprNameRef) {
+			return expr;
+		}
+
+		return undefined;
+	}
+
+	params(): ParamList | undefined {
+		for (const child of this.red.childrenNodes()) {
+			const stmt_cast = castStmt(child);
+			if (stmt_cast && stmt_cast instanceof ParamList) {
+				return stmt_cast;
+			}
+		}
+
+		return undefined;
+	}
+
+	body(): Stmt | undefined {
+		return nthStmt(this.red, 2);
+	}
+}
+
 export class StmtIf {
 	public readonly tag = "StmtIf";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	condition(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
-	then_branch(): Stmt | undefined {
-		return nth_stmt(this.red, 1);
+	thenBranch(): Stmt | undefined {
+		return nthStmt(this.red, 1);
 	}
 
-	else_branch(): Stmt | undefined {
-		return nth_stmt(this.red, 2);
+	elseBranch(): Stmt | undefined {
+		return nthStmt(this.red, 2);
 	}
 
 	keyword1(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwIf) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwIf) {
 				return child;
 			}
 		}
@@ -467,8 +581,8 @@ export class StmtIf {
 	}
 
 	keyword2(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwElse) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwElse) {
 				return child;
 			}
 		}
@@ -479,24 +593,24 @@ export class StmtIf {
 
 export class StmtReturn {
 	public readonly tag = "StmtReturn";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	expr(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
 	}
 
 	keyword(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwReturn) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwReturn) {
 				return child;
 			}
 		}
@@ -507,14 +621,14 @@ export class StmtReturn {
 
 export class StmtVariableDecl {
 	public readonly tag = "StmtVariableDecl";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	typing(): TypeAnnotation | undefined {
-		const stmt = nth_stmt(this.red, 0);
+		const stmt = nthStmt(this.red, 0);
 		if (stmt instanceof TypeAnnotation) {
 			return stmt;
 		}
@@ -522,17 +636,8 @@ export class StmtVariableDecl {
 		return undefined;
 	}
 
-	value(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 1);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
-		}
-
-		return undefined;
-	}
-
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
+		const expr = nthExpr(this.red, 0);
 		if (expr instanceof ExprNameRef) {
 			return expr;
 		}
@@ -541,9 +646,18 @@ export class StmtVariableDecl {
 	}
 
 	names(): ExprNameRef[] | undefined {
-		const expr_list = nth_expr(this.red, 0);
+		const expr_list = nthExpr(this.red, 0);
 		if (expr_list instanceof ExprNameRefList) {
 			return expr_list.names();
+		}
+
+		return undefined;
+	}
+
+	value(): Expr | undefined {
+		const stmt = nthStmt(this.red, 1);
+		if (stmt && stmt.tag === "StmtExpr") {
+			return stmt.expr();
 		}
 
 		return undefined;
@@ -552,28 +666,31 @@ export class StmtVariableDecl {
 
 export class StmtWhile {
 	public readonly tag = "StmtWhile";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	condition(): Expr | undefined {
-		const stmt_cast = nth_stmt(this.red, 0);
-		if (stmt_cast && stmt_cast instanceof StmtExpr) {
-			return stmt_cast.expr();
+		const stmt = nthStmt(this.red, 0);
+		if (stmt && stmt.tag === "StmtExpr") {
+			const expr = stmt.expr();
+			if (expr && expr instanceof ExprCompare) {
+				return expr;
+			}
 		}
 
 		return undefined;
 	}
 
 	body(): Stmt | undefined {
-		return nth_stmt(this.red, 1);
+		return nthStmt(this.red, 1);
 	}
 
 	keyword(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			if (child.green.token.kind === OTokenKind.KwWhile) {
+		for (const child of this.red.childrenTokens()) {
+			if (child.getKind() === OTokenKind.KwWhile) {
 				return child;
 			}
 		}
@@ -582,16 +699,45 @@ export class StmtWhile {
 	}
 }
 
-export class ExprAssign {
+export class ExprArrow {
+	public readonly tag = "ExprArrow";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	lhs(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+
+	rhs(): Expr | undefined {
+		return nthExpr(this.red, 1);
+	}
+
+	op(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
+				case OTokenKind.MinusGreat:
+				case OTokenKind.LessMinus:
+					return child;
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class ExprAssignment {
 	public readonly tag = "ExprAssign";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
+		const expr = nthExpr(this.red, 0);
 		if (expr instanceof ExprNameRef) {
 			return expr;
 		}
@@ -600,12 +746,12 @@ export class ExprAssign {
 	}
 
 	value(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 
 	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
 				case OTokenKind.Equal:
 				case OTokenKind.PlusEqual:
 				case OTokenKind.MinusEqual:
@@ -619,23 +765,23 @@ export class ExprAssign {
 
 export class ExprBinary {
 	public readonly tag = "ExprBinary";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 
 	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 
 	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
 				case OTokenKind.Plus:
 				case OTokenKind.Minus:
 				case OTokenKind.Star:
@@ -650,27 +796,25 @@ export class ExprBinary {
 
 export class ExprCall {
 	public readonly tag = "ExprCall";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
+		const expr_cast = nthExpr(this.red, 0);
+		if (expr_cast instanceof ExprNameRef) {
+			return expr_cast;
 		}
 
 		return undefined;
 	}
 
-	args(): ArgList | undefined {
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
-			if (stmt_cast instanceof ArgList) {
-				return stmt_cast;
-			}
+	argList(): ArgList | undefined {
+		const stmt_cast = nthStmt(this.red, 0);
+		if (stmt_cast && stmt_cast instanceof ArgList) {
+			return stmt_cast;
 		}
 
 		return undefined;
@@ -679,14 +823,14 @@ export class ExprCall {
 
 export class ExprCast {
 	public readonly tag = "ExprCast";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	typing(): TypeAnnotation | undefined {
-		const stmt = nth_stmt(this.red, 0);
+		const stmt = nthStmt(this.red, 0);
 		if (stmt instanceof TypeAnnotation) {
 			return stmt;
 		}
@@ -695,29 +839,29 @@ export class ExprCast {
 	}
 
 	expr(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 }
 
 export class ExprCompare {
 	public readonly tag = "ExprCompare";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 
 	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 
 	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
 				case OTokenKind.EqualEqual:
 				case OTokenKind.BangEqual:
 				case OTokenKind.Great:
@@ -734,14 +878,14 @@ export class ExprCompare {
 
 export class ExprGet {
 	public readonly tag = "ExprGet";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
+		const expr = nthExpr(this.red, 0);
 		if (expr instanceof ExprNameRef) {
 			return expr;
 		}
@@ -750,33 +894,33 @@ export class ExprGet {
 	}
 
 	property(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 }
 
 export class ExprGrouping {
 	public readonly tag = "ExprGrouping";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	expr(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 }
 
 export class ExprIndex {
 	public readonly tag = "ExprIndex";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
+		const expr = nthExpr(this.red, 0);
 		if (expr instanceof ExprNameRef) {
 			return expr;
 		}
@@ -785,33 +929,21 @@ export class ExprIndex {
 	}
 
 	index(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 }
 
-export class ExprLink {
-	public readonly tag = "ExprLink";
-	public red: RedNode;
+export class ExprLiteral {
+	public readonly tag = "ExprLiteral";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
-	}
-
-	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-
-	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
-				case OTokenKind.MinusGreat:
-				case OTokenKind.LessMinus:
-					return child;
-			}
+	parse(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			return child;
 		}
 
 		return undefined;
@@ -820,23 +952,23 @@ export class ExprLink {
 
 export class ExprLogical {
 	public readonly tag = "ExprLogical";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 
 	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 
 	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
 				case OTokenKind.BarBar:
 				case OTokenKind.AmprAmpr:
 					return child;
@@ -847,123 +979,16 @@ export class ExprLogical {
 	}
 }
 
-export class ExprRange {
-	public readonly tag = "ExprRange";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
-		}
-
-		return undefined;
-	}
-
-	start_index(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-
-	end_index(): Expr | undefined {
-		return nth_expr(this.red, 2);
-	}
-}
-
-export class ExprSet {
-	public readonly tag = "ExprSet";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	name(): ExprNameRef | undefined {
-		const expr = nth_expr(this.red, 0);
-		if (expr instanceof ExprNameRef) {
-			return expr;
-		}
-
-		return undefined;
-	}
-
-	property(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-
-	value(): Expr | undefined {
-		return nth_expr(this.red, 2);
-	}
-}
-
-export class ExprArrow {
-	public readonly tag = "ExprArrow";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
-	}
-
-	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-}
-
-export class ExprStringConcat {
-	public readonly tag = "ExprStringConcat";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
-	}
-
-	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-}
-
-export class ExprTernary {
-	public readonly tag = "ExprTernary";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	condition(): Expr | undefined {
-		return nth_expr(this.red, 0);
-	}
-
-	then_branch(): Expr | undefined {
-		return nth_expr(this.red, 1);
-	}
-
-	else_branch(): Expr | undefined {
-		return nth_expr(this.red, 2);
-	}
-}
-
 export class ExprNameRef {
 	public readonly tag = "ExprNameRef";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	name(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
+		for (const child of this.red.childrenTokens()) {
 			return child;
 		}
 
@@ -973,7 +998,7 @@ export class ExprNameRef {
 
 export class ExprNameRefList {
 	public readonly tag = "ExprNameRefList";
-	public red: RedNode;
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
@@ -982,8 +1007,8 @@ export class ExprNameRefList {
 	names(): ExprNameRef[] | undefined {
 		const name_refs: ExprNameRef[] = [];
 
-		for (const child of this.red.children_nodes()) {
-			const expr = cast_expr(child);
+		for (const child of this.red.childrenNodes()) {
+			const expr = castExpr(child);
 			if (expr instanceof ExprNameRef) {
 				name_refs.push(expr);
 			}
@@ -997,23 +1022,21 @@ export class ExprNameRefList {
 	}
 }
 
-export class ExprUnary {
-	public readonly tag = "ExprUnary";
-	public red: RedNode;
+export class ExprPostfix {
+	public readonly tag = "ExprPostfix";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	expr(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 
 	op(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			switch (child.green.token.kind) {
-				case OTokenKind.Bang:
-				case OTokenKind.Minus:
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
 				case OTokenKind.PlusPlus:
 				case OTokenKind.MinusMinus:
 					return child;
@@ -1024,128 +1047,140 @@ export class ExprUnary {
 	}
 }
 
-export class ExprWrite {
-	public readonly tag = "ExprWrite";
-	public red: RedNode;
+export class ExprPrefix {
+	public readonly tag = "ExprPrefix";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	expr(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+
+	op(): RedToken | undefined {
+		for (const child of this.red.childrenTokens()) {
+			switch (child.getKind()) {
+				case OTokenKind.PlusPlus:
+				case OTokenKind.MinusMinus:
+				case OTokenKind.Ampr:
+				case OTokenKind.Plus:
+				case OTokenKind.Minus:
+				case OTokenKind.Tilde:
+				case OTokenKind.Bang:
+				case OTokenKind.KwSizeof:
+				case OTokenKind.KwNull:
+					return child;
+			}
+		}
+
+		return undefined;
+	}
+}
+
+export class ExprRange {
+	public readonly tag = "ExprRange";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	startIndex(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
+
+	endIndex(): Expr | undefined {
+		return nthExpr(this.red, 1);
+	}
+}
+
+export class ExprSet {
+	public readonly tag = "ExprSet";
+	public readonly red: RedNode;
+
+	constructor(red: RedNode) {
+		this.red = red;
+	}
+
+	name(): ExprNameRef | undefined {
+		const expr = nthExpr(this.red, 0);
+		if (expr instanceof ExprNameRef) {
+			return expr;
+		}
+
+		return undefined;
+	}
+
+	property(): Expr | undefined {
+		return nthExpr(this.red, 1);
+	}
+
+	value(): Expr | undefined {
+		return nthExpr(this.red, 2);
+	}
+}
+
+export class ExprStringConcat {
+	public readonly tag = "ExprStringConcat";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
 	lhs(): Expr | undefined {
-		return nth_expr(this.red, 0);
+		return nthExpr(this.red, 0);
 	}
 
 	rhs(): Expr | undefined {
-		return nth_expr(this.red, 1);
+		return nthExpr(this.red, 1);
 	}
 }
 
-export class ExprLiteral {
-	public readonly tag = "ExprLiteral";
-	public red: RedNode;
+export class ExprTernary {
+	public readonly tag = "ExprTernary";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	parse(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			return child;
-		}
+	condition(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
 
-		return undefined;
+	thenBranch(): Expr | undefined {
+		return nthExpr(this.red, 1);
+	}
+
+	elseBranch(): Expr | undefined {
+		return nthExpr(this.red, 2);
 	}
 }
 
-export class TypeAnnotation {
-	public readonly tag = "TypeAnnotation";
-	public red: RedNode;
+export class ExprWrite {
+	public readonly tag = "ExprWrite";
+	public readonly red: RedNode;
 
 	constructor(red: RedNode) {
 		this.red = red;
 	}
 
-	name(): RedToken | undefined {
-		for (const child of this.red.children_tokens()) {
-			return child;
-		}
+	lhs(): Expr | undefined {
+		return nthExpr(this.red, 0);
+	}
 
-		return undefined;
+	rhs(): Expr | undefined {
+		return nthExpr(this.red, 1);
 	}
 }
 
-export class ArgList {
-	public readonly tag = "ArgList";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	args(): Expr[] {
-		const items: Expr[] = [];
-
-		for (const child of this.red.children_nodes()) {
-			const expr_cast = cast_expr(child);
-			if (expr_cast) {
-				items.push(expr_cast);
-			}
-		}
-
-		return items;
-	}
-}
-
-export class ParamList {
-	public readonly tag = "ParamList";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	params(): Param[] {
-		const items: Param[] = [];
-
-		for (const child of this.red.children_nodes()) {
-			const stmt_cast = cast_stmt(child);
-			if (stmt_cast && stmt_cast instanceof Param) {
-				items.push(stmt_cast);
-			}
-		}
-
-		return items;
-	}
-}
-
-export class Param {
-	public readonly tag = "Param";
-	public red: RedNode;
-
-	constructor(red: RedNode) {
-		this.red = red;
-	}
-
-	decl(): Stmt | undefined {
-		for (const child of this.red.children_nodes()) {
-			if (child.green.kind === OTreeKind.StmtVarDecl) {
-				return new StmtVariableDecl(child);
-			} else if (child.green.kind === OTreeKind.StmtFuncDecl) {
-				return new StmtFunctionDecl(child);
-			} else if (child.green.kind === OTreeKind.StmtArrayDecl) {
-				return new StmtArrayDecl(child);
-			}
-		}
-
-		return undefined;
-	}
-}
-
-function nth_expr(red: RedNode, n: number): Expr | undefined {
+function nthExpr(red: RedNode, n: number): Expr | undefined {
 	let count = 0;
-	for (const child of red.children_nodes()) {
-		const expr_cast = cast_expr(child);
+	for (const child of red.childrenNodes()) {
+		const expr_cast = castExpr(child);
 		if (expr_cast) {
 			if (count === n) return expr_cast;
 			count++;
@@ -1155,10 +1190,10 @@ function nth_expr(red: RedNode, n: number): Expr | undefined {
 	return undefined;
 }
 
-function nth_stmt(red: RedNode, n: number): Stmt | undefined {
+function nthStmt(red: RedNode, n: number): Stmt | undefined {
 	let count = 0;
-	for (const child of red.children_nodes()) {
-		const stmt_cast = cast_stmt(child);
+	for (const child of red.childrenNodes()) {
+		const stmt_cast = castStmt(child);
 		if (stmt_cast) {
 			if (count === n) return stmt_cast;
 			count++;

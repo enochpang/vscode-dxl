@@ -5,28 +5,30 @@ import type { RedNode } from "./parse/syntax/red_tree";
 interface ParsedDocuments {
 	version: number;
 	tree: RedNode;
+	symbols: dxl.DxlSymbol[];
+	tokens: dxl.DxlSemanticToken[];
 }
 
-const diagnosticCollection =
+const diagnostic_collection =
 	vscode.languages.createDiagnosticCollection("parser");
 
-const documentMap = new Map<string, ParsedDocuments>();
+const document_map = new Map<string, ParsedDocuments>();
 
-export function remove_parsedFile(filename: string) {
-	documentMap.delete(filename);
+export function removeParsedFile(filename: string) {
+	document_map.delete(filename);
 }
 
-export function get_parsedFile(
+export function getParsedDocument(
 	document: vscode.TextDocument,
-): RedNode | undefined {
-	const parsed = documentMap.get(document.fileName);
-	if (parsed && parsed.version === document.version) {
-		return parsed.tree;
+): ParsedDocuments | undefined {
+	const parsed_document = document_map.get(document.fileName);
+	if (parsed_document && parsed_document.version === document.version) {
+		return parsed_document;
 	}
 
-	diagnosticCollection.clear();
+	diagnostic_collection.clear();
 
-	const res = dxl.get_red_tree(document.getText());
+	const res = dxl.getRedTree(document.getText());
 	if (res) {
 		const diagnostics: vscode.Diagnostic[] = [];
 		for (let i = 0; i < res.errors.length; i++) {
@@ -34,27 +36,31 @@ export function get_parsedFile(
 
 			const diagnostic = new vscode.Diagnostic(
 				new vscode.Range(
-					new vscode.Position(err.tok.start_loc.line, err.tok.start_loc.col),
-					new vscode.Position(err.tok.end_loc.line, err.tok.end_loc.col),
+					document.positionAt(err.offset),
+					document.positionAt(err.offset),
 				),
-				err.msg,
+				err.message,
 				vscode.DiagnosticSeverity.Error,
 			);
 
 			diagnostics.push(diagnostic);
 		}
 
-		diagnosticCollection.set(document.uri, diagnostics);
+		diagnostic_collection.set(document.uri, diagnostics);
 
 		const red_tree = res.tree;
 		if (red_tree) {
-			documentMap.set(document.fileName, {
+			const symbol_result = dxl.getSymbols(red_tree);
+			const parsed = {
 				version: document.version,
 				tree: red_tree,
-			});
-		}
+				symbols: symbol_result.symbols,
+				tokens: symbol_result.tokens,
+			};
 
-		return red_tree;
+			document_map.set(document.fileName, parsed);
+			return parsed;
+		}
 	}
 
 	return undefined;

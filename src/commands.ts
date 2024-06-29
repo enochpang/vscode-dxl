@@ -1,10 +1,13 @@
 import * as dxl from "./parse/lib";
+import { RedNode } from "./parse/syntax/red_tree";
 
-export function show_cst(text: string) {
-	const lex_items = dxl.tokenize(text);
-	const res = dxl.parse(lex_items);
-	const cst = res.tree;
-	if (cst) {
-		console.log(dxl.pp_cst(cst));
+export function showCst(text: string) {
+	const lex_result = dxl.tokenize(text);
+	const parse_result = dxl.parse(lex_result);
+
+	const green_tree = parse_result.tree;
+	if (green_tree) {
+		const red_tree = new RedNode(green_tree, 0);
+		console.log(dxl.ppRedTree(red_tree));
 	}
 }

@@ -1,105 +1,73 @@
-import {
-	BUILTIN_TYPES,
-	type NodeKind,
-	OTokenKind,
-	type TokenKind,
-} from "./syntax_kind";
+import { BUILTIN_TYPES, OTokenKind, type SyntaxKind } from "./syntax_kind";
 
-/**
- * Represents the green lossless syntax tree
- */
 export type GreenElement = GreenNode | GreenToken;
 
-/**
- * Represents a branch within the green tree
- */
 export class GreenNode {
-	public kind: NodeKind;
-	public children: GreenElement[];
-	private start_offset!: number;
-	private end_offset!: number;
-	private start_loc!: TextPosition;
-	private end_loc!: TextPosition;
+	public readonly kind: SyntaxKind;
+	public readonly children: GreenElement[];
+	private readonly length: number;
 
-	constructor(kind: NodeKind, children: GreenElement[]) {
+	constructor(kind: SyntaxKind, children: GreenElement[]) {
 		this.kind = kind;
 		this.children = children;
+
+		let length = 0;
+		for (const elem of this.children) {
+			length += elem.getLength();
+		}
+		this.length = length;
 	}
 
-	private init() {
-		if (this.children.length === 0) {
-			this.start_offset = 0;
-			this.end_offset = 0;
-			this.start_loc = new TextPosition(0, 0);
-			this.end_loc = new TextPosition(0, 0);
-			return;
-		}
-
-		let first_child = this.children[0];
-		while (first_child instanceof GreenNode) {
-			first_child = first_child.children[0];
-		}
-
-		this.start_loc = first_child.token.start_loc;
-		this.start_offset = first_child.token.offset;
-
-		let last_child = this.children[this.children.length - 1];
-		while (last_child instanceof GreenNode) {
-			last_child = last_child.children[last_child.children.length - 1];
-		}
-
-		this.end_loc = last_child.token.end_loc;
-		this.end_offset = last_child.token.end_offset;
+	getLength(): number {
+		return this.length;
 	}
 
-	public get_start_loc(): TextPosition {
-		if (this.start_loc === undefined) {
-			this.init();
-		}
-
-		return this.start_loc;
-	}
-
-	public get_end_loc(): TextPosition {
-		if (this.end_loc === undefined) {
-			this.init();
-		}
-
-		return this.end_loc;
-	}
-
-	public get_start_offset(): number {
-		if (this.start_offset === undefined) {
-			this.init();
-		}
-
-		return this.start_offset;
-	}
-
-	public get_end_offset(): number {
-		if (this.start_offset === undefined) {
-			this.init();
-		}
-
-		return this.end_offset;
-	}
-
-	public getRange(): TextRange {
-		return new TextRange(this.get_start_loc(), this.get_end_loc());
+	toString() {
+		return `Node ${this.kind}`;
 	}
 }
 
 export class GreenToken {
-	public token: Token;
-	public text: string;
+	public readonly kind: SyntaxKind;
+	public readonly text: string;
 
-	constructor(token: Token, text: string) {
-		this.token = token;
+	constructor(kind: SyntaxKind, text: string) {
+		this.kind = kind;
 		this.text = text;
 	}
 
-	public is_type_specifier(): boolean {
-		switch (this.token.kind) {
+	getLength(): number {
+		return this.text.length;
+	}
+
+	toString() {
+		return `Leaf ${this.kind} "${this.text}"`;
+	}
+
+	isTrivia(): boolean {
+		switch (this.kind) {
+			case OTokenKind.Comment:
+			case OTokenKind.Spaces:
+			case OTokenKind.Tabs:
+			case OTokenKind.Eol:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	isStmtEnd(): boolean {
+		switch (this.kind) {
+			case OTokenKind.Semicolon:
+			case OTokenKind.End:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	isTypeSpecifier(): boolean {
+		switch (this.kind) {
 			case OTokenKind.KwInt:
 			case OTokenKind.KwString:
 			case OTokenKind.KwChar:
@@ -115,164 +83,21 @@ export class GreenToken {
 	}
 }
 
-/**
- * Represents a lex item
- */
-export class Token {
-	public kind: TokenKind;
-	public offset: number;
-	public end_offset: number;
-	public start_loc: TextPosition;
-	public end_loc: TextPosition;
-
-	constructor(
-		kind: TokenKind,
-		offset: number,
-		endOffset: number,
-		startLoc: TextPosition,
-		endLoc: TextPosition,
-	) {
-		this.kind = kind;
-		this.offset = offset;
-		this.end_offset = endOffset;
-		this.start_loc = startLoc;
-		this.end_loc = endLoc;
-	}
-
-	public getRange(): TextRange {
-		return new TextRange(this.start_loc, this.end_loc);
-	}
-
-	public is_trivia(): boolean {
-		switch (this.kind) {
-			case OTokenKind.Comment:
-			case OTokenKind.Spaces:
-			case OTokenKind.Tabs:
-			case OTokenKind.Eol:
-				return true;
-			default:
-				return false;
-		}
-	}
-
-	public is_stmt_end(): boolean {
-		switch (this.kind) {
-			case OTokenKind.Semicolon:
-			case OTokenKind.End:
-			case OTokenKind.Eof:
-				return true;
-			default:
-				return false;
-		}
-	}
-}
-
-/**
- * Represents an ordered pair of two positions
- */
-export class TextRange {
-	public start: TextPosition;
-	public end: TextPosition;
-
-	constructor(start: TextPosition, end: TextPosition) {
-		this.start = start;
-		this.end = end;
-	}
-}
-
-/**
- * Represents a location in the editor
- */
-export class TextPosition {
-	public line: number;
-	public col: number;
-
-	constructor(line: number, col: number) {
-		this.line = line;
-		this.col = col;
-	}
-
-	toString(): string {
-		return `(${this.line}, ${this.col}))`;
-	}
-}
-
-/**
- * Maps a string to a token kind
- */
-export const TOKEN_KEYWORD = new Map<string, TokenKind>([
-	["#include", OTokenKind.KwInclude],
-	["and", OTokenKind.KwAnd],
-	["bool", OTokenKind.KwBool],
-	["break", OTokenKind.KwBreak],
-	["by", OTokenKind.KwBy],
-	["case", OTokenKind.KwCase],
-	["char", OTokenKind.KwChar],
-	["const", OTokenKind.KwConst],
-	["continue", OTokenKind.KwContinue],
-	// ["default", OTokenKind.KwDefault],
-	["do", OTokenKind.KwDo],
-	["else", OTokenKind.KwElse],
-	["enum", OTokenKind.KwEnum],
-	["false", OTokenKind.KwFalse],
-	["for", OTokenKind.KwFor],
-	["if", OTokenKind.KwIf],
-	["in", OTokenKind.KwIn],
-	["int", OTokenKind.KwInt],
-	["module", OTokenKind.KwModule],
-	["null", OTokenKind.KwNull],
-	["object", OTokenKind.KwObject],
-	["or", OTokenKind.KwOr],
-	["pragma", OTokenKind.KwPragma],
-	["real", OTokenKind.KwReal],
-	["return", OTokenKind.KwReturn],
-	// ["sizeof", OTokenKind.KwSizeof],
-	["static", OTokenKind.KwStatic],
-	["string", OTokenKind.KwString],
-	["struct", OTokenKind.KwStruct],
-	["switch", OTokenKind.KwSwitch],
-	["then", OTokenKind.KwThen],
-	["true", OTokenKind.KwTrue],
-	["union", OTokenKind.KwUnion],
-	["void", OTokenKind.KwVoid],
-	["while", OTokenKind.KwWhile],
-]);
-
-export function pp_green_element(elem: GreenElement): string {
-	if (elem instanceof GreenToken) {
-		const token = elem.token;
-		const kind = token.kind;
-		const offset = token.offset;
-		const end_offset = token.end_offset;
-		const text = elem.text;
-		return `Leaf ${kind}@${offset}..${end_offset} "${text}"`;
-	} else {
-		const kind = elem.kind;
-		const offset = elem.get_start_offset();
-		const end_offset = elem.get_end_offset();
-		return `Node ${kind}@${offset}..${end_offset}`;
-	}
-}
-
-/**
- * Returns the tree as a formatted string
- */
-export function pp_cst(tree: GreenNode): string {
-	function pp_cst_inner(n: number, tree: GreenElement): string {
-		const newline = `\n${" ".repeat(2 * n)}`;
-
-		if (tree instanceof GreenToken) {
-			return pp_green_element(tree);
+export function ppGreenTree(node: GreenNode): string {
+	function loop(n: number, green: GreenElement): string {
+		if (green instanceof GreenToken) {
+			return green.toString();
 		} else {
-			const res = [pp_green_element(tree)];
+			let res = green.toString();
 
-			for (const item of tree.children) {
-				res.push(newline, pp_cst_inner(n + 1, item));
+			for (const child of green.children) {
+				res += `\n${" ".repeat(2 * n)}`;
+				res += loop(n + 1, child);
 			}
 
-			return res.join("");
+			return res;
 		}
 	}
 
-	return pp_cst_inner(1, tree);
+	return loop(1, node);
 }

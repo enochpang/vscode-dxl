@@ -1,141 +1,95 @@
-import { strict as assert } from "node:assert";
+import assert from "node:assert/strict";
 
-import { GreenNode } from "../syntax/green_tree";
-import { OTokenKind, type NodeKind } from "../syntax/syntax_kind";
-import type { GreenToken } from "../syntax/green_tree";
-import { type ParseError, Parser } from "./parser";
-
-export type ParseResult<T> = {
-	tree: T | undefined;
-	errors: ParseError[];
-};
-
-export function parse(lex_items: GreenToken[]): ParseResult<GreenNode> {
-	const parser = new Parser(lex_items);
-	const events = parser.parse();
-	const tree = process_events(lex_items, events);
-
-	return {
-		tree: tree,
-		errors: parser.get_errors(),
-	};
-}
+import type { GreenNode } from "../syntax/green_tree";
+import type { NodeKind } from "../syntax/syntax_kind";
+import { GreenBuilder } from "../syntax/green_builder";
+import type { LexResult } from "../lexer/lexer";
+import type { ParseError } from "./lib";
 
 export type OpenEvent = {
-	event_kind: "START_NODE";
+	tag: "START_NODE";
 	kind: NodeKind;
-	forward_parent: number;
 };
 
 export type CloseEvent = {
-	event_kind: "FINISH_NODE";
+	tag: "FINISH_NODE";
 };
 
 export type AdvanceEvent = {
-	event_kind: "ADD_TOKEN";
+	tag: "ADD_TOKEN";
 };
 
 export type SkipEvent = {
-	event_kind: "SKIP";
+	tag: "SKIP_TOKEN";
+};
+
+export type ErrorEvent = {
+	tag: "ERROR";
+	message: string;
 };
 
 export type PlaceholderEvent = {
-	event_kind: "PLACEHOLDER";
+	tag: "PLACEHOLDER";
 };
 
 export type ParseEvent =
 	| OpenEvent
 	| CloseEvent
 	| AdvanceEvent
+	| PlaceholderEvent
 	| SkipEvent
-	| PlaceholderEvent;
+	| ErrorEvent;
 
-export type EventKind = ParseEvent["event_kind"];
+export type EventKind = ParseEvent["tag"];
 
-export function process_events(
-	lex_items: GreenToken[],
+export function buildTree(
+	lex_result: LexResult,
 	events: ParseEvent[],
-): GreenNode | undefined {
-	const builder: GreenNode[] = [];
-	const forward_kinds: string[] = [];
-	let pos = 0;
+): [GreenNode, ParseError[]] {
+	const tokens = lex_result.tokens;
+	const builder: GreenBuilder = new GreenBuilder();
+	const errors: ParseError[] = [];
+	let offset = 0;
+	let cur = 0;
 
-	// Remove the last close event event so builder has one item after iterating through the events
-	const last_item = events.pop();
-	assert.notEqual(last_item, undefined);
-	assert.equal(last_item?.event_kind, "FINISH_NODE");
+	// Remove the last close event event so the stack has one item after iterating through the events.
+	const last_event = events.pop();
+	assert.notEqual(last_event, undefined);
+	assert.equal(last_event?.tag, "FINISH_NODE");
 
 	for (let i = 0; i < events.length; i++) {
 		const event = events[i];
 
-		switch (event.event_kind) {
-			case "START_NODE": {
-				forward_kinds.push(event.kind);
-
-				let idx = i;
-				let fp = event.forward_parent;
-
-				while (fp !== -1) {
-					idx += fp;
-
-					const forward_event = events[idx];
-					events[idx] = {
-						event_kind: "PLACEHOLDER",
-					};
-
-					if (forward_event.event_kind === "START_NODE") {
-						forward_kinds.push(forward_event.kind);
-						fp = forward_event.forward_parent;
-					} else {
-						assert.fail("Unreachable");
-					}
-				}
-
-				const count = forward_kinds.length;
-				for (let j = 0; j < count; j++) {
-					const kind = forward_kinds.pop();
-					if (kind !== undefined && kind !== "PLACEHOLDER") {
-						builder.push(new GreenNode(kind, []));
-					}
-				}
-
+		switch (event.tag) {
+			case "START_NODE":
+				builder.startNode(event.kind);
 				break;
-			}
 			case "FINISH_NODE": {
-				const tree = builder.pop();
-				if (tree !== undefined) {
-					const parent_node = builder[builder.length - 1];
-					parent_node.children.push(tree);
-				}
+				builder.finishNode();
 				break;
 			}
 			case "ADD_TOKEN": {
-				const lex_item = lex_items[pos];
-				builder[builder.length - 1].children.push(lex_item);
-				pos += 1;
+				const token = tokens[cur];
+				builder.addToken(token.kind, token.text);
+				offset += token.getLength();
+				cur += 1;
 				break;
 			}
-			case "SKIP":
-				pos += 1;
-				break;
-			case "PLACEHOLDER":
-				break;
-			default:
-				break;
-		}
-
-		// Consume trivia tokens
-		while (pos < lex_items.length) {
-			const item = lex_items[pos];
-			if (!item.token.is_trivia() && item.token.kind !== OTokenKind.End) {
+			case "SKIP_TOKEN": {
+				const token = tokens[cur];
+				offset += token.getLength();
+				cur += 1;
 				break;
 			}
-
-			pos += 1;
+			case "ERROR": {
+				errors.push({
+					offset: offset,
+					message: event.message,
+				});
+				break;
+			}
 		}
 	}
 
-	assert.equal(builder.length, 1);
-
-	return builder.pop();
+	return [builder.getTree() as GreenNode, errors];
 }

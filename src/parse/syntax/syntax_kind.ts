@@ -1,5 +1,9 @@
 export type SyntaxKind = TokenKind | NodeKind;
 
+export type TokenKind = (typeof OTokenKind)[keyof typeof OTokenKind];
+
+export type NodeKind = (typeof ONodeKind)[keyof typeof ONodeKind];
+
 export const OTokenKind = {
 	Lparen: "LPAREN",
 	Rparen: "RPAREN",
@@ -63,7 +67,7 @@ export const OTokenKind = {
 	KwChar: "KWCHAR",
 	KwConst: "KWCONST",
 	KwContinue: "KWCONTINUE",
-	// KwDefault: "KWDEFAULT",
+	KwDefault: "KWDEFAULT",
 	KwDo: "KWDO",
 	KwElse: "KWELSE",
 	KwEnum: "KWENUM",
@@ -80,7 +84,7 @@ export const OTokenKind = {
 	KwPragma: "KWPRAGMA",
 	KwReal: "KWREAL",
 	KwReturn: "KWRETURN",
-	// KwSizeof: "KWSIZEOF",
+	KwSizeof: "KWSIZEOF",
 	KwStatic: "KWSTATIC",
 	KwString: "KWSTRING",
 	KwStruct: "KWSTRUCT",
@@ -104,16 +108,35 @@ export const OTokenKind = {
 	LexError: "LEXERROR",
 } as const;
 
-/**
- * Represents the type of lex item
- */
-export type TokenKind = (typeof OTokenKind)[keyof typeof OTokenKind];
-
-export const OTreeKind = {
+export const ONodeKind = {
 	TreeRoot: "TREEROOT",
-	DxlPragma: "DXLPRAGMA",
-	DxlInclude: "DXLINCLUDE",
+	ArgList: "ARGLIST",
+	Arg: "ARG",
+	Null: "NULL",
+	NameRefList: "NAMEREFLIST",
+	NameRef: "NAMEREF",
+	TypeRef: "TYPEREF",
+	ParamList: "PARAMLIST",
+	Param: "PARAM",
 
+	ExprArrow: "EXPRARROW",
+	ExprAssignment: "EXPRASSIGNMENT",
+	ExprBinary: "EXPRBINARY",
+	ExprCall: "EXPRCALL",
+	ExprCast: "EXPRCAST",
+	ExprCompare: "EXPRCOMPARE",
+	ExprEquality: "EXPREQUALITY",
+	ExprGet: "EXPRGET",
+	ExprGrouping: "EXPRGROUPING",
+	ExprIndex: "EXPRINDEX",
+	ExprLiteral: "EXPRLITERAL",
+	ExprLogical: "EXPRLOGICAL",
+	ExprPostfix: "EXPRPOSTFIX",
+	ExprPrefix: "EXPRPREFIX",
+	ExprRange: "ExprRange",
+	ExprStringConcat: "EXPRSTRINGCONCAT",
+	ExprTernary: "EXPRTERNARY",
+	ExprWrite: "EXPRWRITE",
 	StmtArrayDecl: "STMTARRAYDECL",
 	StmtBlock: "STMTBLOCK",
 	StmtBreak: "STMTBREAK",
@@ -123,43 +146,58 @@ export const OTreeKind = {
 	StmtForIn: "STMTFORIN",
 	StmtFuncDecl: "STMTFUNCDECL",
 	StmtIf: "STMTIF",
-	StmtReturn: "STMTJUMP",
+	StmtInclude: "STMTINCLUDE",
+	StmtPragma: "STMTPRAGMA",
+	StmtReturn: "STMTRETURN",
 	StmtVarDecl: "STMTVARDECL",
 	StmtWhile: "STMTWHILE",
-	ExprAssign: "EXPRASSIGN",
-	ExprBinary: "EXPRBINARY",
-	ExprCall: "EXPRCALL",
-	ExprCast: "EXPRCAST",
-	ExprCompare: "EXPRCOMPARE",
-	ExprGet: "EXPRGET",
-	ExprGrouping: "EXPRGROUPING",
-	ExprIndex: "EXPRINDEX",
-	ExprLiteral: "EXPRLITERAL",
-	ExprLogical: "EXPRLOGICAL",
-	ExprRange: "EXPRRANGE",
-	ExprSet: "EXPRSET",
-	ExprArrow: "EXPRARROW",
-	ExprStringConcat: "EXPRSTRINGCONCAT",
-	ExprTernary: "EXPRTERNARY",
-	ExprUnary: "EXPRUNARY",
-	ExprWrite: "EXPRWRITE",
 
-	Null: "NULL",
-	ParamList: "PARAMLIST",
-	Param: "PARAM",
-	ArgList: "ARGLIST",
-	TypeAnnotation: "TYPEANNOTATION",
-	NameRef: "NAMEREF",
-	NameRefList: "NAMEREFLIST",
-	ErrorNode: "ERRORNODE",
 	WarningNode: "WARNINGNODE",
+	ErrorNode: "ERRORNODE",
+	ParseError: "PARSEERROR",
 };
 
-/**
- * Represents the type of syntax tree item
- */
-export type NodeKind = (typeof OTreeKind)[keyof typeof OTreeKind];
+export const TOKEN_KEYWORDS = new Map<string, TokenKind>([
+	["#include", OTokenKind.KwInclude],
+	["and", OTokenKind.KwAnd],
+	["bool", OTokenKind.KwBool],
+	["break", OTokenKind.KwBreak],
+	["by", OTokenKind.KwBy],
+	["case", OTokenKind.KwCase],
+	["char", OTokenKind.KwChar],
+	["const", OTokenKind.KwConst],
+	["continue", OTokenKind.KwContinue],
+	["default", OTokenKind.KwDefault],
+	["do", OTokenKind.KwDo],
+	["else", OTokenKind.KwElse],
+	["enum", OTokenKind.KwEnum],
+	["false", OTokenKind.KwFalse],
+	["for", OTokenKind.KwFor],
+	["if", OTokenKind.KwIf],
+	["in", OTokenKind.KwIn],
+	["int", OTokenKind.KwInt],
+	["module", OTokenKind.KwModule],
+	["null", OTokenKind.KwNull],
+	["object", OTokenKind.KwObject],
+	["or", OTokenKind.KwOr],
+	["pragma", OTokenKind.KwPragma],
+	["real", OTokenKind.KwReal],
+	["return", OTokenKind.KwReturn],
+	["sizeof", OTokenKind.KwSizeof],
+	["static", OTokenKind.KwStatic],
+	["string", OTokenKind.KwString],
+	["struct", OTokenKind.KwStruct],
+	["switch", OTokenKind.KwSwitch],
+	["then", OTokenKind.KwThen],
+	["true", OTokenKind.KwTrue],
+	["union", OTokenKind.KwUnion],
+	["void", OTokenKind.KwVoid],
+	["while", OTokenKind.KwWhile],
+]);
 
+/**
+ * Set of built in types.
+ */
 export const BUILTIN_TYPES = new Set<string>([
 	"_*",
 	"_a",

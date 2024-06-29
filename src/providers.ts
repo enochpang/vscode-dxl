@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as dxl from "./parse/lib";
-import { get_parsedFile } from "./utils";
+import { getParsedDocument } from "./utils";
 import { OSemanticKind } from "./parse/lib";
 
 export const token_legend = new vscode.SemanticTokensLegend(
@@ -18,32 +18,21 @@ export class DxlDocumentSymbolProvider {
 		return new Promise((resolve, _reject) => {
 			const res: vscode.DocumentSymbol[] = [];
 
-			const tree = get_parsedFile(document);
-			if (tree) {
-				const items = dxl.getSymbols(tree).symbols;
-
-				for (const item of items) {
+			const parsed = getParsedDocument(document);
+			if (parsed) {
+				for (const item of parsed.symbols) {
 					res.push(
 						new vscode.DocumentSymbol(
 							item.name,
 							"",
 							vscode.SymbolKind.Function,
 							new vscode.Range(
-								new vscode.Position(
-									item.range.start.line,
-									item.range.start.col,
-								),
-								new vscode.Position(item.range.end.line, item.range.end.col),
+								document.positionAt(item.range.start),
+								document.positionAt(item.range.end),
 							),
 							new vscode.Range(
-								new vscode.Position(
-									item.selectionRange.start.line,
-									item.selectionRange.start.col,
-								),
-								new vscode.Position(
-									item.selectionRange.end.line,
-									item.selectionRange.end.col,
-								),
+								document.positionAt(item.selectionRange.start),
+								document.positionAt(item.selectionRange.end),
 							),
 						),
 					);
@@ -65,19 +54,36 @@ export class DxlSemanticTokensProvider
 	): vscode.ProviderResult<vscode.SemanticTokens> {
 		const tokensBuilder = new vscode.SemanticTokensBuilder(token_legend);
 
-		const tree = get_parsedFile(document);
-		if (tree) {
-			const items = dxl.getSymbols(tree);
-
-			for (const item of items.tokens) {
-				tokensBuilder.push(
-					new vscode.Range(
-						new vscode.Position(item.range.start.line, item.range.start.col),
-						new vscode.Position(item.range.end.line, item.range.end.col),
-					),
-					item.kind,
-					item.modifiers,
+		const parsed = getParsedDocument(document);
+		if (parsed) {
+			for (const item of parsed.tokens) {
+				const range = new vscode.Range(
+					document.positionAt(item.range.start),
+					document.positionAt(item.range.end),
 				);
+
+				// Semantic tokens can only span a single line.
+				if (range.start.line !== range.end.line) {
+					let new_start_offset = item.range.start;
+
+					const text = document.getText(range);
+					const lines = text.split("\n");
+					for (const line of lines) {
+						const line_length = line.length;
+						const new_end_offset = new_start_offset + line_length;
+
+						const new_range = new vscode.Range(
+							document.positionAt(new_start_offset),
+							document.positionAt(new_end_offset),
+						);
+
+						tokensBuilder.push(new_range, item.kind, item.modifiers);
+
+						new_start_offset = new_end_offset + 1;
+					}
+				} else {
+					tokensBuilder.push(range, item.kind, item.modifiers);
+				}
 			}
 		}
 
@@ -89,27 +95,25 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 	provideRenameEdits(
 		document: vscode.TextDocument,
 		position: vscode.Position,
-		newName: string,
+		new_name: string,
 		_token: vscode.CancellationToken,
 	): vscode.ProviderResult<vscode.WorkspaceEdit> {
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const references = dxl.find.find_references(tree, offset);
+			const references = dxl.find.findReferences(parsed.tree, offset);
 			if (references) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
 				for (const reference of references) {
-					const token = reference.green.token;
-					const start = token.start_loc;
-					const end = token.end_loc;
+					const range = reference.getOffsetRange();
 
 					workspaceEdit.replace(
 						document.uri,
 						new vscode.Range(
-							new vscode.Position(start.line, start.col),
-							new vscode.Position(end.line, end.col),
+							document.positionAt(range.start),
+							document.positionAt(range.end),
 						),
-						newName,
+						new_name,
 					);
 				}
 
@@ -127,19 +131,18 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 		position: vscode.Position,
 		_token: vscode.CancellationToken,
 	): vscode.ProviderResult<vscode.Definition | vscode.LocationLink[]> {
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const result = dxl.find.find_definition(tree, offset);
+			const result = dxl.find.findDefinition(parsed.tree, offset);
 			if (result) {
-				const token = result.green.token;
-				const start = token.start_loc;
-				const end = token.end_loc;
+				const range = result.getOffsetRange();
+
 				const location = new vscode.Location(
 					document.uri,
 					new vscode.Range(
-						new vscode.Position(start.line, start.col),
-						new vscode.Position(end.line, end.col),
+						document.positionAt(range.start),
+						document.positionAt(range.end),
 					),
 				);
 
@@ -160,20 +163,19 @@ export class DxlReferenceProvider implements vscode.ReferenceProvider {
 	): vscode.ProviderResult<vscode.Location[]> {
 		const locations: vscode.Location[] = [];
 
-		const tree = get_parsedFile(document);
-		if (tree) {
+		const parsed = getParsedDocument(document);
+		if (parsed) {
 			const offset = document.offsetAt(position);
-			const results = dxl.find.find_references(tree, offset);
+			const results = dxl.find.findReferences(parsed.tree, offset);
 			if (results) {
 				for (const result of results) {
-					const token = result.green.token;
-					const start = token.start_loc;
-					const end = token.end_loc;
+					const range = result.getOffsetRange();
+
 					const location = new vscode.Location(
 						document.uri,
 						new vscode.Range(
-							new vscode.Position(start.line, start.col),
-							new vscode.Position(end.line, end.col),
+							document.positionAt(range.start),
+							document.positionAt(range.end),
 						),
 					);
 

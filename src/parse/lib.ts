@@ -1,9 +1,8 @@
 import * as ast from "./syntax/ast";
 import { tokenize } from "./lexer/lexer";
-import { type ParseResult, parse } from "./parser/events";
-import { RedNode, type RedToken } from "./syntax/red_tree";
-import type { TextRange } from "./syntax/green_tree";
+import { RedNode, type RedToken, type OffsetRange } from "./syntax/red_tree";
 import { OTokenKind } from "./syntax/syntax_kind";
+import { type ParseResult, parse } from "./parser/lib";
 
 export const OSemanticKind = {
 	Function: "function",
@@ -12,6 +11,7 @@ export const OSemanticKind = {
 	Number: "number",
 	Keyword: "keyword",
 	Type: "type",
+	Comment: "comment",
 };
 
 /**
@@ -20,6 +20,7 @@ export const OSemanticKind = {
 export type SemanticKind = (typeof OSemanticKind)[keyof typeof OSemanticKind];
 
 export const OSemanticModifierKind = {
+	Readonly: "readonly",
 	Default: "defaultLibrary",
 };
 
@@ -32,7 +33,7 @@ export type SemanticModifierKind =
 export type DxlSemanticToken = {
 	kind: SemanticKind;
 	modifiers: SemanticModifierKind[];
-	range: TextRange;
+	range: OffsetRange;
 };
 
 export const OSymbolKind = {
@@ -46,8 +47,8 @@ export type SymbolKind = (typeof OSymbolKind)[keyof typeof OSymbolKind];
 
 export type DxlSymbol = {
 	kind: SymbolKind;
-	range: TextRange;
-	selectionRange: TextRange;
+	range: OffsetRange;
+	selectionRange: OffsetRange;
 	name: string;
 };
 
@@ -65,391 +66,278 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 			tokens.push({
 				kind: OSemanticKind.Keyword,
 				modifiers: [],
-				range: keyword.green.token.getRange(),
+				range: keyword.getOffsetRange(),
 			});
 		}
 	}
 
-	function loop(ast_node: ast.AstNode | undefined) {
-		if (!ast_node) {
+	function loop(node: ast.AstNode | undefined) {
+		if (!node) {
 			return;
 		}
 
-		switch (ast_node.tag) {
-			case "Root": {
-				const stmts = ast_node.stmts();
-				for (const stmt of stmts) {
-					loop(stmt);
-				}
-				break;
+		for (const red of node.red.children()) {
+			if (red.getKind() === OTokenKind.Comment) {
+				tokens.push({
+					kind: OSemanticKind.Comment,
+					modifiers: [],
+					range: red.getOffsetRange(),
+				});
 			}
-			case "Param": {
-				loop(ast_node.decl());
-				break;
-			}
-			case "ParamList": {
-				const params = ast_node.params();
-				for (const param of params) {
-					loop(param);
-				}
+		}
 
-				break;
-			}
-			case "TypeAnnotation": {
-				const type_name = ast_node.name();
-				if (type_name) {
-					tokens.push({
-						kind: OSemanticKind.Type,
-						modifiers: [],
-						range: type_name.green.token.getRange(),
-					});
+		if (node) {
+			switch (node.tag) {
+				case "Root":
+					for (const child of node.stmts()) {
+						loop(child);
+					}
+					break;
+				case "ArgList":
+					for (const child of node.args()) {
+						loop(child);
+					}
+					break;
+				case "Arg":
+					loop(node.expr());
+					break;
+				case "ParamList":
+					for (const child of node.params()) {
+						loop(child);
+					}
+					break;
+				case "Param":
+					loop(node.decl());
+					break;
+				case "TypeAnnotation": {
+					const type_name = node.name();
+					if (type_name) {
+						tokens.push({
+							kind: OSemanticKind.Type,
+							modifiers: [],
+							range: type_name.getOffsetRange(),
+						});
+					}
+					break;
 				}
+				case "StmtArrayDecl":
+					loop(node.typing());
+					loop(node.name());
+					loop(node.count());
+					loop(node.argList());
+					break;
+				case "StmtBlock":
+					for (const child of node.stmts()) {
+						loop(child);
+					}
+					break;
+				case "StmtBreak":
+					addKeyword(node.keyword());
+					break;
+				case "StmtContinue":
+					break;
+				case "StmtExpr":
+					loop(node.expr());
+					break;
+				case "StmtFor":
+					addKeyword(node.keyword());
 
-				break;
-			}
-			case "StmtArrayDecl": {
-				loop(ast_node.typing());
+					loop(node.initializer());
+					loop(node.condition());
+					loop(node.increment());
+					loop(node.body());
+					break;
+				case "StmtForIn":
+					addKeyword(node.keyword1());
+					addKeyword(node.keyword2());
+					addKeyword(node.keyword3());
+					addKeyword(node.keyword4());
 
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
+					loop(node.item());
+					loop(node.parent());
+					loop(node.body());
+					break;
+				case "StmtFunctionDecl": {
+					const name_ref = node.name();
+					if (name_ref) {
+						const name = name_ref.name();
+						if (name) {
+							symbols.push({
+								kind: OSymbolKind.Function,
+								range: node.red.getOffsetRange(),
+								selectionRange: name.getOffsetRange(),
+								name: name.getText(),
+							});
+
+							tokens.push({
+								kind: OSemanticKind.Function,
+								modifiers: [],
+								range: name.getOffsetRange(),
+							});
+						}
+					}
+
+					loop(node.typing());
+					loop(node.params());
+					loop(node.body());
+					break;
+				}
+				case "StmtIf":
+					addKeyword(node.keyword1());
+					addKeyword(node.keyword2());
+
+					loop(node.condition());
+					loop(node.thenBranch());
+					loop(node.elseBranch());
+					break;
+				case "StmtReturn":
+					addKeyword(node.keyword());
+
+					loop(node.expr());
+					break;
+				case "StmtVariableDecl": {
+					loop(node.typing());
+					loop(node.name());
+					loop(node.value());
+
+					const names = node.names();
+					if (names) {
+						for (const child of names) {
+							loop(child);
+						}
+					}
+					break;
+				}
+				case "StmtWhile":
+					addKeyword(node.keyword());
+
+					loop(node.condition());
+					loop(node.body());
+					break;
+				case "ExprArrow":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
+				case "ExprAssign":
+					loop(node.name());
+					loop(node.value());
+					break;
+				case "ExprBinary":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
+				case "ExprCall": {
+					const name_ref = node.name();
+					if (name_ref) {
+						const name = name_ref.name();
+						if (name) {
+							tokens.push({
+								kind: OSemanticKind.Function,
+								modifiers: [],
+								range: name.getOffsetRange(),
+							});
+						}
+					}
+
+					loop(node.argList());
+					break;
+				}
+				case "ExprCast":
+					loop(node.typing());
+					loop(node.expr());
+					break;
+				case "ExprCompare":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
+				case "ExprGet":
+					loop(node.name());
+					loop(node.property());
+					break;
+				case "ExprGrouping":
+					loop(node.expr());
+					break;
+				case "ExprIndex":
+					loop(node.name());
+					loop(node.index());
+					break;
+				case "ExprLiteral": {
+					const value = node.parse();
+					if (value) {
+						let kind: SemanticKind | undefined;
+						switch (value.getKind()) {
+							case OTokenKind.String:
+								kind = OSemanticKind.String;
+								break;
+							case OTokenKind.Integer:
+							case OTokenKind.Real:
+								kind = OSemanticKind.Number;
+								break;
+						}
+
+						if (kind) {
+							tokens.push({
+								kind: kind,
+								modifiers: [],
+								range: value.getOffsetRange(),
+							});
+						}
+					}
+					break;
+				}
+				case "ExprLogical":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
+				case "ExprNameRef": {
+					const name = node.name();
 					if (name) {
 						tokens.push({
 							kind: OSemanticKind.Variable,
 							modifiers: [],
-							range: name.green.token.getRange(),
+							range: name.getOffsetRange(),
 						});
 					}
+					break;
 				}
-
-				loop(ast_node.count());
-
-				const arglist = ast_node.args();
-				if (arglist) {
-					for (const arg of arglist.args()) {
-						loop(arg);
+				case "ExprNameRefList": {
+					const names = node.names();
+					if (names) {
+						for (const child of names) {
+							loop(child);
+						}
 					}
+					break;
 				}
-
-				break;
+				case "ExprPostfix":
+					loop(node.expr());
+					break;
+				case "ExprPrefix":
+					loop(node.expr());
+					break;
+				case "ExprRange":
+					loop(node.startIndex());
+					loop(node.endIndex());
+					break;
+				case "ExprStringConcat":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
+				case "ExprTernary":
+					loop(node.condition());
+					loop(node.thenBranch());
+					loop(node.elseBranch());
+					break;
+				case "ExprWrite":
+					loop(node.lhs());
+					loop(node.rhs());
+					break;
 			}
-			case "StmtBlock": {
-				for (const stmt of ast_node.stmts()) {
-					loop(stmt);
-				}
-				break;
-			}
-			case "StmtExpr": {
-				loop(ast_node.expr());
-				break;
-			}
-			case "StmtFor": {
-				addKeyword(ast_node.keyword());
-
-				loop(ast_node.initializer());
-				loop(ast_node.condition());
-				loop(ast_node.increment());
-				loop(ast_node.body());
-				break;
-			}
-			case "StmtForIn": {
-				addKeyword(ast_node.keyword1());
-				addKeyword(ast_node.keyword2());
-				addKeyword(ast_node.keyword3());
-
-				loop(ast_node.item());
-				loop(ast_node.parent());
-				loop(ast_node.body());
-				break;
-			}
-			case "StmtFunctionDecl": {
-				loop(ast_node.typing());
-
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						symbols.push({
-							kind: OSymbolKind.Function,
-							range: ast_node.red.green.getRange(),
-							selectionRange: name.green.token.getRange(),
-							name: name.green.text,
-						});
-
-						tokens.push({
-							kind: OSemanticKind.Function,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.params());
-				loop(ast_node.body());
-
-				break;
-			}
-			case "StmtIf": {
-				addKeyword(ast_node.keyword1());
-				addKeyword(ast_node.keyword2());
-
-				loop(ast_node.condition());
-				loop(ast_node.then_branch());
-				loop(ast_node.else_branch());
-				break;
-			}
-			case "StmtReturn": {
-				addKeyword(ast_node.keyword());
-
-				loop(ast_node.expr());
-				break;
-			}
-			case "StmtVariableDecl": {
-				loop(ast_node.typing());
-
-				const nameRefs = ast_node.names();
-				if (nameRefs) {
-					for (const nameRef of nameRefs) {
-						loop(nameRef);
-					}
-				}
-
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-				break;
-			}
-			case "StmtWhile": {
-				addKeyword(ast_node.keyword());
-
-				loop(ast_node.condition());
-				loop(ast_node.body());
-				break;
-			}
-			case "ExprAssign": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.value());
-
-				break;
-			}
-			case "ExprBinary": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			case "ExprCall": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Function,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				const arglist = ast_node.args();
-				if (arglist) {
-					for (const arg of arglist.args()) {
-						loop(arg);
-					}
-				}
-
-				break;
-			}
-			case "ExprCast": {
-				loop(ast_node.typing());
-				loop(ast_node.expr());
-				break;
-			}
-			case "ExprCompare": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			case "ExprGet": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.property());
-
-				break;
-			}
-			case "ExprGrouping": {
-				loop(ast_node.expr());
-				break;
-			}
-			case "ExprIndex": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.index());
-
-				break;
-			}
-			case "ExprLiteral": {
-				const value = ast_node.parse();
-				if (value) {
-					const modifiers: SemanticModifierKind[] = [];
-					let kind: SemanticKind | undefined;
-					switch (value.green.token.kind) {
-						case OTokenKind.String:
-							kind = OSemanticKind.String;
-							break;
-						case OTokenKind.Integer:
-						case OTokenKind.Real:
-							kind = OSemanticKind.Number;
-							break;
-						case OTokenKind.KwTrue:
-						case OTokenKind.KwFalse:
-							kind = OSemanticKind.Keyword;
-							modifiers.push(OSemanticModifierKind.Default);
-							break;
-					}
-
-					if (kind) {
-						tokens.push({
-							kind: kind,
-							modifiers: modifiers,
-							range: value.green.token.getRange(),
-						});
-					}
-				}
-				break;
-			}
-			case "ExprLogical": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			case "ExprNameRef": {
-				const name = ast_node.name();
-				if (name) {
-					tokens.push({
-						kind: OSemanticKind.Variable,
-						modifiers: [],
-						range: name.green.token.getRange(),
-					});
-				}
-
-				break;
-			}
-			case "ExprNameRefList": {
-				const names = ast_node.names();
-				if (names) {
-					for (const name of names) {
-						console.log(name);
-						loop(name);
-					}
-				}
-				break;
-			}
-			case "ExprRange": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.start_index());
-				loop(ast_node.end_index());
-
-				break;
-			}
-			case "ExprSet": {
-				const name_ref = ast_node.name();
-				if (name_ref) {
-					const name = name_ref.name();
-					if (name) {
-						tokens.push({
-							kind: OSemanticKind.Variable,
-							modifiers: [],
-							range: name.green.token.getRange(),
-						});
-					}
-				}
-
-				loop(ast_node.property());
-				loop(ast_node.value());
-
-				break;
-			}
-			case "ExprArrow": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			case "ExprStringConcat": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			case "ExprTernary": {
-				loop(ast_node.condition());
-				loop(ast_node.then_branch());
-				loop(ast_node.else_branch());
-				break;
-			}
-			case "ExprUnary": {
-				loop(ast_node.expr());
-				break;
-			}
-			case "ExprWrite": {
-				loop(ast_node.lhs());
-				loop(ast_node.rhs());
-				break;
-			}
-			default:
-				break;
 		}
 	}
 
-	loop(ast.cast(red_tree));
+	const root = ast.cast(red_tree);
+	loop(root);
 
 	return {
 		tokens: tokens,
@@ -457,15 +345,15 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 	};
 }
 
-export function get_red_tree(text: string): ParseResult<RedNode> | undefined {
-	const lex_items = tokenize(text);
-	const res = parse(lex_items);
+export function getRedTree(text: string): ParseResult<RedNode> | undefined {
+	const lex_result = tokenize(text);
+	const parse_result = parse(lex_result);
 
-	if (res.tree) {
-		const red_tree = new RedNode(res.tree, 0);
+	if (parse_result.tree) {
+		const red_tree = new RedNode(parse_result.tree, 0);
 		return {
 			tree: red_tree,
-			errors: res.errors,
+			errors: parse_result.errors,
 		};
 	}
 
@@ -473,6 +361,7 @@ export function get_red_tree(text: string): ParseResult<RedNode> | undefined {
 }
 
 export { tokenize } from "./lexer/lexer";
-export { parse } from "./parser/events";
-export { pp_cst } from "./syntax/green_tree";
+export { parse } from "./parser/lib";
+export { ppGreenTree } from "./syntax/green_tree";
+export { ppRedTree } from "./syntax/red_tree";
 export * as find from "./find";

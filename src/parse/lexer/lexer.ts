@@ -1,45 +1,56 @@
-import { OTokenKind, type TokenKind } from "../syntax/syntax_kind";
+import { GreenToken } from "../syntax/green_tree";
 import {
-	GreenToken,
-	TOKEN_KEYWORD as TOKEN_KEYWORDS,
-	TextPosition as Location,
-	Token,
-} from "../syntax/green_tree";
+	OTokenKind,
+	TOKEN_KEYWORDS,
+	type TokenKind,
+} from "../syntax/syntax_kind";
 
-export function tokenize(input: string): GreenToken[] {
+export type LexResult = {
+	tokens: GreenToken[];
+	newlines: number[];
+};
+
+export function tokenize(input: string): LexResult {
 	const lexer = new Lexer(input);
-	const res: GreenToken[] = [];
+	const tokens: GreenToken[] = [];
+	const newlines: number[] = [];
 
 	while (true) {
-		const [token, text] = lexer.next_token();
-		res.push(new GreenToken(token, text));
+		const [kind, text, offset] = lexer.nextToken();
+		tokens.push(new GreenToken(kind, text));
 
-		if (token.kind === OTokenKind.Eof) {
+		switch (kind) {
+			case OTokenKind.Eol:
+			case OTokenKind.End:
+			case OTokenKind.Eof:
+				newlines.push(offset);
+		}
+
+		if (kind === OTokenKind.Eof) {
 			break;
 		}
 	}
 
-	return res;
+	return {
+		tokens: tokens,
+		newlines: newlines,
+	};
 }
 
 export class Lexer {
 	private input: string;
 	private offset = 0;
 	private rdoffset = 0;
-	private line = 0;
-	private rdline = 0;
-	private col = 0;
-	private rdcol = 0;
 	private ignore_end = false;
 
-	constructor(documentText: string) {
-		this.input = documentText;
+	constructor(input: string) {
+		this.input = input;
 	}
 
 	/**
-	 * Returns the next token in the input
+	 * Returns the next token in the input.
 	 */
-	public next_token(): [Token, string] {
+	public nextToken(): [TokenKind, string, number] {
 		const ch = this.advance();
 
 		let kind: TokenKind;
@@ -204,23 +215,19 @@ export class Lexer {
 				if (this.consume("=")) {
 					kind = OTokenKind.FslashEqual;
 				} else if (this.peek() === "/") {
-					kind = this.read_singleline_comment();
+					kind = this.readSinglelineComment();
 				} else if (this.peek() === "*") {
-					kind = this.read_mutliline_comment();
+					kind = this.readMutlilineComment();
 				} else {
 					kind = OTokenKind.Fslash;
 				}
 				break;
 			case "\r":
 				this.consume("\n");
-				this.rdline += 1;
-				this.rdcol = 0;
 
-				while (this.consume("\r")) {
-					this.consume("\n");
-					this.rdline += 1;
-					this.rdcol = 0;
-				}
+				// while (this.consume("\r")) {
+				// 	this.consume("\n");
+				// }
 
 				if (this.ignore_end) {
 					kind = OTokenKind.Eol;
@@ -230,13 +237,7 @@ export class Lexer {
 
 				break;
 			case "\n":
-				this.rdline += 1;
-				this.rdcol = 0;
-
-				while (this.consume("\n")) {
-					this.rdline += 1;
-					this.rdcol = 0;
-				}
+				// while (this.consume("\n")) {}
 
 				if (this.ignore_end) {
 					kind = OTokenKind.Eol;
@@ -258,55 +259,53 @@ export class Lexer {
 				kind = OTokenKind.Tabs;
 				break;
 			case "'":
-				kind = this.read_string("'");
+				kind = this.readString("'");
 				break;
 			case '"':
-				kind = this.read_string('"');
+				kind = this.readString('"');
 				break;
 			case "#":
-				kind = this.read_ident();
+				kind = this.readIdent();
 				break;
 			case "\0":
 				kind = OTokenKind.Eof;
 				break;
 			default:
 				if (isAlpha(ch)) {
-					kind = this.read_ident();
+					kind = this.readIdent();
 				} else if (isDigit(ch)) {
-					kind = this.read_number();
+					kind = this.readNumber();
 				} else {
 					kind = OTokenKind.LexError;
 				}
 				break;
 		}
 
-		const token = this.emit(kind);
-		const text = this.current_lexeme();
+		const text = this.input.substring(this.offset, this.rdoffset);
+		const offset = this.offset;
 
 		if (kind === OTokenKind.Ident) {
 			const val = TOKEN_KEYWORDS.get(text);
-			if (val !== undefined) {
-				token.kind = val;
+			if (val) {
+				kind = val;
 			}
 		}
 
-		this.line = this.rdline;
-		this.col = this.rdcol;
-		this.offset = this.rdoffset;
-
-		if (token.kind === OTokenKind.Comment) {
+		if (kind === OTokenKind.Comment) {
 			this.ignore_end = text[text.length - 1] === "-";
 		} else {
-			this.ignore_end = check_ignore_end(token.kind);
+			this.ignore_end = checkIgnoreEnd(kind);
 		}
 
-		return [token, text];
+		this.offset = this.rdoffset;
+
+		return [kind, text, offset];
 	}
 
 	/**
-	 * Returns a ident token
+	 * Scans a ident token.
 	 */
-	private read_ident(): TokenKind {
+	private readIdent(): TokenKind {
 		while (isAlphanum(this.peek()) || this.peek() === "_") {
 			this.advance();
 		}
@@ -315,22 +314,22 @@ export class Lexer {
 	}
 
 	/**
-	 * Returns a integer or real token
+	 * Scans an integer or real token.
 	 */
-	private read_number(): TokenKind {
-		this.read_integer();
+	private readNumber(): TokenKind {
+		this.readInteger();
 
 		if (this.consume(".")) {
-			this.read_integer();
+			this.readInteger();
 
 			if (this.consume("e") || this.consume("E")) {
-				this.read_integer();
+				this.readInteger();
 			}
 
 			return OTokenKind.Real;
 		}
 		if (this.consume("e") || this.consume("E")) {
-			this.read_integer();
+			this.readInteger();
 
 			return OTokenKind.Real;
 		} else {
@@ -338,28 +337,25 @@ export class Lexer {
 		}
 	}
 
-	private read_integer() {
+	/**
+	 * Scans an integer.
+	 */
+	private readInteger() {
 		while (isDigit(this.peek())) {
 			this.advance();
 		}
 	}
 
 	/**
-	 * Returns a string token
+	 * Scans a string token.
 	 */
-	private read_string(qouteCh: string): TokenKind {
+	private readString(qouteCh: string): TokenKind {
 		while (true) {
 			if (this.peek() === "\0") break;
 
 			if (this.peek() === qouteCh) {
-				// The closing quote
-				this.advance();
+				this.advance(); // The closing quote.
 				break;
-			}
-
-			if (this.peek() === "\n") {
-				this.rdline += 1;
-				this.rdcol = 0;
 			}
 
 			const ch = this.advance();
@@ -373,9 +369,9 @@ export class Lexer {
 	}
 
 	/**
-	 * Returns a (single-line) comment token
+	 * Scans a (single-line) comment token.
 	 */
-	private read_singleline_comment(): TokenKind {
+	private readSinglelineComment(): TokenKind {
 		while (true) {
 			if (this.peek() === "\0") break;
 			if (this.peek() === "\r") break;
@@ -388,22 +384,16 @@ export class Lexer {
 	}
 
 	/**
-	 * Returns a (multi-line) comment token
+	 * Scans a (multi-line) comment token.
 	 */
-	private read_mutliline_comment(): TokenKind {
+	private readMutlilineComment(): TokenKind {
 		while (true) {
 			if (this.peek() === "\0") break;
-
-			if (this.peek() === "\n") {
-				this.rdline += 1;
-				this.rdcol = 0;
-			}
 
 			const ch = this.advance();
 
 			if (ch === "*" && this.peek() === "/") {
-				// The closing slash
-				this.advance();
+				this.advance(); // The closing slash.
 				break;
 			}
 		}
@@ -412,21 +402,7 @@ export class Lexer {
 	}
 
 	/**
-	 * Returns a token with the lexer's state
-	 */
-	private emit(kind: TokenKind): Token {
-		const startLoc = new Location(this.line, this.col);
-		const endLoc = new Location(this.rdline, this.rdcol);
-		const token = new Token(kind, this.offset, this.rdoffset, startLoc, endLoc);
-
-		this.line = this.rdline;
-		this.col = this.rdcol;
-
-		return token;
-	}
-
-	/**
-	 * Consumes the next character in the input if it matches the given char
+	 * Consumes the next character in the input if it matches the given char.
 	 */
 	private consume(ch: string): boolean {
 		if (this.peek() !== ch) {
@@ -438,7 +414,7 @@ export class Lexer {
 	}
 
 	/**
-	 * Consumes the next character in the input
+	 * Consumes the next character in the input.
 	 */
 	private advance(): string {
 		if (this.rdoffset >= this.input.length) {
@@ -446,30 +422,22 @@ export class Lexer {
 		} else {
 			const ch = this.input[this.rdoffset];
 			this.rdoffset += 1;
-			this.rdcol += 1;
 			return ch;
 		}
 	}
 
 	/**
-	 * Look ahead one character, without consuming it
+	 * Look ahead one character, without consuming it.
 	 */
 	private peek(): string {
 		return this.rdoffset >= this.input.length
 			? "\0"
 			: this.input[this.rdoffset];
 	}
-
-	/**
-	 * Returns the current substring under observation
-	 */
-	private current_lexeme(): string {
-		return this.input.substring(this.offset, this.rdoffset);
-	}
 }
 
 /**
- * Reports if the given character is a digit
+ * Reports if the given character is a digit.
  */
 function isDigit(ch: string): boolean {
 	// 48 -> 0; 57 ->9
@@ -478,7 +446,7 @@ function isDigit(ch: string): boolean {
 }
 
 /**
- * Reports if the given character is a letter
+ * Reports if the given character is a letter.
  */
 function isAlpha(ch: string): boolean {
 	// 65 -> A; 90 -> Z; 97 -> a; 122 -> z
@@ -487,16 +455,16 @@ function isAlpha(ch: string): boolean {
 }
 
 /**
- * Reports if the given character is a letter of digit
+ * Reports if the given character is a letter of digit.
  */
 function isAlphanum(ch: string): boolean {
 	return isAlpha(ch) || isDigit(ch);
 }
 
 /**
- * Reports if the token kind prevents emitting end of statement tokens
+ * Reports if the token kind prevents emitting end of statement tokens.
  */
-function check_ignore_end(kind: TokenKind): boolean {
+function checkIgnoreEnd(kind: TokenKind): boolean {
 	switch (kind) {
 		case OTokenKind.Semicolon:
 		case OTokenKind.Comma:
