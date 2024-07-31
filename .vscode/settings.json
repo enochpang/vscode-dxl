@@ -1,5 +1,6 @@
 {
 	"editor.formatOnSave": true,
+	"biome.enabled": true,
 	"files.exclude": {
 		"out": false
 	},
