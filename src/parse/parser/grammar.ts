@@ -122,7 +122,15 @@ function parseVarDeclaration(
 
 		if (p.consume(OTokenKind.Equal)) {
 			if (p.expect(OTokenKind.Lcurly)) {
+				while (p.peek().isStmtEnd()) {
+					p.bump();
+				}
+
 				parseExprList(p, OTokenKind.Rcurly);
+
+				while (p.peek().isStmtEnd()) {
+					p.bump();
+				}
 
 				p.expect(OTokenKind.Rcurly);
 			}
