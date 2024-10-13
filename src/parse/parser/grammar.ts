@@ -7,6 +7,8 @@ import {
 } from "../syntax/syntax_kind";
 import type { MarkClosed, MarkOpened, Parser } from "./parser";
 
+const BP_LOWEST = 0;
+
 export function parseDeclaration(p: Parser) {
 	if (p.atAny([OTokenKind.KwConst, OTokenKind.KwStatic])) {
 		p.bumpAs(ONodeKind.WarningNode);
@@ -418,7 +420,7 @@ function parseForStmt(p: Parser) {
 
 function parseExpression(p: Parser) {
 	const m = p.open();
-	expr_bp(p, 0);
+	expr_bp(p, BP_LOWEST);
 	p.close(m, ONodeKind.StmtExpr);
 }
 
@@ -505,13 +507,11 @@ function expr_bp(p: Parser, min_bp: number) {
 					lhs = p.close(m, ONodeKind.ExprPostfix);
 					break;
 				}
+				case OTokenKind.String:
+					lhs = parseStringExpr(p, lhs, bp_postfix);
+					break;
 				default:
-					if (op.kind === OTokenKind.String) {
-						lhs = parseStringExpr(p, lhs, bp_postfix);
-					} else if (
-						lhs.kind === ONodeKind.NameRef ||
-						lhs.kind === ONodeKind.Null
-					) {
+					if (lhs.kind === ONodeKind.NameRef || lhs.kind === ONodeKind.Null) {
 						lhs = parseCallExpr(p, lhs);
 					} else if (op.kind === OTokenKind.Lparen) {
 						lhs = parseGroupingExpr(p);
@@ -595,7 +595,7 @@ function parseGroupingExpr(p: Parser) {
 		kind = ONodeKind.ExprCast;
 	}
 
-	expr_bp(p, 0);
+	expr_bp(p, BP_LOWEST);
 	p.expect(OTokenKind.Rparen);
 
 	return p.close(m, kind);
@@ -639,11 +639,11 @@ function parseIndexExpr(p: Parser, lhs: MarkClosed): MarkClosed {
 	const m = p.openBefore(lhs);
 
 	p.expect(OTokenKind.Lbracket);
-	expr_bp(p, 0);
+	expr_bp(p, BP_LOWEST);
 
 	if (p.consume(OTokenKind.Colon)) {
 		if (!p.at(OTokenKind.Rbracket)) {
-			expr_bp(p, 0);
+			expr_bp(p, BP_LOWEST);
 		}
 
 		p.expect(OTokenKind.Rbracket);
