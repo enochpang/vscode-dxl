@@ -19,16 +19,16 @@ describe("find_01", () => {
 	const node_aa_ln1 = find.nodeAtOffset(red_tree, 5);
 	if (!node_aa_ln1) assert.fail("Could not find node_aa_ln1");
 
-	const node_bb_ln6 = find.nodeAtOffset(red_tree, 51);
+	const node_bb_ln6 = find.nodeAtOffset(red_tree, 46);
 	if (!node_bb_ln6) assert.fail("Could not find node_bb_ln6");
 
-	const node_aa_ln10 = find.nodeAtOffset(red_tree, 87);
+	const node_aa_ln10 = find.nodeAtOffset(red_tree, 78);
 	if (!node_aa_ln10) assert.fail("Could not find node_aa_ln10");
 
 	describe("tokenAtOffset", () => {
 		const token_aa_ln1 = find.tokenAtOffset(red_tree, 5);
-		const token_bb_ln6 = find.tokenAtOffset(red_tree, 51);
-		const token_aa_ln10 = find.tokenAtOffset(red_tree, 87);
+		const token_bb_ln6 = find.tokenAtOffset(red_tree, 46);
+		const token_aa_ln10 = find.tokenAtOffset(red_tree, 78);
 
 		test("token_aa_ln1", () => {
 			expect(token_aa_ln1?.toString()).toMatchInlineSnapshot(
@@ -38,13 +38,13 @@ describe("find_01", () => {
 
 		test("token_bb_ln6", () => {
 			expect(token_bb_ln6?.toString()).toMatchInlineSnapshot(
-				`"Leaf IDENT@50..52 "bb""`,
+				`"Leaf IDENT@45..47 "bb""`,
 			);
 		});
 
 		test("token_aa_ln10", () => {
 			expect(token_aa_ln10?.toString()).toMatchInlineSnapshot(
-				`"Leaf IDENT@86..88 "aa""`,
+				`"Leaf IDENT@77..79 "aa""`,
 			);
 		});
 	});
@@ -58,13 +58,13 @@ describe("find_01", () => {
 
 		test("node_bb_ln6", () => {
 			expect(node_bb_ln6.toString()).toMatchInlineSnapshot(
-				`"Node NAMEREF@50..52"`,
+				`"Node NAMEREF@45..47"`,
 			);
 		});
 
 		test("node_aa_ln10", () => {
 			expect(node_aa_ln10.toString()).toMatchInlineSnapshot(
-				`"Node NAMEREF@86..88"`,
+				`"Node NAMEREF@77..79"`,
 			);
 		});
 	});
@@ -87,57 +87,57 @@ describe("find_01", () => {
 		test("scope in root", () => {
 			const scope_node = find.getContainingScope(node_aa_ln1);
 			expect(scope_node.toString()).toMatchInlineSnapshot(
-				`"Node TREEROOT@0..169"`,
+				`"Node TREEROOT@0..148"`,
 			);
 		});
 
 		test("scope in function", () => {
 			const scope_node = find.getContainingScope(node_bb_ln6);
 			expect(scope_node.toString()).toMatchInlineSnapshot(
-				`"Node STMTBLOCK@43..70"`,
+				`"Node STMTBLOCK@39..63"`,
 			);
 		});
 
 		test("scope in param", () => {
 			const scope_node = find.getContainingScope(node_aa_ln10);
 			expect(scope_node.toString()).toMatchInlineSnapshot(
-				`"Node PARAMLIST@82..96"`,
+				`"Node PARAMLIST@73..87"`,
 			);
 		});
 	});
 
 	describe("find_definition", () => {
-		const token_bb_ln2 = find.tokenAtOffset(red_tree, 13);
-		const token_cc_ln3 = find.tokenAtOffset(red_tree, 21);
-		const token_cc_ln11 = find.tokenAtOffset(red_tree, 110);
-		const token_aa_ln10 = find.tokenAtOffset(red_tree, 87);
+		const token_bb_ln2 = find.tokenAtOffset(red_tree, 12);
+		const token_cc_ln3 = find.tokenAtOffset(red_tree, 19);
+		const token_cc_ln11 = find.tokenAtOffset(red_tree, 100);
+		const token_aa_ln10 = find.tokenAtOffset(red_tree, 78);
 
 		test("root to root", () => {
-			const node = find.findDefinition(red_tree, 168);
-			if (!node) assert.fail("Could not find node");
+			const token_cc_ln22 = find.findDefinition(red_tree, 147);
+			if (!token_cc_ln22) assert.fail("Could not find node");
 
-			expect(node.toString()).toEqual(token_cc_ln3?.toString());
+			expect(token_cc_ln22.toString()).toEqual(token_cc_ln3?.toString());
 		});
 
 		test("in function to root", () => {
-			const node = find.findDefinition(red_tree, 51);
-			if (!node) assert.fail("Could not find node");
+			const token_bb_ln6 = find.findDefinition(red_tree, 46);
+			if (!token_bb_ln6) assert.fail("Could not find node");
 
-			expect(node.toString()).toEqual(token_bb_ln2?.toString());
+			expect(token_bb_ln6.toString()).toEqual(token_bb_ln2?.toString());
 		});
 
 		test("in function to param", () => {
-			const node = find.findDefinition(red_tree, 120);
-			if (!node) assert.fail("Could not find node");
+			const token_cc_ln13 = find.findDefinition(red_tree, 108);
+			if (!token_cc_ln13) assert.fail("Could not find node");
 
-			expect(node.toString()).toEqual(token_aa_ln10?.toString());
+			expect(token_cc_ln13.toString()).toEqual(token_aa_ln10?.toString());
 		});
 
 		test("in function to in function", () => {
-			const node = find.findDefinition(red_tree, 136);
-			if (!node) assert.fail("Could not find node");
+			const token_cc_ln15 = find.findDefinition(red_tree, 122);
+			if (!token_cc_ln15) assert.fail("Could not find node");
 
-			expect(node.toString()).toEqual(token_cc_ln11?.toString());
+			expect(token_cc_ln15.toString()).toEqual(token_cc_ln11?.toString());
 		});
 	});
 });
@@ -175,7 +175,7 @@ describe("find_03", () => {
 
 	describe("find_references", () => {
 		const token_add1_ln1 = find.tokenAtOffset(red_tree, 5);
-		const token_add1_ln5 = find.tokenAtOffset(red_tree, 37);
+		const token_add1_ln5 = find.tokenAtOffset(red_tree, 33);
 
 		test("add1_ln1", () => {
 			const nodes = find.findReferences(red_tree, 5);
@@ -226,7 +226,7 @@ describe("find_04", () => {
 
 	describe("find_references", () => {
 		const token_obj_ln1 = find.tokenAtOffset(red_tree, 19);
-		const token_obj_ln6 = find.tokenAtOffset(red_tree, 85);
+		const token_obj_ln6 = find.tokenAtOffset(red_tree, 80);
 
 		test("buf_ln1", () => {
 			const nodes = find.findReferences(red_tree, 19);
