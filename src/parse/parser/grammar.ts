@@ -312,6 +312,8 @@ function parseIfStmt(p: Parser) {
 	if (p.consume(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
+		while (p.consume(OTokenKind.End)) {}
+
 		if (p.expect(OTokenKind.Rparen)) {
 			while (p.consume(OTokenKind.End)) {}
 
