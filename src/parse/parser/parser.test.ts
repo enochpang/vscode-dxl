@@ -82,9 +82,11 @@ checkParse("if (true) { a + 1 } else { b + 2 }");
 checkParse("if (true)\n\n{} else {}");
 checkParse("if (a) { 1 } else if (b) { 2 }");
 checkParse("if (isDeleted module(modVersion)) {}");
+checkParse("if (\ntrue\n) {}");
 checkParse("while (a < 2) {}");
 checkParse("while (a) last--");
 checkParse("while (a==2 and b==3) {}");
+checkParse("while (\ntrue\n) {}");
 checkParse("for (i = 0; i < 4; i++) {}");
 checkParse("for (a<2;a++) {}");
 checkParse("for obj in mod do {}");
@@ -93,7 +95,9 @@ checkParse("for x in 1 : 11 {}");
 checkParse("for x in 1 : 11 by 2 do {}");
 
 function checkParse(text: string) {
-	test(`parse ${text}`, () => {
+	const testMessage = text.replaceAll("\n", "¶");
+
+	test(`parse ${testMessage}`, () => {
 		const lex_result = tokenize(text);
 		const parse_result = parse(lex_result);
 		const tree = parse_result.tree;

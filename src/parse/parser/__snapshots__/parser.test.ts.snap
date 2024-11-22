@@ -25,8 +25,7 @@ exports[`parse !x 1`] = `
         Leaf IDENT "x""
 `;
 
-exports[`parse "hello" //-
-"world" 1`] = `
+exports[`parse "hello" //-¶"world" 1`] = `
 "Node TREEROOT
   Node STMTEXPR
     Node EXPRSTRINGCONCAT
@@ -772,33 +771,6 @@ exports[`parse if (isDeleted module(modVersion)) {} 1`] = `
       Leaf RCURLY "}""
 `;
 
-exports[`parse if (true)
-
-{} else {} 1`] = `
-"Node TREEROOT
-  Node STMTIF
-    Leaf KWIF "if"
-    Leaf SPACES " "
-    Leaf LPAREN "("
-    Node STMTEXPR
-      Node EXPRLITERAL
-        Leaf KWTRUE "true"
-    Leaf RPAREN ")"
-    Leaf END "
-"
-    Leaf END "
-"
-    Node STMTBLOCK
-      Leaf LCURLY "{"
-      Leaf RCURLY "}"
-    Leaf SPACES " "
-    Leaf KWELSE "else"
-    Leaf SPACES " "
-    Node STMTBLOCK
-      Leaf LCURLY "{"
-      Leaf RCURLY "}""
-`;
-
 exports[`parse if (true) { a + 1 } else { b + 2 } 1`] = `
 "Node TREEROOT
   Node STMTIF
@@ -890,6 +862,51 @@ exports[`parse if (true) 1 else 2 1`] = `
     Node STMTEXPR
       Node EXPRLITERAL
         Leaf INTEGER "2""
+`;
+
+exports[`parse if (true)¶¶{} else {} 1`] = `
+"Node TREEROOT
+  Node STMTIF
+    Leaf KWIF "if"
+    Leaf SPACES " "
+    Leaf LPAREN "("
+    Node STMTEXPR
+      Node EXPRLITERAL
+        Leaf KWTRUE "true"
+    Leaf RPAREN ")"
+    Leaf END "
+"
+    Leaf END "
+"
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}"
+    Leaf SPACES " "
+    Leaf KWELSE "else"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
+exports[`parse if (¶true¶) {} 1`] = `
+"Node TREEROOT
+  Node STMTIF
+    Leaf KWIF "if"
+    Leaf SPACES " "
+    Leaf LPAREN "("
+    Node STMTEXPR
+      Leaf EOL "
+"
+      Node EXPRLITERAL
+        Leaf KWTRUE "true"
+    Leaf END "
+"
+    Leaf RPAREN ")"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
 `;
 
 exports[`parse int a = 2 1`] = `
@@ -1318,8 +1335,26 @@ exports[`parse obj."text" 1`] = `
         Leaf STRING ""text"""
 `;
 
-exports[`parse out << "hello"
-out << "world" 1`] = `
+exports[`parse out << "hello" << "world" 1`] = `
+"Node TREEROOT
+  Node STMTEXPR
+    Node EXPRWRITE
+      Node NAMEREF
+        Leaf IDENT "out"
+      Leaf SPACES " "
+      Leaf LESSLESS "<<"
+      Leaf SPACES " "
+      Node EXPRWRITE
+        Node EXPRLITERAL
+          Leaf STRING ""hello""
+        Leaf SPACES " "
+        Leaf LESSLESS "<<"
+        Leaf SPACES " "
+        Node EXPRLITERAL
+          Leaf STRING ""world"""
+`;
+
+exports[`parse out << "hello"¶out << "world" 1`] = `
 "Node TREEROOT
   Node STMTEXPR
     Node EXPRWRITE
@@ -1341,25 +1376,6 @@ out << "world" 1`] = `
       Leaf SPACES " "
       Node EXPRLITERAL
         Leaf STRING ""world"""
-`;
-
-exports[`parse out << "hello" << "world" 1`] = `
-"Node TREEROOT
-  Node STMTEXPR
-    Node EXPRWRITE
-      Node NAMEREF
-        Leaf IDENT "out"
-      Leaf SPACES " "
-      Leaf LESSLESS "<<"
-      Leaf SPACES " "
-      Node EXPRWRITE
-        Node EXPRLITERAL
-          Leaf STRING ""hello""
-        Leaf SPACES " "
-        Leaf LESSLESS "<<"
-        Leaf SPACES " "
-        Node EXPRLITERAL
-          Leaf STRING ""world"""
 `;
 
 exports[`parse pragma encoding, "utf-8" 1`] = `
@@ -1634,6 +1650,26 @@ exports[`parse while (a==2 and b==3) {} 1`] = `
           Leaf EQUALEQUAL "=="
           Node EXPRLITERAL
             Leaf INTEGER "3"
+    Leaf RPAREN ")"
+    Leaf SPACES " "
+    Node STMTBLOCK
+      Leaf LCURLY "{"
+      Leaf RCURLY "}""
+`;
+
+exports[`parse while (¶true¶) {} 1`] = `
+"Node TREEROOT
+  Node STMTWHILE
+    Leaf KWWHILE "while"
+    Leaf SPACES " "
+    Leaf LPAREN "("
+    Node STMTEXPR
+      Leaf EOL "
+"
+      Node EXPRLITERAL
+        Leaf KWTRUE "true"
+    Leaf END "
+"
     Leaf RPAREN ")"
     Leaf SPACES " "
     Node STMTBLOCK
