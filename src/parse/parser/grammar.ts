@@ -360,6 +360,8 @@ function parseWhileStmt(p: Parser) {
 	if (p.expect(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
+		while (p.consume(OTokenKind.End)) {}
+
 		if (p.expect(OTokenKind.Rparen)) {
 			if (p.at(OTokenKind.Lcurly)) {
 				parseBlockStmt(p);
