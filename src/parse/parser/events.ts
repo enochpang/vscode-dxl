@@ -6,20 +6,20 @@ import { GreenBuilder } from "../syntax/green_builder";
 import type { LexResult } from "../lexer/lexer";
 import type { ParseError } from "./lib";
 
-export type OpenEvent = {
+export type StartNode = {
 	tag: "START_NODE";
 	kind: NodeKind;
 };
 
-export type CloseEvent = {
+export type FinishNode = {
 	tag: "FINISH_NODE";
 };
 
-export type AdvanceEvent = {
+export type AddToken = {
 	tag: "ADD_TOKEN";
 };
 
-export type SkipEvent = {
+export type SkipToken = {
 	tag: "SKIP_TOKEN";
 };
 
@@ -33,11 +33,11 @@ export type PlaceholderEvent = {
 };
 
 export type ParseEvent =
-	| OpenEvent
-	| CloseEvent
-	| AdvanceEvent
+	| StartNode
+	| FinishNode
+	| AddToken
+	| SkipToken
 	| PlaceholderEvent
-	| SkipEvent
 	| ErrorEvent;
 
 export type EventKind = ParseEvent["tag"];
