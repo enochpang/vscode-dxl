@@ -62,13 +62,20 @@ export class Parser {
 	 * Creates a marker before a closed marker.
 	 */
 	openBefore(m: MarkClosed): MarkOpened {
-		const mark: MarkOpened = {
-			index: m.index,
-		};
+		const new_m = this.open();
 
-		this.events.splice(m.index, 0, { tag: "PLACEHOLDER" });
+		const event = this.events[m.index];
+		if (event.tag === "START_NODE") {
+			this.events[m.index] = {
+				tag: "START_NODE",
+				kind: event.kind,
+				forward_parent: new_m.index - m.index,
+			};
+		} else {
+			assert.fail("Unreachable");
+		}
 
-		return mark;
+		return new_m;
 	}
 
 	/**
@@ -77,7 +84,12 @@ export class Parser {
 	close(m: MarkOpened, kind: NodeKind): MarkClosed {
 		assert.equal(this.events[m.index].tag, "PLACEHOLDER");
 
-		this.events[m.index] = { tag: "START_NODE", kind: kind };
+		this.events[m.index] = {
+			tag: "START_NODE",
+			kind: kind,
+			forward_parent: undefined,
+		};
+
 		this.events.push({ tag: "FINISH_NODE" });
 
 		return {
