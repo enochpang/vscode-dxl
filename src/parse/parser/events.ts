@@ -52,7 +52,7 @@ export function buildTree(
 	const errors: ParseError[] = [];
 	const kinds: SyntaxKind[] = [];
 	let offset = 0;
-	let cur = 0;
+	let cursor = 0;
 
 	// Remove the last close event event so the stack has one item after iterating through the events.
 	const last_event = events.pop();
@@ -93,10 +93,10 @@ export function buildTree(
 				break;
 			}
 			case "ADD_TOKEN": {
-				const token = tokens[cur];
+				const token = tokens[cursor];
 				builder.addToken(token.kind, token.text);
 				offset += token.getLength();
-				cur += 1;
+				cursor += 1;
 				break;
 			}
 			case "FINISH_NODE": {
@@ -104,9 +104,9 @@ export function buildTree(
 				break;
 			}
 			case "SKIP_TOKEN": {
-				const token = tokens[cur];
+				const token = tokens[cursor];
 				offset += token.getLength();
-				cur += 1;
+				cursor += 1;
 				break;
 			}
 			case "ERROR": {
