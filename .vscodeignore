@@ -2,7 +2,7 @@
 node_modules/
 samples/
 src/
-out/
+dist/bin/
 test_data/
 .gitattributes
 .gitignore
