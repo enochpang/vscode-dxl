@@ -41,14 +41,15 @@
 		"vscode:prepublish": "npm run build",
 		"build": "tsc",
 		"watch": "tsc -watch",
-		"test": "vitest"
+		"test": "vitest",
+		"format": "biome format --write src/"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@types/node": "^22.13.4",
-		"@types/vscode": "^1.97.0",
+		"@types/node": "^22.14.1",
+		"@types/vscode": "^1.99.1",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.7.3",
-		"vitest": "^3.0.5"
+		"typescript": "^5.8.3",
+		"vitest": "^3.1.1"
 	}
 }
