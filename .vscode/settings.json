@@ -1,6 +1,5 @@
 {
 	"editor.formatOnSave": true,
-	"biome.enabled": true,
 	"files.exclude": {
 		"out": false
 	},
@@ -9,10 +8,4 @@
 		"node_modules": true
 	},
 	"typescript.tsc.autoDetect": "off",
-	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[javascript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	}
 }
