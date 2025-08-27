@@ -1,27 +1,33 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
-		"outDir": "dist",
-		"module": "node16",
-		"moduleResolution": "node16",
-		"target": "es2020",
 		"lib": [
-			"es2020"
+			"es2024",
+			"ESNext.Array",
+      		"ESNext.Collection",
+      		"ESNext.Iterator"
 		],
-		"rootDirs": [
-			"src"
-		],
-		"sourceMap": true,
+		"module": "nodenext",
+		"target": "es2020",
 		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"moduleResolution": "node16",
+		"outDir": "out",
+		"rootDir": "src",
+		"sourceMap": true,
 		"strict": true,
-		"noImplicitReturns": true,
-		"noImplicitOverride": true,
-		"noPropertyAccessFromIndexSignature": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
-		"exactOptionalPropertyTypes": true
+		"allowUnreachableCode": false,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": true,
+		// "noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"isolatedModules": true,
+		"checkJs": true,
 	},
 	"include": [
 		"src/**/*.ts"
