@@ -4,8 +4,8 @@
 		"lib": [
 			"es2024",
 			"ESNext.Array",
-      		"ESNext.Collection",
-      		"ESNext.Iterator"
+			"ESNext.Collection",
+			"ESNext.Iterator"
 		],
 		"module": "nodenext",
 		"target": "es2020",
@@ -20,8 +20,10 @@
 		"allowUnreachableCode": false,
 		"exactOptionalPropertyTypes": true,
 		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
+		"noImplicitThis": true,
 		"noPropertyAccessFromIndexSignature": true,
 		// "noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
