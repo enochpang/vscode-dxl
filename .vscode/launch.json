@@ -23,9 +23,8 @@
 			"request": "launch",
 			"runtimeExecutable": "node",
 			"runtimeArgs": [
-				"--nolazy",
-				"-r",
-				"ts-node/register"
+				"--import",
+				"@oxc-node/core/register",
 			],
 			"args": [
 				"src/bin/index.ts"

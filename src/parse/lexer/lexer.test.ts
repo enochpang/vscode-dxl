@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
-
+import { OTokenKind, type TokenKind } from "../syntax/syntax_kind";
 import { Lexer, tokenize } from "./lexer";
-import { type TokenKind, OTokenKind } from "../syntax/syntax_kind";
 
 describe("next_token", () => {
 	const test_cases: [string, TokenKind, number, number][] = [

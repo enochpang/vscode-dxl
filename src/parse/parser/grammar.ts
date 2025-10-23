@@ -312,10 +312,10 @@ function parseIfStmt(p: Parser) {
 	if (p.consume(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
-		while (p.consume(OTokenKind.End)) { }
+		while (p.consume(OTokenKind.End)) {}
 
 		if (p.expect(OTokenKind.Rparen)) {
-			while (p.consume(OTokenKind.End)) { }
+			while (p.consume(OTokenKind.End)) {}
 
 			if (p.at(OTokenKind.Lcurly)) {
 				parseStatement(p); // The then body
@@ -360,7 +360,7 @@ function parseWhileStmt(p: Parser) {
 	if (p.expect(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
-		while (p.consume(OTokenKind.End)) { }
+		while (p.consume(OTokenKind.End)) {}
 
 		if (p.expect(OTokenKind.Rparen)) {
 			if (p.at(OTokenKind.Lcurly)) {

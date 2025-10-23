@@ -327,8 +327,7 @@ export class Lexer {
 			}
 
 			return OTokenKind.Real;
-		}
-		else if (this.consume("e") || this.consume("E")) {
+		} else if (this.consume("e") || this.consume("E")) {
 			this.readInteger();
 
 			return OTokenKind.Real;

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as dxl from "./parse/lib";
-import { getParsedDocument } from "./utils";
 import { OSemanticKind } from "./parse/lib";
+import { getParsedDocument } from "./utils";
 
 export const token_legend = new vscode.SemanticTokensLegend(
 	Object.values(OSemanticKind),

@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
-
+import type { LexResult } from "../lexer/lexer";
+import { GreenBuilder } from "../syntax/green_builder";
 import type { GreenNode } from "../syntax/green_tree";
 import type { NodeKind, SyntaxKind } from "../syntax/syntax_kind";
-import { GreenBuilder } from "../syntax/green_builder";
-import type { LexResult } from "../lexer/lexer";
 import type { ParseError } from "./lib";
 
 export type StartNode = {

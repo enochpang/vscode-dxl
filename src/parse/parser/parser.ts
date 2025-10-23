@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 
 import type { GreenToken } from "../syntax/green_tree";
 import {
-	OTokenKind,
-	ONodeKind,
 	type NodeKind,
+	ONodeKind,
+	OTokenKind,
 	type SyntaxKind,
 } from "../syntax/syntax_kind";
-import { parseDeclaration } from "./grammar";
 import type { ParseEvent } from "./events";
+import { parseDeclaration } from "./grammar";
 
 export type MarkOpened = {
 	index: number;

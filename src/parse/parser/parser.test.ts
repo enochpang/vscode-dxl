@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { tokenize } from "../lexer/lexer";
-import { parse } from "./lib";
 import { ppGreenTree } from "../syntax/green_tree";
+import { parse } from "./lib";
 
 // Expressions
 checkParse("-1");

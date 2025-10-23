@@ -1,6 +1,5 @@
-import { describe, expect, test, assert } from "vitest";
-
 import * as fs from "node:fs";
+import { assert, describe, expect, test } from "vitest";
 import * as find from "./find";
 import { tokenize } from "./lexer/lexer";
 import { parse } from "./parser/lib";

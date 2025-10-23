@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import * as providers from "./providers";
 import * as commands from "./commands";
-import { getParsedDocument, removeParsedFile } from "./utils";
+import * as providers from "./providers";
 import { token_legend } from "./providers";
+import { getParsedDocument, removeParsedFile } from "./utils";
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(

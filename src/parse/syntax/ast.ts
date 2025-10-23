@@ -1,5 +1,5 @@
 import type { RedNode, RedToken } from "./red_tree";
-import { OTokenKind, ONodeKind } from "./syntax_kind";
+import { ONodeKind, OTokenKind } from "./syntax_kind";
 
 export type AstNode = Stmt | Expr;
 

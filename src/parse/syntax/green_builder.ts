@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { GreenNode, type GreenElement, GreenToken } from "./green_tree";
+import { type GreenElement, GreenNode, GreenToken } from "./green_tree";
 import type { SyntaxKind } from "./syntax_kind";
 
 export class GreenBuilder {

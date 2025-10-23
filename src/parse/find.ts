@@ -233,7 +233,7 @@ function getSameAssignName(
 	node: RedNode,
 	start_name: string,
 ): RedToken | undefined {
-	let result_token = undefined;
+	let result_token: RedToken | undefined;
 
 	const expr = ast.castExpr(node);
 	if (expr instanceof ast.ExprAssignment) {
