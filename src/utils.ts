@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import * as dxl from "./parse/lib";
-import type { RedNode } from "./parse/syntax/red_tree";
+import * as dxl from "./parse/lib.ts";
+import type { RedNode } from "./parse/syntax/red_tree.ts";
 
 interface ParsedDocuments {
 	version: number;

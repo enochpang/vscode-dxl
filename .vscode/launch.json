@@ -23,8 +23,9 @@
 			"request": "launch",
 			"runtimeExecutable": "node",
 			"runtimeArgs": [
-				"--import",
-				"@oxc-node/core/register",
+				// "--import",
+				// "@oxc-node/core/register",
+				"--experimental-strip-types"
 			],
 			"args": [
 				"src/bin/index.ts"

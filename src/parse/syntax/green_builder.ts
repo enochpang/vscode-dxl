@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
-import { type GreenElement, GreenNode, GreenToken } from "./green_tree";
-import type { SyntaxKind } from "./syntax_kind";
+import { type GreenElement, GreenNode, GreenToken } from "./green_tree.ts";
+import type { SyntaxKind } from "./syntax_kind.ts";
 
 export class GreenBuilder {
 	private cache = new GreenCache();

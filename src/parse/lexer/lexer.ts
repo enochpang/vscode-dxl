@@ -1,9 +1,9 @@
-import { GreenToken } from "../syntax/green_tree";
+import { GreenToken } from "../syntax/green_tree.ts";
 import {
 	OTokenKind,
 	TOKEN_KEYWORDS,
 	type TokenKind,
-} from "../syntax/syntax_kind";
+} from "../syntax/syntax_kind.ts";
 
 export type LexResult = {
 	tokens: GreenToken[];

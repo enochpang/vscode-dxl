@@ -1,8 +1,8 @@
-import { tokenize } from "./lexer/lexer";
-import { type ParseResult, parse } from "./parser/lib";
-import * as ast from "./syntax/ast";
-import { type OffsetRange, RedNode, type RedToken } from "./syntax/red_tree";
-import { OTokenKind } from "./syntax/syntax_kind";
+import { tokenize } from "./lexer/lexer.ts";
+import { type ParseResult, parse } from "./parser/lib.ts";
+import * as ast from "./syntax/ast.ts";
+import { type OffsetRange, RedNode, type RedToken } from "./syntax/red_tree.ts";
+import { OTokenKind } from "./syntax/syntax_kind.ts";
 
 export const OSemanticKind = {
 	Function: "function",
@@ -360,8 +360,8 @@ export function getRedTree(text: string): ParseResult<RedNode> | undefined {
 	return undefined;
 }
 
-export * as find from "./find";
-export { tokenize } from "./lexer/lexer";
-export { parse } from "./parser/lib";
-export { ppGreenTree } from "./syntax/green_tree";
-export { ppRedTree } from "./syntax/red_tree";
+export * as find from "./find.ts";
+export { tokenize } from "./lexer/lexer.ts";
+export { parse } from "./parser/lib.ts";
+export { ppGreenTree } from "./syntax/green_tree.ts";
+export { ppRedTree } from "./syntax/red_tree.ts";

@@ -1,5 +1,5 @@
-import { GreenNode, GreenToken } from "./green_tree";
-import { OTokenKind, type SyntaxKind } from "./syntax_kind";
+import { GreenNode, GreenToken } from "./green_tree.ts";
+import { OTokenKind, type SyntaxKind } from "./syntax_kind.ts";
 
 export interface OffsetRange {
 	start: number;

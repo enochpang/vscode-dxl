@@ -1,4 +1,4 @@
-import { BUILTIN_TYPES, OTokenKind, type SyntaxKind } from "./syntax_kind";
+import { BUILTIN_TYPES, OTokenKind, type SyntaxKind } from "./syntax_kind.ts";
 
 export type GreenElement = GreenNode | GreenToken;
 

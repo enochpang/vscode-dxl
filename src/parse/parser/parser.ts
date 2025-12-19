@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 
-import type { GreenToken } from "../syntax/green_tree";
+import type { GreenToken } from "../syntax/green_tree.ts";
 import {
 	type NodeKind,
 	ONodeKind,
 	OTokenKind,
 	type SyntaxKind,
-} from "../syntax/syntax_kind";
-import type { ParseEvent } from "./events";
-import { parseDeclaration } from "./grammar";
+} from "../syntax/syntax_kind.ts";
+import type { ParseEvent } from "./events.ts";
+import { parseDeclaration } from "./grammar.ts";
 
 export type MarkOpened = {
 	index: number;

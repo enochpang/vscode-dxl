@@ -1,5 +1,5 @@
-import * as dxl from "./parse/lib";
-import { RedNode } from "./parse/syntax/red_tree";
+import * as dxl from "./parse/lib.ts";
+import { RedNode } from "./parse/syntax/red_tree.ts";
 
 export function showCst(text: string) {
 	const lex_result = dxl.tokenize(text);

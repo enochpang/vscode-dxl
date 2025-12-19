@@ -1,7 +1,7 @@
-import type { LexResult } from "../lexer/lexer";
-import type { GreenNode } from "../syntax/green_tree";
-import { buildTree } from "./events";
-import { Parser } from "./parser";
+import type { LexResult } from "../lexer/lexer.ts";
+import type { GreenNode } from "../syntax/green_tree.ts";
+import { buildTree } from "./events.ts";
+import { Parser } from "./parser.ts";
 
 export type ParseResult<T> = {
 	tree: T | undefined;

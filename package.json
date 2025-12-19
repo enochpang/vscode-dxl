@@ -1,4 +1,5 @@
 {
+	"type": "module",
 	"name": "vscode-dxl",
 	"displayName": "vscode-dxl",
 	"description": "DXL support for VS Code",
@@ -49,7 +50,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.2",
-		"@oxc-node/core": "^0.0.32",
 		"@types/node": "^24.3.0",
 		"@types/vscode": "^1.99.1",
 		"typescript": "^5.9.2",

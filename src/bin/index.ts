@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
-import * as dxl from "../parse/lib";
-import * as syntax from "../parse/syntax/red_tree";
+import * as dxl from "../parse/lib.ts";
+import * as syntax from "../parse/syntax/red_tree.ts";
 
 const text = fs.readFileSync("samples/sample.dxl", "utf-8");
 const lex_items = dxl.tokenize(text);

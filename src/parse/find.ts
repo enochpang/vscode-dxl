@@ -1,6 +1,6 @@
-import * as ast from "./syntax/ast";
-import { type RedElement, RedNode, RedToken } from "./syntax/red_tree";
-import { ONodeKind, OTokenKind } from "./syntax/syntax_kind";
+import * as ast from "./syntax/ast.ts";
+import { type RedElement, RedNode, RedToken } from "./syntax/red_tree.ts";
+import { ONodeKind, OTokenKind } from "./syntax/syntax_kind.ts";
 
 export function findDefinition(
 	red_tree: RedNode,
