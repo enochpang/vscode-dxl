@@ -1,8 +1,10 @@
-import { describe, expect, test } from "vitest";
-import { OTokenKind, type TokenKind } from "../syntax/syntax_kind";
-import { Lexer, tokenize } from "./lexer";
+import assert from 'node:assert/strict'
+import test from 'node:test';
 
-describe("next_token", () => {
+import { OTokenKind, type TokenKind } from "../src/parse/syntax/syntax_kind.ts";
+import { Lexer, tokenize } from "../src/parse/lexer/lexer.ts";
+
+test("next_token", () => {
 	const test_cases: [string, TokenKind, number, number][] = [
 		["", OTokenKind.Eof, 0, 0],
 		["  ", OTokenKind.Spaces, 0, 2],
@@ -130,8 +132,8 @@ describe("next_token", () => {
 		const [got_tok, got_str] = lexer.nextToken();
 
 		test(`Lex ${escapeText(want_str)}`, () => {
-			expect(got_tok).toEqual(want_kind);
-			expect(got_str).toEqual(want_str);
+			assert.equal(got_tok, want_kind);
+			assert.equal(got_str, want_str);
 		});
 	}
 });
@@ -178,8 +180,8 @@ function checkLex(
 		const [want_str, want_kind, _want_offset, _want_end_offset] = test_cases[i];
 		const got_item = tokens[i];
 
-		expect(got_item.kind).toEqual(want_kind);
-		expect(got_item.text).toEqual(want_str);
+		assert.equal(got_item.kind, want_kind);
+		assert.equal(got_item.text, want_str);
 	}
 }
 

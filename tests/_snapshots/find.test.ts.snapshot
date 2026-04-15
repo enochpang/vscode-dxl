@@ -1,0 +1,39 @@
+exports[`find_01 > node_aa_ln1 > getContainingScope 1`] = `
+"Node TREEROOT@0..169"
+`;
+
+exports[`find_01 > node_aa_ln1 > nodeAtOffset 1`] = `
+"Node NAMEREF@4..6"
+`;
+
+exports[`find_01 > node_aa_ln1 > tokenAtOffset 1`] = `
+"Leaf IDENT@4..6 \\"aa\\""
+`;
+
+exports[`find_01 > node_aa_ln10 > getContainingScope 1`] = `
+"Node PARAMLIST@82..96"
+`;
+
+exports[`find_01 > node_aa_ln10 > nodeAtOffset 1`] = `
+"Node NAMEREF@86..88"
+`;
+
+exports[`find_01 > node_aa_ln10 > tokenAtOffset 1`] = `
+"Leaf IDENT@86..88 \\"aa\\""
+`;
+
+exports[`find_01 > node_bb_ln6 > getContainingScope 1`] = `
+"Node STMTBLOCK@43..70"
+`;
+
+exports[`find_01 > node_bb_ln6 > nodeAtOffset 1`] = `
+"Node NAMEREF@50..52"
+`;
+
+exports[`find_01 > node_bb_ln6 > tokenAtOffset 1`] = `
+"Leaf IDENT@50..52 \\"bb\\""
+`;
+
+exports[`find_02 > node_at_offset > node_ii_initializer 1`] = `
+"Node NAMEREF@5..7"
+`;

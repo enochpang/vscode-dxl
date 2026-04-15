@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as dxl from "../parse/lib.ts";
 import * as syntax from "../parse/syntax/red_tree.ts";
 
-const text = fs.readFileSync("samples/sample.dxl", "utf-8");
+const text = fs.readFileSync("tests/_data/find_04.dxl", "utf-8");
 const lex_items = dxl.tokenize(text);
 const parse_result = dxl.parse(lex_items);
 

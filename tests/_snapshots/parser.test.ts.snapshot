@@ -1,0 +1,347 @@
+exports[`parse !null ad 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRPREFIX\\n      Leaf BANG \\"!\\"\\n      Node EXPRCALL\\n        Node NULL\\n          Leaf KWNULL \\"null\\"\\n        Leaf SPACES \\" \\"\\n        Node ARGLIST\\n          Node ARG\\n            Node STMTEXPR\\n              Node NAMEREF\\n                Leaf IDENT \\"ad\\""
+`;
+
+exports[`parse !x 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRPREFIX\\n      Leaf BANG \\"!\\"\\n      Node NAMEREF\\n        Leaf IDENT \\"x\\""
+`;
+
+exports[`parse #include <file.txt> 1`] = `
+"Node TREEROOT\\n  Node STMTINCLUDE\\n    Leaf KWINCLUDE \\"#include\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LESS \\"<\\"\\n    Leaf IDENT \\"file\\"\\n    Leaf PERIOD \\".\\"\\n    Leaf IDENT \\"txt\\"\\n    Leaf GREAT \\">\\""
+`;
+
+exports[`parse #include \"file.txt\" 1`] = `
+"Node TREEROOT\\n  Node STMTINCLUDE\\n    Leaf KWINCLUDE \\"#include\\"\\n    Leaf SPACES \\" \\"\\n    Leaf STRING \\"\\"file.txt\\"\\""
+`;
+
+exports[`parse (1 + 2) * 3 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRGROUPING\\n        Leaf LPAREN \\"(\\"\\n        Node EXPRBINARY\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"1\\"\\n          Leaf SPACES \\" \\"\\n          Leaf PLUS \\"+\\"\\n          Leaf SPACES \\" \\"\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"2\\"\\n        Leaf RPAREN \\")\\"\\n      Leaf SPACES \\" \\"\\n      Leaf STAR \\"*\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"3\\""
+`;
+
+exports[`parse (Object current) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCAST\\n      Leaf LPAREN \\"(\\"\\n      Node TYPEREF\\n        Leaf IDENT \\"Object\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"current\\"\\n      Leaf RPAREN \\")\\""
+`;
+
+exports[`parse (a < b) ? 1 : 2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRTERNARY\\n      Node EXPRGROUPING\\n        Leaf LPAREN \\"(\\"\\n        Node EXPRCOMPARE\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n          Leaf SPACES \\" \\"\\n          Leaf LESS \\"<\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n        Leaf RPAREN \\")\\"\\n      Leaf SPACES \\" \\"\\n      Leaf QMARK \\"?\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n      Leaf COLON \\":\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse (int key sk) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCAST\\n      Leaf LPAREN \\"(\\"\\n      Node TYPEREF\\n        Leaf KWINT \\"int\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRCALL\\n        Node NAMEREF\\n          Leaf IDENT \\"key\\"\\n        Leaf SPACES \\" \\"\\n        Node ARGLIST\\n          Node ARG\\n            Node STMTEXPR\\n              Node NAMEREF\\n                Leaf IDENT \\"sk\\"\\n      Leaf RPAREN \\")\\""
+`;
+
+exports[`parse ++x 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRPREFIX\\n      Leaf PLUSPLUS \\"++\\"\\n      Node NAMEREF\\n        Leaf IDENT \\"x\\""
+`;
+
+exports[`parse -1 * 2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRPREFIX\\n        Leaf MINUS \\"-\\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n        Leaf SPACES \\" \\"\\n      Leaf STAR \\"*\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse -1 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRPREFIX\\n      Leaf MINUS \\"-\\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\""
+`;
+
+exports[`parse 1 + 2 * 3 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUS \\"+\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRBINARY\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n        Leaf SPACES \\" \\"\\n        Leaf STAR \\"*\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"3\\""
+`;
+
+exports[`parse 1 + 2 + 3 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUS \\"+\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRBINARY\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n        Leaf SPACES \\" \\"\\n        Leaf PLUS \\"+\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"3\\""
+`;
+
+exports[`parse 1 + 2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUS \\"+\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse 1 + 2; 3 + 4 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUS \\"+\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\"\\n  Leaf SEMICOLON \\";\\"\\n  Leaf SPACES \\" \\"\\n  Node STMTEXPR\\n    Node EXPRBINARY\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"3\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUS \\"+\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"4\\""
+`;
+
+exports[`parse 2 \"\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRSTRINGCONCAT\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"\\"\\""
+`;
+
+exports[`parse \"hello\" //-¶\"world\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRSTRINGCONCAT\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"hello\\"\\"\\n      Leaf SPACES \\" \\"\\n      Leaf COMMENT \\"//-\\"\\n      Leaf EOL \\"\\n\\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"world\\"\\""
+`;
+
+exports[`parse a && b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRLOGICAL\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf AMPRAMPR \\"&&\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse a && isspace b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRLOGICAL\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf AMPRAMPR \\"&&\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRCALL\\n        Node NAMEREF\\n          Leaf IDENT \\"isspace\\"\\n        Leaf SPACES \\" \\"\\n        Node ARGLIST\\n          Node ARG\\n            Node STMTEXPR\\n              Node NAMEREF\\n                Leaf IDENT \\"b\\""
+`;
+
+exports[`parse a += b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRASSIGNMENT\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf PLUSEQUAL \\"+=\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse a < b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCOMPARE\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf LESS \\"<\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse a = b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRASSIGNMENT\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf EQUAL \\"=\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse a == b 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPREQUALITY\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf SPACES \\" \\"\\n      Leaf EQUALEQUAL \\"==\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse ad.object 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRGET\\n      Node NAMEREF\\n        Leaf IDENT \\"ad\\"\\n      Leaf PERIOD \\".\\"\\n      Node NAMEREF\\n        Leaf KWOBJECT \\"object\\""
+`;
+
+exports[`parse arr[1] 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRINDEX\\n      Node NAMEREF\\n        Leaf IDENT \\"arr\\"\\n      Leaf LBRACKET \\"[\\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf RBRACKET \\"]\\""
+`;
+
+exports[`parse break 1`] = `
+"Node TREEROOT\\n  Node STMTBREAK\\n    Leaf KWBREAK \\"break\\""
+`;
+
+exports[`parse continue 1`] = `
+"Node TREEROOT\\n  Node STMTCONTINUE\\n    Leaf KWCONTINUE \\"continue\\""
+`;
+
+exports[`parse current Object 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCAST\\n      Node NAMEREF\\n        Leaf IDENT \\"current\\"\\n      Leaf SPACES \\" \\"\\n      Node TYPEREF\\n        Leaf IDENT \\"Object\\""
+`;
+
+exports[`parse dbe->\"left\"->\"flush\"->dbe2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRARROW\\n      Node NAMEREF\\n        Leaf IDENT \\"dbe\\"\\n      Leaf MINUSGREAT \\"->\\"\\n      Node EXPRARROW\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"left\\"\\"\\n        Leaf MINUSGREAT \\"->\\"\\n        Node EXPRARROW\\n          Node EXPRLITERAL\\n            Leaf STRING \\"\\"flush\\"\\"\\n          Leaf MINUSGREAT \\"->\\"\\n          Node NAMEREF\\n            Leaf IDENT \\"dbe2\\""
+`;
+
+exports[`parse dbe->\"left\"->\"form\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRARROW\\n      Node NAMEREF\\n        Leaf IDENT \\"dbe\\"\\n      Leaf MINUSGREAT \\"->\\"\\n      Node EXPRARROW\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"left\\"\\"\\n        Leaf MINUSGREAT \\"->\\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"form\\"\\""
+`;
+
+exports[`parse foo() \"\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRSTRINGCONCAT\\n      Node EXPRCALL\\n        Node NAMEREF\\n          Leaf IDENT \\"foo\\"\\n        Node ARGLIST\\n          Leaf LPAREN \\"(\\"\\n          Leaf RPAREN \\")\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"\\"\\""
+`;
+
+exports[`parse for (a<2;a++) {} 1`] = `
+"Node TREEROOT\\n  Node STMTFOR\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRCOMPARE\\n        Node NAMEREF\\n          Leaf IDENT \\"a\\"\\n        Leaf LESS \\"<\\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n    Leaf SEMICOLON \\";\\"\\n    Node STMTEXPR\\n      Node EXPRPOSTFIX\\n        Node NAMEREF\\n          Leaf IDENT \\"a\\"\\n        Leaf PLUSPLUS \\"++\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse for (i = 0; i < 4; i++) {} 1`] = `
+"Node TREEROOT\\n  Node STMTFOR\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRASSIGNMENT\\n        Node NAMEREF\\n          Leaf IDENT \\"i\\"\\n        Leaf SPACES \\" \\"\\n        Leaf EQUAL \\"=\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"0\\"\\n    Leaf SEMICOLON \\";\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node EXPRCOMPARE\\n        Node NAMEREF\\n          Leaf IDENT \\"i\\"\\n        Leaf SPACES \\" \\"\\n        Leaf LESS \\"<\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"4\\"\\n    Leaf SEMICOLON \\";\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node EXPRPOSTFIX\\n        Node NAMEREF\\n          Leaf IDENT \\"i\\"\\n        Leaf PLUSPLUS \\"++\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse for lnk in obj<-\"*\" do {} 1`] = `
+"Node TREEROOT\\n  Node STMTFORIN\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"lnk\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWIN \\"in\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node EXPRARROW\\n        Node NAMEREF\\n          Leaf IDENT \\"obj\\"\\n        Leaf LESSMINUS \\"<-\\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"*\\"\\"\\n        Leaf SPACES \\" \\"\\n    Leaf KWDO \\"do\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse for obj in mod do {} 1`] = `
+"Node TREEROOT\\n  Node STMTFORIN\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"obj\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWIN \\"in\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"mod\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWDO \\"do\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse for x in 1 : 11 by 2 do {} 1`] = `
+"Node TREEROOT\\n  Node STMTFORIN\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"x\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWIN \\"in\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node ExprRange\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n        Leaf SPACES \\" \\"\\n        Leaf COLON \\":\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"11\\"\\n        Leaf SPACES \\" \\"\\n    Leaf KWBY \\"by\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWDO \\"do\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse for x in 1 : 11 {} 1`] = `
+"Node TREEROOT\\n  Node STMTFORIN\\n    Leaf KWFOR \\"for\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"x\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWIN \\"in\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node ExprRange\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n        Leaf SPACES \\" \\"\\n        Leaf COLON \\":\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"11\\"\\n        Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse fun(null) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"fun\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node NULL\\n              Leaf KWNULL \\"null\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse func(++i) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"func\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRPREFIX\\n              Leaf PLUSPLUS \\"++\\"\\n              Node NAMEREF\\n                Leaf IDENT \\"i\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse func(\"\" val) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"func\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRSTRINGCONCAT\\n              Node EXPRLITERAL\\n                Leaf STRING \\"\\"\\"\\"\\n              Leaf SPACES \\" \\"\\n              Node NAMEREF\\n                Leaf IDENT \\"val\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse i++ 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRPOSTFIX\\n      Node NAMEREF\\n        Leaf IDENT \\"i\\"\\n      Leaf PLUSPLUS \\"++\\""
+`;
+
+exports[`parse if (a < 2) {b} 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRCOMPARE\\n        Node NAMEREF\\n          Leaf IDENT \\"a\\"\\n        Leaf SPACES \\" \\"\\n        Leaf LESS \\"<\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Node STMTEXPR\\n        Node NAMEREF\\n          Leaf IDENT \\"b\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse if (a) { 1 } else if (b) { 2 } 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n        Leaf SPACES \\" \\"\\n      Leaf RCURLY \\"}\\"\\n    Leaf SPACES \\" \\"\\n    Leaf KWELSE \\"else\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTIF\\n      Leaf KWIF \\"if\\"\\n      Leaf SPACES \\" \\"\\n      Leaf LPAREN \\"(\\"\\n      Node STMTEXPR\\n        Node NAMEREF\\n          Leaf IDENT \\"b\\"\\n      Leaf RPAREN \\")\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTBLOCK\\n        Leaf LCURLY \\"{\\"\\n        Leaf SPACES \\" \\"\\n        Node STMTEXPR\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"2\\"\\n          Leaf SPACES \\" \\"\\n        Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse if (isDeleted module(modVersion)) {} 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRCALL\\n        Node NAMEREF\\n          Leaf IDENT \\"isDeleted\\"\\n        Leaf SPACES \\" \\"\\n        Node ARGLIST\\n          Node ARG\\n            Node STMTEXPR\\n              Node EXPRCALL\\n                Node NAMEREF\\n                  Leaf KWMODULE \\"module\\"\\n                Node ARGLIST\\n                  Leaf LPAREN \\"(\\"\\n                  Node ARG\\n                    Node STMTEXPR\\n                      Node NAMEREF\\n                        Leaf IDENT \\"modVersion\\"\\n                  Leaf RPAREN \\")\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse if (true) 1 else 2 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"1\\"\\n      Leaf SPACES \\" \\"\\n    Leaf KWELSE \\"else\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse if (true) { a + 1 } else { b + 2 } 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRBINARY\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n          Leaf SPACES \\" \\"\\n          Leaf PLUS \\"+\\"\\n          Leaf SPACES \\" \\"\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"1\\"\\n          Leaf SPACES \\" \\"\\n      Leaf RCURLY \\"}\\"\\n    Leaf SPACES \\" \\"\\n    Leaf KWELSE \\"else\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRBINARY\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n          Leaf SPACES \\" \\"\\n          Leaf PLUS \\"+\\"\\n          Leaf SPACES \\" \\"\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"2\\"\\n          Leaf SPACES \\" \\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse if (true) { a } else b 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node NAMEREF\\n          Leaf IDENT \\"a\\"\\n        Leaf SPACES \\" \\"\\n      Leaf RCURLY \\"}\\"\\n    Leaf SPACES \\" \\"\\n    Leaf KWELSE \\"else\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse if (true)¶¶{} else {} 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf END \\"\\n\\"\\n    Leaf END \\"\\n\\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\"\\n    Leaf SPACES \\" \\"\\n    Leaf KWELSE \\"else\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse if (¶true¶) {} 1`] = `
+"Node TREEROOT\\n  Node STMTIF\\n    Leaf KWIF \\"if\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Leaf EOL \\"\\n\\"\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf END \\"\\n\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int a 1`] = `
+"Node TREEROOT\\n  Node STMTVARDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"a\\""
+`;
+
+exports[`parse int a = 2 1`] = `
+"Node TREEROOT\\n  Node STMTVARDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"a\\"\\n    Leaf SPACES \\" \\"\\n    Leaf EQUAL \\"=\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse int a, b=0, c 1`] = `
+"Node TREEROOT\\n  Node STMTVARDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREFLIST\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\"\\n      Leaf EQUAL \\"=\\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"0\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"c\\""
+`;
+
+exports[`parse int a=0, b, c 1`] = `
+"Node TREEROOT\\n  Node STMTVARDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREFLIST\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n      Leaf EQUAL \\"=\\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"0\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"c\\""
+`;
+
+exports[`parse int acc(int base, int f(int, int)) {} 1`] = `
+"Node TREEROOT\\n  Node STMTFUNCDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"acc\\"\\n    Leaf LPAREN \\"(\\"\\n    Node PARAMLIST\\n      Node PARAM\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"base\\"\\n      Leaf COMMA \\",\\"\\n      Node PARAM\\n        Leaf SPACES \\" \\"\\n        Node STMTFUNCDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"f\\"\\n          Leaf LPAREN \\"(\\"\\n          Node PARAMLIST\\n            Node PARAM\\n              Node STMTFUNCDECL\\n                Node TYPEREF\\n                  Leaf KWINT \\"int\\"\\n            Leaf COMMA \\",\\"\\n            Node PARAM\\n              Leaf SPACES \\" \\"\\n              Node STMTFUNCDECL\\n                Node TYPEREF\\n                  Leaf KWINT \\"int\\"\\n          Leaf RPAREN \\")\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int arr[2] = {1, 2} 1`] = `
+"Node TREEROOT\\n  Node STMTARRAYDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"arr\\"\\n    Leaf LBRACKET \\"[\\"\\n    Node STMTEXPR\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\"\\n    Leaf RBRACKET \\"]\\"\\n    Leaf SPACES \\" \\"\\n    Leaf EQUAL \\"=\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LCURLY \\"{\\"\\n    Node ARGLIST\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n    Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int nums[] = {1, 2, 3} 1`] = `
+"Node TREEROOT\\n  Node STMTARRAYDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"nums\\"\\n    Leaf LBRACKET \\"[\\"\\n    Leaf RBRACKET \\"]\\"\\n    Leaf SPACES \\" \\"\\n    Leaf EQUAL \\"=\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LCURLY \\"{\\"\\n    Node ARGLIST\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"1\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n      Leaf COMMA \\",\\"\\n      Leaf SPACES \\" \\"\\n      Node STMTEXPR\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"3\\"\\n    Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int sum(int &a, int &b) {} 1`] = `
+"Node TREEROOT\\n  Node STMTFUNCDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"sum\\"\\n    Leaf LPAREN \\"(\\"\\n    Node PARAMLIST\\n      Node PARAM\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Leaf AMPR \\"&\\"\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n      Leaf COMMA \\",\\"\\n      Node PARAM\\n        Leaf SPACES \\" \\"\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Leaf AMPR \\"&\\"\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int sum(int a, b) 1`] = `
+"Node TREEROOT\\n  Node STMTFUNCDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"sum\\"\\n    Leaf LPAREN \\"(\\"\\n    Node PARAMLIST\\n      Node PARAM\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n      Leaf COMMA \\",\\"\\n      Node PARAM\\n        Leaf SPACES \\" \\"\\n        Node STMTVARDECL\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n    Leaf RPAREN \\")\\""
+`;
+
+exports[`parse int sum(int a, int b) {} 1`] = `
+"Node TREEROOT\\n  Node STMTFUNCDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"sum\\"\\n    Leaf LPAREN \\"(\\"\\n    Node PARAMLIST\\n      Node PARAM\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n      Leaf COMMA \\",\\"\\n      Node PARAM\\n        Leaf SPACES \\" \\"\\n        Node STMTVARDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n          Leaf SPACES \\" \\"\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse int sum(int, int) 1`] = `
+"Node TREEROOT\\n  Node STMTFUNCDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"sum\\"\\n    Leaf LPAREN \\"(\\"\\n    Node PARAMLIST\\n      Node PARAM\\n        Node STMTFUNCDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n      Leaf COMMA \\",\\"\\n      Node PARAM\\n        Leaf SPACES \\" \\"\\n        Node STMTFUNCDECL\\n          Node TYPEREF\\n            Leaf KWINT \\"int\\"\\n    Leaf RPAREN \\")\\""
+`;
+
+exports[`parse int& a = b 1`] = `
+"Node TREEROOT\\n  Node STMTVARDECL\\n    Node TYPEREF\\n      Leaf KWINT \\"int\\"\\n    Leaf AMPR \\"&\\"\\n    Leaf SPACES \\" \\"\\n    Node NAMEREF\\n      Leaf IDENT \\"a\\"\\n    Leaf SPACES \\" \\"\\n    Leaf EQUAL \\"=\\"\\n    Node STMTEXPR\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"b\\""
+`;
+
+exports[`parse lnk->\"*\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRARROW\\n      Node NAMEREF\\n        Leaf IDENT \\"lnk\\"\\n      Leaf MINUSGREAT \\"->\\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"*\\"\\""
+`;
+
+exports[`parse lnk<-\"*\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRARROW\\n      Node NAMEREF\\n        Leaf IDENT \\"lnk\\"\\n      Leaf LESSMINUS \\"<-\\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"*\\"\\""
+`;
+
+exports[`parse major(b) \"\" minor(b) \"\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRSTRINGCONCAT\\n      Node EXPRSTRINGCONCAT\\n        Node EXPRCALL\\n          Node NAMEREF\\n            Leaf IDENT \\"major\\"\\n          Node ARGLIST\\n            Leaf LPAREN \\"(\\"\\n            Node ARG\\n              Node STMTEXPR\\n                Node NAMEREF\\n                  Leaf IDENT \\"b\\"\\n            Leaf RPAREN \\")\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"\\"\\"\\n        Leaf SPACES \\" \\"\\n      Node EXPRSTRINGCONCAT\\n        Node EXPRCALL\\n          Node NAMEREF\\n            Leaf IDENT \\"minor\\"\\n          Node ARGLIST\\n            Leaf LPAREN \\"(\\"\\n            Node ARG\\n              Node STMTEXPR\\n                Node NAMEREF\\n                  Leaf IDENT \\"b\\"\\n            Leaf RPAREN \\")\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"\\"\\""
+`;
+
+exports[`parse null obj 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NULL\\n        Leaf KWNULL \\"null\\"\\n      Leaf SPACES \\" \\"\\n      Node ARGLIST\\n        Node ARG\\n          Node STMTEXPR\\n            Node NAMEREF\\n              Leaf IDENT \\"obj\\""
+`;
+
+exports[`parse null(obj) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NULL\\n        Leaf KWNULL \\"null\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node NAMEREF\\n              Leaf IDENT \\"obj\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse obj.\"number\" = 2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRASSIGNMENT\\n      Node EXPRGET\\n        Node NAMEREF\\n          Leaf IDENT \\"obj\\"\\n        Leaf PERIOD \\".\\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"number\\"\\"\\n        Leaf SPACES \\" \\"\\n      Leaf EQUAL \\"=\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse obj.\"text\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRGET\\n      Node NAMEREF\\n        Leaf IDENT \\"obj\\"\\n      Leaf PERIOD \\".\\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"text\\"\\""
+`;
+
+exports[`parse out << \"hello\" << \"world\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRWRITE\\n      Node NAMEREF\\n        Leaf IDENT \\"out\\"\\n      Leaf SPACES \\" \\"\\n      Leaf LESSLESS \\"<<\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRWRITE\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"hello\\"\\"\\n        Leaf SPACES \\" \\"\\n        Leaf LESSLESS \\"<<\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf STRING \\"\\"world\\"\\""
+`;
+
+exports[`parse out << \"hello\"¶out << \"world\" 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRWRITE\\n      Node NAMEREF\\n        Leaf IDENT \\"out\\"\\n      Leaf SPACES \\" \\"\\n      Leaf LESSLESS \\"<<\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"hello\\"\\"\\n  Leaf END \\"\\n\\"\\n  Node STMTEXPR\\n    Node EXPRWRITE\\n      Node NAMEREF\\n        Leaf IDENT \\"out\\"\\n      Leaf SPACES \\" \\"\\n      Leaf LESSLESS \\"<<\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf STRING \\"\\"world\\"\\""
+`;
+
+exports[`parse pragma encoding, \"utf-8\" 1`] = `
+"Node TREEROOT\\n  Node STMTPRAGMA\\n    Leaf KWPRAGMA \\"pragma\\"\\n    Leaf SPACES \\" \\"\\n    Leaf IDENT \\"encoding\\"\\n    Leaf COMMA \\",\\"\\n    Leaf SPACES \\" \\"\\n    Leaf STRING \\"\\"utf-8\\"\\""
+`;
+
+exports[`parse pragma runLim, 0 1`] = `
+"Node TREEROOT\\n  Node STMTPRAGMA\\n    Leaf KWPRAGMA \\"pragma\\"\\n    Leaf SPACES \\" \\"\\n    Leaf IDENT \\"runLim\\"\\n    Leaf COMMA \\",\\"\\n    Leaf SPACES \\" \\"\\n    Leaf INTEGER \\"0\\""
+`;
+
+exports[`parse print square 2 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"print\\"\\n      Leaf SPACES \\" \\"\\n      Node ARGLIST\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRCALL\\n              Node NAMEREF\\n                Leaf IDENT \\"square\\"\\n              Leaf SPACES \\" \\"\\n              Node ARGLIST\\n                Node ARG\\n                  Node STMTEXPR\\n                    Node EXPRLITERAL\\n                      Leaf INTEGER \\"2\\""
+`;
+
+exports[`parse return 1`] = `
+"Node TREEROOT\\n  Node STMTRETURN\\n    Leaf KWRETURN \\"return\\""
+`;
+
+exports[`parse return a 1`] = `
+"Node TREEROOT\\n  Node STMTRETURN\\n    Leaf KWRETURN \\"return\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\""
+`;
+
+exports[`parse str[0:2] 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRINDEX\\n      Node NAMEREF\\n        Leaf IDENT \\"str\\"\\n      Leaf LBRACKET \\"[\\"\\n      Node ExprRange\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"0\\"\\n        Leaf COLON \\":\\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n      Leaf RBRACKET \\"]\\""
+`;
+
+exports[`parse str[0:] 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRINDEX\\n      Node NAMEREF\\n        Leaf IDENT \\"str\\"\\n      Leaf LBRACKET \\"[\\"\\n      Node ExprRange\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"0\\"\\n        Leaf COLON \\":\\"\\n      Leaf RBRACKET \\"]\\""
+`;
+
+exports[`parse stream -> buf 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRARROW\\n      Node NAMEREF\\n        Leaf IDENT \\"stream\\"\\n      Leaf SPACES \\" \\"\\n      Leaf MINUSGREAT \\"->\\"\\n      Leaf SPACES \\" \\"\\n      Node NAMEREF\\n        Leaf IDENT \\"buf\\""
+`;
+
+exports[`parse styleCentered|styleFixed 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRLOGICAL\\n      Node NAMEREF\\n        Leaf IDENT \\"styleCentered\\"\\n      Leaf BAR \\"|\\"\\n      Node NAMEREF\\n        Leaf IDENT \\"styleFixed\\""
+`;
+
+exports[`parse sum(a, b) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"sum\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node NAMEREF\\n              Leaf IDENT \\"a\\"\\n          Leaf COMMA \\",\\"\\n        Leaf SPACES \\" \\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node NAMEREF\\n              Leaf IDENT \\"b\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse trigger(\"t1\", project->all->module->all) 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"trigger\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRLITERAL\\n              Leaf STRING \\"\\"t1\\"\\"\\n          Leaf COMMA \\",\\"\\n        Leaf SPACES \\" \\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRARROW\\n              Node NAMEREF\\n                Leaf IDENT \\"project\\"\\n              Leaf MINUSGREAT \\"->\\"\\n              Node EXPRARROW\\n                Node NAMEREF\\n                  Leaf IDENT \\"all\\"\\n                Leaf MINUSGREAT \\"->\\"\\n                Node EXPRARROW\\n                  Node NAMEREF\\n                    Leaf KWMODULE \\"module\\"\\n                  Leaf MINUSGREAT \\"->\\"\\n                  Node NAMEREF\\n                    Leaf IDENT \\"all\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse trigger(\"t1\", project->module->\"2\") 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRCALL\\n      Node NAMEREF\\n        Leaf IDENT \\"trigger\\"\\n      Node ARGLIST\\n        Leaf LPAREN \\"(\\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRLITERAL\\n              Leaf STRING \\"\\"t1\\"\\"\\n          Leaf COMMA \\",\\"\\n        Leaf SPACES \\" \\"\\n        Node ARG\\n          Node STMTEXPR\\n            Node EXPRARROW\\n              Node NAMEREF\\n                Leaf IDENT \\"project\\"\\n              Leaf MINUSGREAT \\"->\\"\\n              Node EXPRARROW\\n                Node NAMEREF\\n                  Leaf KWMODULE \\"module\\"\\n                Leaf MINUSGREAT \\"->\\"\\n                Node EXPRLITERAL\\n                  Leaf STRING \\"\\"2\\"\\"\\n        Leaf RPAREN \\")\\""
+`;
+
+exports[`parse true || false 1`] = `
+"Node TREEROOT\\n  Node STMTEXPR\\n    Node EXPRLOGICAL\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n      Leaf SPACES \\" \\"\\n      Leaf BARABR \\"||\\"\\n      Leaf SPACES \\" \\"\\n      Node EXPRLITERAL\\n        Leaf KWFALSE \\"false\\""
+`;
+
+exports[`parse while (a < 2) {} 1`] = `
+"Node TREEROOT\\n  Node STMTWHILE\\n    Leaf KWWHILE \\"while\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRCOMPARE\\n        Node NAMEREF\\n          Leaf IDENT \\"a\\"\\n        Leaf SPACES \\" \\"\\n        Leaf LESS \\"<\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPRLITERAL\\n          Leaf INTEGER \\"2\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse while (a) last-- 1`] = `
+"Node TREEROOT\\n  Node STMTWHILE\\n    Leaf KWWHILE \\"while\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node NAMEREF\\n        Leaf IDENT \\"a\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTEXPR\\n      Node EXPRPOSTFIX\\n        Node NAMEREF\\n          Leaf IDENT \\"last\\"\\n        Leaf MINUSMINUS \\"--\\""
+`;
+
+exports[`parse while (a==2 and b==3) {} 1`] = `
+"Node TREEROOT\\n  Node STMTWHILE\\n    Leaf KWWHILE \\"while\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Node EXPRLOGICAL\\n        Node EXPREQUALITY\\n          Node NAMEREF\\n            Leaf IDENT \\"a\\"\\n          Leaf EQUALEQUAL \\"==\\"\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"2\\"\\n          Leaf SPACES \\" \\"\\n        Leaf KWAND \\"and\\"\\n        Leaf SPACES \\" \\"\\n        Node EXPREQUALITY\\n          Node NAMEREF\\n            Leaf IDENT \\"b\\"\\n          Leaf EQUALEQUAL \\"==\\"\\n          Node EXPRLITERAL\\n            Leaf INTEGER \\"3\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;
+
+exports[`parse while (¶true¶) {} 1`] = `
+"Node TREEROOT\\n  Node STMTWHILE\\n    Leaf KWWHILE \\"while\\"\\n    Leaf SPACES \\" \\"\\n    Leaf LPAREN \\"(\\"\\n    Node STMTEXPR\\n      Leaf EOL \\"\\n\\"\\n      Node EXPRLITERAL\\n        Leaf KWTRUE \\"true\\"\\n    Leaf END \\"\\n\\"\\n    Leaf RPAREN \\")\\"\\n    Leaf SPACES \\" \\"\\n    Node STMTBLOCK\\n      Leaf LCURLY \\"{\\"\\n      Leaf RCURLY \\"}\\""
+`;

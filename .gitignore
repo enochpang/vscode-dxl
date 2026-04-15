@@ -1,7 +1,6 @@
 temp.*
 
 out/
-dist/
 samples/
 node_modules
 .vscode-test/

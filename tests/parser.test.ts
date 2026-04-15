@@ -1,7 +1,15 @@
-import { expect, test } from "vitest";
-import { tokenize } from "../lexer/lexer";
-import { ppGreenTree } from "../syntax/green_tree";
-import { parse } from "./lib";
+import test from 'node:test';
+import path from 'node:path';
+
+import { tokenize } from "../src/parse/lexer/lexer.ts";
+import { ppGreenTree } from "../src/parse/syntax/green_tree.ts";
+import { parse } from "../src/parse/parser/lib.ts";
+
+test.snapshot.setResolveSnapshotPath(() => {
+	const basename = path.basename(import.meta.filename);
+	const filename = basename + '.snapshot'
+	return path.join(import.meta.dirname, '_snapshots', filename);
+});
 
 // Expressions
 checkParse("-1");
@@ -97,13 +105,13 @@ checkParse("for x in 1 : 11 by 2 do {}");
 function checkParse(text: string) {
 	const testMessage = text.replaceAll("\n", "¶");
 
-	test(`parse ${testMessage}`, () => {
+	test(`parse ${testMessage}`, (t) => {
 		const lex_result = tokenize(text);
 		const parse_result = parse(lex_result);
 		const tree = parse_result.tree;
 
 		if (tree !== undefined) {
-			expect(ppGreenTree(tree)).toMatchSnapshot();
+			t.assert.snapshot(ppGreenTree(tree));
 		} else {
 			throw new Error("Tree undefined");
 		}

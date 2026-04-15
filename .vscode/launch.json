@@ -13,7 +13,7 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
+				"${workspaceFolder}/out/**/*.js"
 			],
 			"preLaunchTask": "npm: build"
 		},
@@ -23,8 +23,6 @@
 			"request": "launch",
 			"runtimeExecutable": "node",
 			"runtimeArgs": [
-				// "--import",
-				// "@oxc-node/core/register",
 				"--experimental-strip-types"
 			],
 			"args": [
