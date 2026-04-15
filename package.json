@@ -41,8 +41,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run build",
-		"build": "tsc",
-		"watch": "tsc -watch",
+		"build": "tsc --project tsconfig.build.json",
 		"test": "node --test 'test/**/*.tests.ts'"
 	},
 	"devDependencies": {

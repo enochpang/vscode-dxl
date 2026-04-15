@@ -13,8 +13,6 @@
 		"module": "nodenext",
 		"rootDir": ".",
 		"rewriteRelativeImportExtensions": true,
-		//Emit.
-		"outDir": "./out",
 		//Interop Constraints.
 		"isolatedModules": true,
 		"erasableSyntaxOnly": true,
