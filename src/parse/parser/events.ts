@@ -3,7 +3,6 @@ import type { LexResult } from "../lexer/lexer.ts";
 import { GreenBuilder } from "../syntax/green_builder.ts";
 import type { GreenNode } from "../syntax/green_tree.ts";
 import type { NodeKind, SyntaxKind } from "../syntax/syntax_kind.ts";
-import type { ParseError } from "./lib.ts";
 
 export type StartNode = {
 	tag: "START_NODE";
@@ -41,6 +40,11 @@ export type ParseEvent =
 	| ErrorEvent;
 
 export type EventKind = ParseEvent["tag"];
+
+export type ParseError = {
+	offset: number;
+	message: string;
+};
 
 export function buildTree(
 	lex_result: LexResult,

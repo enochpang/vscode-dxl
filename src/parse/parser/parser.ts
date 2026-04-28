@@ -1,14 +1,15 @@
 import assert from "node:assert/strict";
 
-import type { GreenToken } from "../syntax/green_tree.ts";
+import type { GreenNode, GreenToken } from "../syntax/green_tree.ts";
 import {
 	type NodeKind,
 	ONodeKind,
 	OTokenKind,
 	type SyntaxKind,
 } from "../syntax/syntax_kind.ts";
-import type { ParseEvent } from "./events.ts";
+import { buildTree, type ParseError, type ParseEvent } from "./events.ts";
 import { parseDeclaration } from "./grammar.ts";
+import type { LexResult } from "../lexer/lexer.ts";
 
 export type MarkOpened = {
 	index: number;
@@ -18,6 +19,23 @@ export type MarkClosed = {
 	index: number;
 	kind: NodeKind;
 };
+
+export type ParseResult<T> = {
+	tree: T | undefined;
+	errors: ParseError[];
+};
+
+export function parse(lex_result: LexResult): ParseResult<GreenNode> {
+	const tokens = lex_result.tokens;
+	const parser = new Parser(tokens);
+	const events = parser.parse();
+	const [tree, errors] = buildTree(lex_result, events);
+
+	return {
+		tree: tree,
+		errors: errors,
+	};
+}
 
 export class Parser {
 	private tokens: GreenToken[];

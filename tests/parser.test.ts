@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { tokenize } from "../src/parse/lexer/lexer.ts";
 import { ppGreenTree } from "../src/parse/syntax/green_tree.ts";
-import { parse } from "../src/parse/parser/lib.ts";
+import { parse } from "../src/parse/parser/parser.ts";
 
 test.snapshot.setResolveSnapshotPath(() => {
 	const basename = path.basename(import.meta.filename);
