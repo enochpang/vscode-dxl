@@ -2,10 +2,7 @@ import * as ast from "./syntax/ast.ts";
 import { type RedElement, RedNode, RedToken } from "./syntax/red_tree.ts";
 import { ONodeKind, OTokenKind } from "./syntax/syntax_kind.ts";
 
-export function findDefinition(
-	red_tree: RedNode,
-	offset: number,
-): RedToken | undefined {
+export function findDefinition(red_tree: RedNode, offset: number): RedToken | undefined {
 	const start_node = nodeAtOffset(red_tree, offset);
 	if (!start_node) {
 		return undefined;
@@ -118,13 +115,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 		scoping_node = scoping_node.parent;
 	}
 
-	const results = getReferences(
-		scoping_node,
-		start_name,
-		start_offset,
-		start_level,
-		[],
-	);
+	const results = getReferences(scoping_node, start_name, start_offset, start_level, []);
 
 	return results;
 }
@@ -140,11 +131,7 @@ export function elementsToOffset(node: RedNode, offset: number) {
 
 			acc.push(child);
 
-			if (
-				offset >= range.start &&
-				offset <= range.end &&
-				child instanceof RedNode
-			) {
+			if (offset >= range.start && offset <= range.end && child instanceof RedNode) {
 				loop(child, offset, acc);
 			}
 		}
@@ -155,10 +142,7 @@ export function elementsToOffset(node: RedNode, offset: number) {
 	return loop(node, offset, []);
 }
 
-function getSameDeclName(
-	node: RedNode,
-	start_name: string,
-): RedToken | undefined {
+function getSameDeclName(node: RedNode, start_name: string): RedToken | undefined {
 	const stmt = ast.castStmt(node);
 	if (stmt instanceof ast.StmtVariableDecl) {
 		const names = stmt.names();
@@ -229,10 +213,7 @@ function getSameDeclName(
 	return undefined;
 }
 
-function getSameAssignName(
-	node: RedNode,
-	start_name: string,
-): RedToken | undefined {
+function getSameAssignName(node: RedNode, start_name: string): RedToken | undefined {
 	let result_token: RedToken | undefined;
 
 	const expr = ast.castExpr(node);
@@ -252,10 +233,7 @@ function getSameAssignName(
 	return result_token;
 }
 
-export function nodeAtOffset(
-	node: RedNode,
-	offset: number,
-): RedNode | undefined {
+export function nodeAtOffset(node: RedNode, offset: number): RedNode | undefined {
 	let result: RedNode | undefined;
 
 	for (const child of node.children()) {
@@ -275,10 +253,7 @@ export function nodeAtOffset(
 	return result;
 }
 
-export function tokenAtOffset(
-	node: RedNode,
-	offset: number,
-): RedToken | undefined {
+export function tokenAtOffset(node: RedNode, offset: number): RedToken | undefined {
 	for (const child of node.children()) {
 		const range = child.getOffsetRange();
 

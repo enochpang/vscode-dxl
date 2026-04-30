@@ -8,10 +8,7 @@ export type TextRange = {
 	end: TextPosition;
 };
 
-export function getTextPositionFromOffset(
-	newlines: number[],
-	offset: number,
-): TextPosition {
+export function getTextPositionFromOffset(newlines: number[], offset: number): TextPosition {
 	// Leftmost binary search
 	let l = 0;
 	let r = newlines.length - 1;

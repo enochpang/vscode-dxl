@@ -1,5 +1,5 @@
 import { tokenize } from "./lexer.ts";
-import { parse, type ParseResult } from "./parser.ts";
+import { type ParseResult, parse } from "./parser.ts";
 import * as ast from "./syntax/ast.ts";
 import { type OffsetRange, RedNode, type RedToken } from "./syntax/red_tree.ts";
 import { OTokenKind } from "./syntax/syntax_kind.ts";

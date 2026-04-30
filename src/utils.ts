@@ -9,8 +9,7 @@ interface ParsedDocuments {
 	tokens: dxl.DxlSemanticToken[];
 }
 
-const diagnostic_collection =
-	vscode.languages.createDiagnosticCollection("parser");
+const diagnostic_collection = vscode.languages.createDiagnosticCollection("parser");
 
 const document_map = new Map<string, ParsedDocuments>();
 
@@ -18,9 +17,7 @@ export function removeParsedFile(filename: string) {
 	document_map.delete(filename);
 }
 
-export function getParsedDocument(
-	document: vscode.TextDocument,
-): ParsedDocuments | undefined {
+export function getParsedDocument(document: vscode.TextDocument): ParsedDocuments | undefined {
 	const parsed_document = document_map.get(document.fileName);
 	if (parsed_document && parsed_document.version === document.version) {
 		return parsed_document;
@@ -35,10 +32,7 @@ export function getParsedDocument(
 			const err = res.errors[i];
 
 			const diagnostic = new vscode.Diagnostic(
-				new vscode.Range(
-					document.positionAt(err.offset),
-					document.positionAt(err.offset),
-				),
+				new vscode.Range(document.positionAt(err.offset), document.positionAt(err.offset)),
 				err.message,
 				vscode.DiagnosticSeverity.Error,
 			);

@@ -1,10 +1,9 @@
 import * as vscode from "vscode";
 import * as dxl from "./parse/lib.ts";
-import { OSemanticKind } from "./parse/lib.ts";
 import { getParsedDocument } from "./utils.ts";
 
 export const token_legend = new vscode.SemanticTokensLegend(
-	Object.values(OSemanticKind),
+	Object.values(dxl.OSemanticKind),
 	Object.values(dxl.OSemanticModifierKind),
 );
 
@@ -12,9 +11,7 @@ export class DxlDocumentSymbolProvider {
 	provideDocumentSymbols(
 		document: vscode.TextDocument,
 		_token: vscode.CancellationToken,
-	): vscode.ProviderResult<
-		vscode.DocumentSymbol[] | vscode.SymbolInformation[]
-	> {
+	): vscode.ProviderResult<vscode.DocumentSymbol[] | vscode.SymbolInformation[]> {
 		return new Promise((resolve, _reject) => {
 			const res: vscode.DocumentSymbol[] = [];
 
@@ -44,9 +41,7 @@ export class DxlDocumentSymbolProvider {
 	}
 }
 
-export class DxlSemanticTokensProvider
-	implements vscode.DocumentSemanticTokensProvider
-{
+export class DxlSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
 	onDidChangeSemanticTokens?: vscode.Event<void>;
 	provideDocumentSemanticTokens(
 		document: vscode.TextDocument,
@@ -109,10 +104,7 @@ export class DxlRenameProvider implements vscode.RenameProvider {
 
 					workspaceEdit.replace(
 						document.uri,
-						new vscode.Range(
-							document.positionAt(range.start),
-							document.positionAt(range.end),
-						),
+						new vscode.Range(document.positionAt(range.start), document.positionAt(range.end)),
 						new_name,
 					);
 				}
@@ -140,10 +132,7 @@ export class DxlDefinitionProvider implements vscode.DefinitionProvider {
 
 				const location = new vscode.Location(
 					document.uri,
-					new vscode.Range(
-						document.positionAt(range.start),
-						document.positionAt(range.end),
-					),
+					new vscode.Range(document.positionAt(range.start), document.positionAt(range.end)),
 				);
 
 				return location;
@@ -173,10 +162,7 @@ export class DxlReferenceProvider implements vscode.ReferenceProvider {
 
 					const location = new vscode.Location(
 						document.uri,
-						new vscode.Range(
-							document.positionAt(range.start),
-							document.positionAt(range.end),
-						),
+						new vscode.Range(document.positionAt(range.start), document.positionAt(range.end)),
 					);
 
 					locations.push(location);

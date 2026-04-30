@@ -1,9 +1,5 @@
 import { GreenToken } from "./syntax/green_tree.ts";
-import {
-	OTokenKind,
-	TOKEN_KEYWORDS,
-	type TokenKind,
-} from "./syntax/syntax_kind.ts";
+import { OTokenKind, TOKEN_KEYWORDS, type TokenKind } from "./syntax/syntax_kind.ts";
 
 export type LexResult = {
 	tokens: GreenToken[];
@@ -429,9 +425,7 @@ export class Lexer {
 	 * Look ahead one character, without consuming it.
 	 */
 	private peek(): string {
-		return this.rdoffset >= this.input.length
-			? "\0"
-			: this.input[this.rdoffset];
+		return this.rdoffset >= this.input.length ? "\0" : this.input[this.rdoffset];
 	}
 }
 

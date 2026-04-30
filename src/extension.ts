@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import * as commands from "./commands.ts";
 import * as providers from "./providers.ts";
-import { token_legend } from "./providers.ts";
 import { getParsedDocument, removeParsedFile } from "./utils.ts";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -16,15 +15,12 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.languages.registerDocumentSemanticTokensProvider(
 			{ language: "dxl" },
 			new providers.DxlSemanticTokensProvider(),
-			token_legend,
+			providers.token_legend,
 		),
 	);
 
 	context.subscriptions.push(
-		vscode.languages.registerRenameProvider(
-			{ language: "dxl" },
-			new providers.DxlRenameProvider(),
-		),
+		vscode.languages.registerRenameProvider({ language: "dxl" }, new providers.DxlRenameProvider()),
 	);
 
 	context.subscriptions.push(

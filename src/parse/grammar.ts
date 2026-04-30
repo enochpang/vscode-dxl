@@ -1,3 +1,4 @@
+import type { MarkClosed, MarkOpened, Parser } from "./parser.ts";
 import {
 	type NodeKind,
 	ONodeKind,
@@ -5,7 +6,6 @@ import {
 	type SyntaxKind,
 	type TokenKind,
 } from "./syntax/syntax_kind.ts";
-import type { MarkClosed, MarkOpened, Parser } from "./parser.ts";
 
 const BP_LOWEST = 0;
 
@@ -109,11 +109,7 @@ function parseFuncDeclaration(p: Parser, m: MarkOpened) {
 	p.close(m, ONodeKind.StmtFuncDecl);
 }
 
-function parseVarDeclaration(
-	p: Parser,
-	m: MarkOpened,
-	m_name: MarkClosed | undefined,
-) {
+function parseVarDeclaration(p: Parser, m: MarkOpened, m_name: MarkClosed | undefined) {
 	if (p.consume(OTokenKind.Equal)) {
 		parseExpression(p);
 	} else if (p.consume(OTokenKind.Lbracket)) {
@@ -250,14 +246,7 @@ function parseIncludeStmt(p: Parser) {
 		p.expect(OTokenKind.Less);
 
 		while (!p.at(OTokenKind.Great) && !p.eof()) {
-			if (
-				p.atAny([
-					OTokenKind.Ident,
-					OTokenKind.Bslash,
-					OTokenKind.Fslash,
-					OTokenKind.Period,
-				])
-			) {
+			if (p.atAny([OTokenKind.Ident, OTokenKind.Bslash, OTokenKind.Fslash, OTokenKind.Period])) {
 				p.bump();
 			} else {
 				break;
@@ -312,10 +301,10 @@ function parseIfStmt(p: Parser) {
 	if (p.consume(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
-		while (p.consume(OTokenKind.End)) { }
+		while (p.consume(OTokenKind.End)) {}
 
 		if (p.expect(OTokenKind.Rparen)) {
-			while (p.consume(OTokenKind.End)) { }
+			while (p.consume(OTokenKind.End)) {}
 
 			if (p.at(OTokenKind.Lcurly)) {
 				parseStatement(p); // The then body
@@ -360,7 +349,7 @@ function parseWhileStmt(p: Parser) {
 	if (p.expect(OTokenKind.Lparen)) {
 		parseExpression(p); // The condition
 
-		while (p.consume(OTokenKind.End)) { }
+		while (p.consume(OTokenKind.End)) {}
 
 		if (p.expect(OTokenKind.Rparen)) {
 			if (p.at(OTokenKind.Lcurly)) {
@@ -704,12 +693,7 @@ function parseRangeExpr(p: Parser, lhs: MarkClosed, bp: number): MarkClosed {
 	return p.close(m, ONodeKind.ExprRange);
 }
 
-function parseInfixExpr(
-	p: Parser,
-	lhs: MarkClosed,
-	bp: number,
-	kind: NodeKind,
-): MarkClosed {
+function parseInfixExpr(p: Parser, lhs: MarkClosed, bp: number, kind: NodeKind): MarkClosed {
 	const m = p.openBefore(lhs);
 	p.bump();
 	expr_bp(p, bp);
