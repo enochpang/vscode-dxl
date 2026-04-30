@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test';
 
 import { OTokenKind, type TokenKind } from "../src/parse/syntax/syntax_kind.ts";
-import { Lexer, tokenize } from "../src/parse/lexer/lexer.ts";
+import { Lexer, tokenize } from "../src/parse/lexer.ts";
 
 test("next_token", () => {
 	const test_cases: [string, TokenKind, number, number][] = [

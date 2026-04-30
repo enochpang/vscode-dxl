@@ -4,7 +4,7 @@ import {
 	OTokenKind,
 	type SyntaxKind,
 	type TokenKind,
-} from "../syntax/syntax_kind.ts";
+} from "./syntax/syntax_kind.ts";
 import type { MarkClosed, MarkOpened, Parser } from "./parser.ts";
 
 const BP_LOWEST = 0;

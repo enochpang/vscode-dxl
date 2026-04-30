@@ -1,5 +1,5 @@
-import { tokenize } from "./lexer/lexer.ts";
-import { parse, type ParseResult } from "./parser/parser.ts";
+import { tokenize } from "./lexer.ts";
+import { parse, type ParseResult } from "./parser.ts";
 import * as ast from "./syntax/ast.ts";
 import { type OffsetRange, RedNode, type RedToken } from "./syntax/red_tree.ts";
 import { OTokenKind } from "./syntax/syntax_kind.ts";
@@ -361,7 +361,7 @@ export function getRedTree(text: string): ParseResult<RedNode> | undefined {
 }
 
 export * as find from "./find.ts";
-export { tokenize } from "./lexer/lexer.ts";
-export { parse } from "./parser/parser.ts";
+export { tokenize } from "./lexer.ts";
+export { parse } from "./parser.ts";
 export { ppGreenTree } from "./syntax/green_tree.ts";
 export { ppRedTree } from "./syntax/red_tree.ts";

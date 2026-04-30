@@ -1,15 +1,15 @@
 import assert from "node:assert/strict";
 
-import type { GreenNode, GreenToken } from "../syntax/green_tree.ts";
+import type { GreenNode, GreenToken } from "./syntax/green_tree.ts";
 import {
 	type NodeKind,
 	ONodeKind,
 	OTokenKind,
 	type SyntaxKind,
-} from "../syntax/syntax_kind.ts";
+} from "./syntax/syntax_kind.ts";
 import { parseDeclaration } from "./grammar.ts";
-import type { LexResult } from "../lexer/lexer.ts";
-import { GreenBuilder } from "../syntax/green_builder.ts";
+import type { LexResult } from "./lexer.ts";
+import { GreenBuilder } from "./syntax/green_builder.ts";
 
 export type MarkOpened = {
 	index: number;

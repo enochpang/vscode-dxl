@@ -4,8 +4,8 @@ import test from 'node:test';
 import * as path from 'node:path';
 import * as fs from "node:fs";
 import * as find from "../src/parse/find.ts";
-import { tokenize } from "../src/parse/lexer/lexer.ts";
-import { parse } from "../src/parse/parser/parser.ts";
+import { tokenize } from "../src/parse/lexer.ts";
+import { parse } from "../src/parse/parser.ts";
 import { RedNode } from "../src/parse/syntax/red_tree.ts";
 
 test.snapshot.setResolveSnapshotPath(() => {
