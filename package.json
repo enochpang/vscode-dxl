@@ -37,7 +37,18 @@
 				"command": "vscode-dxl.showCst",
 				"title": "Show CST"
 			}
-		]
+		],
+		"configuration": {
+			"title": "DXL Settings",
+			"type": "object",
+			"properties": {
+				"dxl.showParseErrors": {
+					"type": "boolean",
+					"default": true,
+					"description": "Show parsing error diagnostics."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run build",

@@ -28,16 +28,22 @@ export function getParsedDocument(document: vscode.TextDocument): ParsedDocument
 	const res = dxl.getRedTree(document.getText());
 	if (res) {
 		const diagnostics: vscode.Diagnostic[] = [];
-		for (let i = 0; i < res.errors.length; i++) {
-			const err = res.errors[i];
 
-			const diagnostic = new vscode.Diagnostic(
-				new vscode.Range(document.positionAt(err.offset), document.positionAt(err.offset)),
-				err.message,
-				vscode.DiagnosticSeverity.Error,
-			);
+		const config = vscode.workspace.getConfiguration("dxl");
+		const showParseErrors = config.get<boolean>("showParseErrors");
 
-			diagnostics.push(diagnostic);
+		if (showParseErrors) {
+			for (let i = 0; i < res.errors.length; i++) {
+				const err = res.errors[i];
+
+				const diagnostic = new vscode.Diagnostic(
+					new vscode.Range(document.positionAt(err.offset), document.positionAt(err.offset)),
+					err.message,
+					vscode.DiagnosticSeverity.Error,
+				);
+
+				diagnostics.push(diagnostic);
+			}
 		}
 
 		diagnostic_collection.set(document.uri, diagnostics);
