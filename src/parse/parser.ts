@@ -64,17 +64,7 @@ export type ParseResult<T> = {
 export function parse(lex_result: LexResult): ParseResult<GreenNode> {
 	const tokens = lex_result.tokens;
 	const parser = new Parser(tokens);
-	const events = parser.parse();
-	const [tree, errors] = buildTree(lex_result, events);
-
-	return {
-		tree: tree,
-		errors: errors,
-	};
-}
-
-export function buildTree(lex_result: LexResult, events: ParseEvent[]): [GreenNode, ParseError[]] {
-	const tokens = lex_result.tokens;
+	const events = parser.buildEvents();
 	const builder: GreenBuilder = new GreenBuilder();
 	const errors: ParseError[] = [];
 	const kinds: SyntaxKind[] = [];
@@ -94,17 +84,17 @@ export function buildTree(lex_result: LexResult, events: ParseEvent[]): [GreenNo
 			case "START_NODE": {
 				kinds.push(event.kind);
 				let idx = event_index;
-				let ofp = event.forward_parent;
+				let fp = event.forward_parent;
 
-				while (ofp) {
-					idx += ofp;
+				while (fp) {
+					idx += fp;
 
 					const event = events[idx];
 					events[idx] = { tag: "PLACEHOLDER" };
 
 					if (event.tag === "START_NODE") {
 						kinds.push(event.kind);
-						ofp = event.forward_parent;
+						fp = event.forward_parent;
 					} else {
 						assert.fail("Unreachable");
 					}
@@ -146,7 +136,10 @@ export function buildTree(lex_result: LexResult, events: ParseEvent[]): [GreenNo
 		}
 	}
 
-	return [builder.getTree() as GreenNode, errors];
+	return {
+		tree: builder.getTree() as GreenNode,
+		errors: errors,
+	};
 }
 
 export class Parser {
@@ -159,7 +152,7 @@ export class Parser {
 		this.tokens = tokens;
 	}
 
-	parse(): ParseEvent[] {
+	buildEvents(): ParseEvent[] {
 		const m = this.open();
 
 		while (!this.eof()) {
