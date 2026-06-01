@@ -32,12 +32,6 @@
 				"configuration": "./language-configuration.json"
 			}
 		],
-		"commands": [
-			{
-				"command": "vscode-dxl.showCst",
-				"title": "Show CST"
-			}
-		],
 		"configuration": {
 			"title": "DXL Settings",
 			"type": "object",

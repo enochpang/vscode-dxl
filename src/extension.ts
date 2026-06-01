@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as commands from "./commands.ts";
 import * as providers from "./providers.ts";
 import { getParsedDocument, removeParsedFile } from "./utils.ts";
 
@@ -50,15 +49,6 @@ export function activate(context: vscode.ExtensionContext) {
 			removeParsedFile(document.fileName);
 		}),
 	);
-
-	context.subscriptions.push(
-		vscode.commands.registerCommand("vscode-dxl.showCst", () => {
-			const activeEditor = vscode.window.activeTextEditor;
-			if (activeEditor) {
-				commands.showCst(activeEditor.document.getText());
-			}
-		}),
-	);
 }
 
-export function deactivate() {}
+export function deactivate() { }
