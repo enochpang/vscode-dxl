@@ -18,6 +18,7 @@ export class GreenNode {
 		this.length = length;
 	}
 
+	/** Returns the node's character count, including all children. */
 	getLength(): number {
 		return this.length;
 	}
@@ -36,6 +37,7 @@ export class GreenToken {
 		this.text = text;
 	}
 
+	/** Returns the token's character count. */
 	getLength(): number {
 		return this.text.length;
 	}
@@ -44,6 +46,7 @@ export class GreenToken {
 		return `Leaf ${this.kind} "${this.text}"`;
 	}
 
+	/** Reports if the token is whitespace. */
 	isTrivia(): boolean {
 		switch (this.kind) {
 			case OTokenKind.Comment:
@@ -56,6 +59,7 @@ export class GreenToken {
 		}
 	}
 
+	/** Reports if the token ends a statement. */
 	isStmtEnd(): boolean {
 		switch (this.kind) {
 			case OTokenKind.Semicolon:
@@ -66,6 +70,7 @@ export class GreenToken {
 		}
 	}
 
+	/** Reports if the token is type identifier. */
 	isTypeSpecifier(): boolean {
 		switch (this.kind) {
 			case OTokenKind.KwInt:
@@ -83,6 +88,9 @@ export class GreenToken {
 	}
 }
 
+/**
+ * Returns a string representation for the given green node.
+ */
 export function ppGreenTree(node: GreenNode): string {
 	function loop(n: number, green: GreenElement): string {
 		if (green instanceof GreenToken) {

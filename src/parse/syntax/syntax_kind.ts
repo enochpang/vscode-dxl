@@ -4,6 +4,9 @@ export type TokenKind = (typeof OTokenKind)[keyof typeof OTokenKind];
 
 export type NodeKind = (typeof ONodeKind)[keyof typeof ONodeKind];
 
+/**
+ * Represents a syntax token kind.
+ */
 export const OTokenKind = {
 	Lparen: "LPAREN",
 	Rparen: "RPAREN",
@@ -108,6 +111,9 @@ export const OTokenKind = {
 	LexError: "LEXERROR",
 } as const;
 
+/**
+ * Represents a syntax node kind.
+ */
 export const ONodeKind = {
 	TreeRoot: "TREEROOT",
 	ArgList: "ARGLIST",
@@ -157,6 +163,9 @@ export const ONodeKind = {
 	ParseError: "PARSEERROR",
 };
 
+/**
+ * Maps a identifier to a token kind.
+ */
 export const TOKEN_KEYWORDS = new Map<string, TokenKind>([
 	["#include", OTokenKind.KwInclude],
 	["and", OTokenKind.KwAnd],
@@ -196,7 +205,7 @@ export const TOKEN_KEYWORDS = new Map<string, TokenKind>([
 ]);
 
 /**
- * Set of built in types.
+ * List of built-in types.
  */
 export const BUILTIN_TYPES = new Set<string>([
 	"_*",

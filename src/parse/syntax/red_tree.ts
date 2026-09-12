@@ -18,6 +18,7 @@ export class RedNode {
 		this.offset = offset;
 	}
 
+	/** Returns the node kind. */
 	getKind(): SyntaxKind {
 		return this.green.kind;
 	}
@@ -91,10 +92,12 @@ export class RedToken {
 		this.offset = offset;
 	}
 
+	/** Returns the token kind. */
 	getKind(): SyntaxKind {
 		return this.green.kind;
 	}
 
+	/** Returns the text of the token. */
 	getText(): string {
 		return this.green.text;
 	}
@@ -128,6 +131,9 @@ export class RedToken {
 	}
 }
 
+/**
+ * Returns a string representation for the given red node.
+ */
 export function ppRedTree(node: RedNode): string {
 	function loop(n: number, red: RedElement): string {
 		if (red instanceof RedToken) {
