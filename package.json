@@ -50,8 +50,8 @@
 		"test": "node --test tests/**/*.test.ts"
 	},
 	"devDependencies": {
-		"@types/node": "^25.6.0",
-		"@types/vscode": "^1.115.0",
-		"typescript": "^6.0.2"
+		"@types/node": "22.20.2",
+		"@types/vscode": "1.137.0",
+		"typescript": "7.0.2"
 	}
 }
