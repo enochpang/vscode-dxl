@@ -1,7 +1,6 @@
 # Red Green Trees
 
-The green tree is created bottom-up by creating a node that has a value and children. The nodes are 
-immutable and only have downward pointers.
+The green tree is created bottom-up by creating a node that has a value and children. The nodes are immutable and only have downward pointers.
 
 The red tree is created top-down created on demand. Each red node contains a parent refernce, positional context, and a green node reference
 
