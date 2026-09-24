@@ -1,429 +1,446 @@
 import type { GreenToken } from "./green_tree.ts";
 
+type primitive = boolean | number | string;
+
 export interface Expr {
-    accept<R>(visitor: ExprVisitor<R>): R;
+	accept<R>(visitor: ExprVisitor<R>): R;
 }
 
 export interface ExprVisitor<R> {
-    visitArrowExpr(expr: ArrowExpr): R;
-    visitAssignmentExpr(expr: AssignmentExpr): R;
-    visitBinaryExpr(expr: BinaryExpr): R;
-    visitCallExpr(expr: CallExpr): R;
-    visitCastExpr(expr: CastExpr): R;
-    visitCompareExpr(expr: CompareExpr): R;
-    visitGetExpr(expr: GetExpr): R;
-    visitGroupingExpr(expr: GroupingExpr): R;
-    visitIndexExpr(expr: IndexExpr): R;
-    visitLiteralExpr(expr: LiteralExpr): R;
-    visitLogicalExpr(expr: LogicalExpr): R;
-    visitNameRefExpr(expr: NameRefExpr): R;
-    visitNameRefListExpr(expr: NameRefListExpr): R;
-    visitPostfixExpr(expr: PostfixExpr): R;
-    visitPrefixExpr(expr: PrefixExpr): R;
-    visitRangeExpr(expr: RangeExpr): R;
-    visitSetExpr(expr: SetExpr): R;
-    visitStringConcatExpr(expr: StringConcatExpr): R;
-    visitTernaryExpr(expr: TernaryExpr): R;
-    visitWriteExpr(expr: WriteExpr): R;
-    visitMissingExpr(): R;
+	visitArrowExpr(expr: ArrowExpr): R;
+	visitAssignmentExpr(expr: AssignmentExpr): R;
+	visitBinaryExpr(expr: BinaryExpr): R;
+	visitCallExpr(expr: CallExpr): R;
+	visitCastExpr(expr: CastExpr): R;
+	visitCompareExpr(expr: CompareExpr): R;
+	visitGetExpr(expr: GetExpr): R;
+	visitGroupingExpr(expr: GroupingExpr): R;
+	visitIndexExpr(expr: IndexExpr): R;
+	visitLiteralExpr(expr: LiteralExpr): R;
+	visitLogicalExpr(expr: LogicalExpr): R;
+	visitNameRefExpr(expr: NameRefExpr): R;
+	visitNameRefListExpr(expr: NameRefListExpr): R;
+	visitPostfixExpr(expr: PostfixExpr): R;
+	visitPrefixExpr(expr: PrefixExpr): R;
+	visitRangeExpr(expr: RangeExpr): R;
+	visitSetExpr(expr: SetExpr): R;
+	visitStringConcatExpr(expr: StringConcatExpr): R;
+	visitTernaryExpr(expr: TernaryExpr): R;
+	visitWriteExpr(expr: WriteExpr): R;
+	visitMissingExpr(): R;
 }
 
 export class ArrowExpr implements Expr {
-    public left: Expr;
-    public op: GreenToken;
-    public right: Expr;
+	public left: Expr;
+	public op: GreenToken;
+	public right: Expr;
 
-    constructor(left: Expr, op: GreenToken, right: Expr) {
-        this.left = left;
-        this.op = op;
-        this.right = right;
-    }
+	constructor(left: Expr, op: GreenToken, right: Expr) {
+		this.left = left;
+		this.op = op;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitArrowExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitArrowExpr(this);
+	}
 }
 
 export class AssignmentExpr implements Expr {
-    public name: Expr;
-    public op: GreenToken;
-    public value: Expr;
+	public name: Expr;
+	public op: GreenToken;
+	public value: Expr;
 
-    constructor(name: Expr, op: GreenToken, value: Expr) {
-        this.name = name;
-        this.op = op;
-        this.value = value;
-    }
+	constructor(name: Expr, op: GreenToken, value: Expr) {
+		this.name = name;
+		this.op = op;
+		this.value = value;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitAssignmentExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitAssignmentExpr(this);
+	}
 }
 
 export class BinaryExpr implements Expr {
-    public left: Expr;
-    public op: GreenToken;
-    public right: Expr;
+	public left: Expr;
+	public op: GreenToken;
+	public right: Expr;
 
-    constructor(left: Expr, op: GreenToken, right: Expr) {
-        this.left = left;
-        this.op = op;
-        this.right = right;
-    }
+	constructor(left: Expr, op: GreenToken, right: Expr) {
+		this.left = left;
+		this.op = op;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitBinaryExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitBinaryExpr(this);
+	}
 }
 
 export class CallExpr implements Expr {
-    public name: Expr;
-    public args: Expr[];
+	public name: Expr;
+	public args: Expr[];
 
-    constructor(name: Expr, args: Expr[]) {
-        this.name = name;
-        this.args = args;
-    }
+	constructor(name: Expr, args: Expr[]) {
+		this.name = name;
+		this.args = args;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitCallExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitCallExpr(this);
+	}
 }
 
 export class CastExpr implements Expr {
-    public typing: Expr;
-    public expr: Expr;
+	public typing: Expr;
+	public expr: Expr;
 
-    constructor(typing: Expr, expr: Expr) {
-        this.typing = typing;
-        this.expr = expr;
-    }
+	constructor(typing: Expr, expr: Expr) {
+		this.typing = typing;
+		this.expr = expr;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitCastExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitCastExpr(this);
+	}
 }
 
 export class CompareExpr implements Expr {
-    public left: Expr;
-    public op: GreenToken;
-    public right: Expr;
+	public left: Expr;
+	public op: GreenToken;
+	public right: Expr;
 
-    constructor(left: Expr, op: GreenToken, right: Expr) {
-        this.left = left;
-        this.op = op;
-        this.right = right;
-    }
+	constructor(left: Expr, op: GreenToken, right: Expr) {
+		this.left = left;
+		this.op = op;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitCompareExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitCompareExpr(this);
+	}
 }
 
 export class GetExpr implements Expr {
-    public name: Expr;
-    public property: Expr;
+	public name: Expr;
+	public property: Expr;
 
-    constructor(name: Expr, property: Expr) {
-        this.name = name;
-        this.property = property;
-    }
+	constructor(name: Expr, property: Expr) {
+		this.name = name;
+		this.property = property;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitGetExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitGetExpr(this);
+	}
 }
 
 export class GroupingExpr implements Expr {
-    public expr: Expr;
+	public expr: Expr;
 
-    constructor(expr: Expr) {
-        this.expr = expr;
-    }
+	constructor(expr: Expr) {
+		this.expr = expr;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitGroupingExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitGroupingExpr(this);
+	}
 }
 
 export class LiteralExpr implements Expr {
-    public value: Object;
+	public value: primitive;
 
-    constructor(value: Object) {
-        this.value = value;
-    }
+	constructor(value: primitive) {
+		this.value = value;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitLiteralExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitLiteralExpr(this);
+	}
 }
 
 export class LogicalExpr implements Expr {
-    public left: Expr;
-    public op: GreenToken;
-    public right: Expr;
+	public left: Expr;
+	public op: GreenToken;
+	public right: Expr;
 
-    constructor(left: Expr, op: GreenToken, right: Expr) {
-        this.left = left;
-        this.op = op;
-        this.right = right;
-    }
+	constructor(left: Expr, op: GreenToken, right: Expr) {
+		this.left = left;
+		this.op = op;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitLogicalExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitLogicalExpr(this);
+	}
 }
 
 export class IndexExpr implements Expr {
-    public name: Expr;
-    public index: Expr;
+	public name: Expr;
+	public index: Expr;
 
-    constructor(name: Expr, index: Expr) {
-        this.name = name;
-        this.index = index;
-    }
+	constructor(name: Expr, index: Expr) {
+		this.name = name;
+		this.index = index;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitIndexExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitIndexExpr(this);
+	}
 }
 
 export class NameRefExpr implements Expr {
-    public name: Expr;
+	public name: Expr;
 
-    constructor(name: Expr) {
-        this.name = name;
-    }
+	constructor(name: Expr) {
+		this.name = name;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitNameRefExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitNameRefExpr(this);
+	}
 }
 
 export class NameRefListExpr implements Expr {
-    public names: Expr[];
+	public names: Expr[];
 
-    constructor(names: Expr[]) {
-        this.names = names;
-    }
+	constructor(names: Expr[]) {
+		this.names = names;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitNameRefListExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitNameRefListExpr(this);
+	}
 }
 
 export class PostfixExpr implements Expr {
-    public op: GreenToken;
-    public right: Expr;
+	public op: GreenToken;
+	public right: Expr;
 
-    constructor(op: GreenToken, right: Expr) {
-        this.op = op;
-        this.right = right;
-    }
+	constructor(op: GreenToken, right: Expr) {
+		this.op = op;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitPostfixExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitPostfixExpr(this);
+	}
 }
 
 export class PrefixExpr implements Expr {
-    public left: Expr;
-    public op: GreenToken;
+	public left: Expr;
+	public op: GreenToken;
 
-    constructor(left: Expr, op: GreenToken) {
-        this.left = left;
-        this.op = op;
-    }
+	constructor(left: Expr, op: GreenToken) {
+		this.left = left;
+		this.op = op;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitPrefixExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitPrefixExpr(this);
+	}
 }
 
 export class RangeExpr implements Expr {
-    public start: Expr;
-    public end: Expr;
+	public start: Expr;
+	public end: Expr;
 
-    constructor(start: Expr, end: Expr) {
-        this.start = start;
-        this.end = end;
-    }
+	constructor(start: Expr, end: Expr) {
+		this.start = start;
+		this.end = end;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitRangeExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitRangeExpr(this);
+	}
 }
 
 export class SetExpr implements Expr {
-    public name: Expr;
-    public property: Expr;
-    public value: Expr;
+	public name: Expr;
+	public property: Expr;
+	public value: Expr;
 
-    constructor(name: Expr, property: Expr, value: Expr) {
-        this.name = name;
-        this.property = property;
-        this.value = value;
-    }
+	constructor(name: Expr, property: Expr, value: Expr) {
+		this.name = name;
+		this.property = property;
+		this.value = value;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitSetExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitSetExpr(this);
+	}
 }
 
 export class StringConcatExpr implements Expr {
-    public left: Expr;
-    public right: Expr;
+	public left: Expr;
+	public right: Expr;
 
-    constructor(left: Expr, right: Expr) {
-        this.left = left;
-        this.right = right;
-    }
+	constructor(left: Expr, right: Expr) {
+		this.left = left;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitStringConcatExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitStringConcatExpr(this);
+	}
 }
 
 export class TernaryExpr implements Expr {
-    public condition: Expr;
-    public thenBranch: Expr;
-    public elseBranch: Expr;
+	public condition: Expr;
+	public thenBranch: Expr;
+	public elseBranch: Expr;
 
-    constructor(condition: Expr, thenBranch: Expr, elseBranch: Expr) {
-        this.condition = condition;
-        this.thenBranch = thenBranch;
-        this.elseBranch = elseBranch;
-    }
+	constructor(condition: Expr, thenBranch: Expr, elseBranch: Expr) {
+		this.condition = condition;
+		this.thenBranch = thenBranch;
+		this.elseBranch = elseBranch;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitTernaryExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitTernaryExpr(this);
+	}
 }
 
 export class WriteExpr implements Expr {
-    public left: Expr;
-    public right: Expr;
+	public left: Expr;
+	public right: Expr;
 
-    constructor(left: Expr, right: Expr) {
-        this.left = left;
-        this.right = right;
-    }
+	constructor(left: Expr, right: Expr) {
+		this.left = left;
+		this.right = right;
+	}
 
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitWriteExpr(this);
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitWriteExpr(this);
+	}
 }
 
 export class MissingExpr implements Expr {
-    accept<R>(visitor: ExprVisitor<R>): R {
-        return visitor.visitMissingExpr();
-    }
+	accept<R>(visitor: ExprVisitor<R>): R {
+		return visitor.visitMissingExpr();
+	}
 }
 
 /**
- * TODO
+ * Returns a string representation for the given Expr.
+ */
+export function ppExpr(expr: Expr): string {
+	const astPrinter = new AstPrinter();
+	return astPrinter.parenthesize("", expr);
+}
+
+/**
+ * Visitor to write the Expr to a string.
  */
 export class AstPrinter implements ExprVisitor<string> {
-    parenthesize(name: string, ...exprs: Expr[]): string {
-        const result = [];
+	parenthesize(name: string, ...exprs: Expr[]): string {
+		const result = [];
 
-        result.push("(");
-        result.push(name);
-        for (const expr of exprs) {
-            result.push(expr.accept(this));
-        }
-        result.push(")");
+		if (name !== "") {
+			result.push("(");
+			result.push(name);
+		}
 
-        return result.join();
-    }
+		for (const expr of exprs) {
+			result.push(" ");
+			result.push(expr.accept(this));
+		}
 
-    visitArrowExpr(expr: ArrowExpr): string {
-        return this.parenthesize(expr.op.text, expr.left, expr.right);
-    }
+		if (name !== "") {
+			result.push(")");
+		}
 
-    visitAssignmentExpr(expr: AssignmentExpr): string {
-        return this.parenthesize(expr.op.text, expr.name, expr.value);
-    }
+		return result.join("");
+	}
 
-    visitBinaryExpr(expr: BinaryExpr): string {
-        return this.parenthesize(expr.op.text, expr.left, expr.right);
-    }
+	visitArrowExpr(expr: ArrowExpr): string {
+		return this.parenthesize(expr.op.text, expr.left, expr.right);
+	}
 
-    visitCallExpr(expr: CallExpr): string {
-        return this.parenthesize("call", expr.name, ...expr.args);
-    }
+	visitAssignmentExpr(expr: AssignmentExpr): string {
+		return this.parenthesize(expr.op.text, expr.name, expr.value);
+	}
 
-    visitCastExpr(expr: CastExpr): string {
-        return this.parenthesize("CAST", expr.typing, expr.expr);
-    }
+	visitBinaryExpr(expr: BinaryExpr): string {
+		return this.parenthesize(expr.op.text, expr.left, expr.right);
+	}
 
-    visitCompareExpr(expr: CompareExpr): string {
-        return this.parenthesize(expr.op.text, expr.left, expr.right);
-    }
+	visitCallExpr(expr: CallExpr): string {
+		return this.parenthesize("call", expr.name, ...expr.args);
+	}
 
-    visitGetExpr(expr: GetExpr): string {
-        return this.parenthesize("GET", expr.name, expr.property);
-    }
+	visitCastExpr(expr: CastExpr): string {
+		return this.parenthesize("CAST", expr.typing, expr.expr);
+	}
 
-    visitGroupingExpr(expr: GroupingExpr): string {
-        return this.parenthesize("GROUP", expr.expr);
-    }
+	visitCompareExpr(expr: CompareExpr): string {
+		return this.parenthesize(expr.op.text, expr.left, expr.right);
+	}
 
-    visitIndexExpr(expr: IndexExpr): string {
-        return this.parenthesize("INDEX", expr.name, expr.index);
-    }
+	visitGetExpr(expr: GetExpr): string {
+		return this.parenthesize("GET", expr.name, expr.property);
+	}
 
-    visitLiteralExpr(expr: LiteralExpr): string {
-        if (expr.value === null) {
-            return "NULL";
-        } else if (typeof expr.value === "string") {
-            return expr.value as string;
-        } else {
-            return expr.value.toString();
-        }
-    }
+	visitGroupingExpr(expr: GroupingExpr): string {
+		return this.parenthesize("GROUP", expr.expr);
+	}
 
-    visitLogicalExpr(expr: LogicalExpr): string {
-        return this.parenthesize(expr.op.text, expr.left, expr.right);
-    }
+	visitIndexExpr(expr: IndexExpr): string {
+		return this.parenthesize("INDEX", expr.name, expr.index);
+	}
 
-    visitNameRefExpr(expr: NameRefExpr): string {
-        return this.parenthesize("NAMEREF", expr.name);
-    }
+	visitLiteralExpr(expr: LiteralExpr): string {
+		if (expr.value === null) {
+			return "NULL";
+		} else if (typeof expr.value === "string") {
+			return expr.value as string;
+		} else {
+			return expr.value.toString();
+		}
+	}
 
-    visitNameRefListExpr(expr: NameRefListExpr): string {
-        return this.parenthesize("NAMEREFLIST", ...expr.names);
-    }
+	visitLogicalExpr(expr: LogicalExpr): string {
+		return this.parenthesize(expr.op.text, expr.left, expr.right);
+	}
 
-    visitPostfixExpr(expr: PostfixExpr): string {
-        return this.parenthesize(expr.op.text, expr.right);
-    }
+	visitNameRefExpr(expr: NameRefExpr): string {
+		return this.parenthesize("NAMEREF", expr.name);
+	}
 
-    visitPrefixExpr(expr: PrefixExpr): string {
-        return this.parenthesize(expr.op.text, expr.left);
-    }
+	visitNameRefListExpr(expr: NameRefListExpr): string {
+		return this.parenthesize("NAMEREFLIST", ...expr.names);
+	}
 
-    visitRangeExpr(expr: RangeExpr): string {
-        return this.parenthesize("RANGE", expr.start, expr.end);
-    }
+	visitPostfixExpr(expr: PostfixExpr): string {
+		return this.parenthesize(expr.op.text, expr.right);
+	}
 
-    visitSetExpr(expr: SetExpr): string {
-        return this.parenthesize("SET", expr.name, expr.property, expr.value);
-    }
+	visitPrefixExpr(expr: PrefixExpr): string {
+		return this.parenthesize(expr.op.text, expr.left);
+	}
 
-    visitStringConcatExpr(expr: StringConcatExpr): string {
-        return this.parenthesize("CONCAT", expr.left, expr.right);
-    }
+	visitRangeExpr(expr: RangeExpr): string {
+		return this.parenthesize("RANGE", expr.start, expr.end);
+	}
 
-    visitTernaryExpr(expr: TernaryExpr): string {
-        return this.parenthesize("TERNARY", expr.condition, expr.thenBranch, expr.elseBranch);
-    }
+	visitSetExpr(expr: SetExpr): string {
+		return this.parenthesize("SET", expr.name, expr.property, expr.value);
+	}
 
-    visitWriteExpr(expr: WriteExpr): string {
-        return this.parenthesize("WRITE", expr.left, expr.right);
-    }
+	visitStringConcatExpr(expr: StringConcatExpr): string {
+		return this.parenthesize("CONCAT", expr.left, expr.right);
+	}
 
-    visitMissingExpr(): string {
-        return this.parenthesize("MISSING")
-    }
+	visitTernaryExpr(expr: TernaryExpr): string {
+		return this.parenthesize("TERNARY", expr.condition, expr.thenBranch, expr.elseBranch);
+	}
+
+	visitWriteExpr(expr: WriteExpr): string {
+		return this.parenthesize("WRITE", expr.left, expr.right);
+	}
+
+	visitMissingExpr(): string {
+		return this.parenthesize("MISSING");
+	}
 }
