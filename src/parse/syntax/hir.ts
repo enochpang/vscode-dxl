@@ -1,6 +1,4 @@
-import type { GreenToken } from "./green_tree.ts";
-
-type primitive = boolean | number | string;
+type primitive = boolean | number | string | null;
 
 export interface Expr {
 	accept<R>(visitor: ExprVisitor<R>): R;
@@ -32,10 +30,10 @@ export interface ExprVisitor<R> {
 
 export class ArrowExpr implements Expr {
 	public left: Expr;
-	public op: GreenToken;
+	public op: string;
 	public right: Expr;
 
-	constructor(left: Expr, op: GreenToken, right: Expr) {
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
@@ -48,10 +46,10 @@ export class ArrowExpr implements Expr {
 
 export class AssignmentExpr implements Expr {
 	public name: Expr;
-	public op: GreenToken;
+	public op: string;
 	public value: Expr;
 
-	constructor(name: Expr, op: GreenToken, value: Expr) {
+	constructor(name: Expr, op: string, value: Expr) {
 		this.name = name;
 		this.op = op;
 		this.value = value;
@@ -64,10 +62,10 @@ export class AssignmentExpr implements Expr {
 
 export class BinaryExpr implements Expr {
 	public left: Expr;
-	public op: GreenToken;
+	public op: string;
 	public right: Expr;
 
-	constructor(left: Expr, op: GreenToken, right: Expr) {
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
@@ -108,10 +106,10 @@ export class CastExpr implements Expr {
 
 export class CompareExpr implements Expr {
 	public left: Expr;
-	public op: GreenToken;
+	public op: string;
 	public right: Expr;
 
-	constructor(left: Expr, op: GreenToken, right: Expr) {
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
@@ -162,10 +160,10 @@ export class LiteralExpr implements Expr {
 
 export class LogicalExpr implements Expr {
 	public left: Expr;
-	public op: GreenToken;
+	public op: string;
 	public right: Expr;
 
-	constructor(left: Expr, op: GreenToken, right: Expr) {
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
@@ -215,10 +213,10 @@ export class NameRefListExpr implements Expr {
 }
 
 export class PostfixExpr implements Expr {
-	public op: GreenToken;
+	public op: string;
 	public right: Expr;
 
-	constructor(op: GreenToken, right: Expr) {
+	constructor(op: string, right: Expr) {
 		this.op = op;
 		this.right = right;
 	}
@@ -230,9 +228,9 @@ export class PostfixExpr implements Expr {
 
 export class PrefixExpr implements Expr {
 	public left: Expr;
-	public op: GreenToken;
+	public op: string;
 
-	constructor(left: Expr, op: GreenToken) {
+	constructor(left: Expr, op: string) {
 		this.left = left;
 		this.op = op;
 	}
@@ -355,15 +353,15 @@ export class AstPrinter implements ExprVisitor<string> {
 	}
 
 	visitArrowExpr(expr: ArrowExpr): string {
-		return this.parenthesize(expr.op.text, expr.left, expr.right);
+		return this.parenthesize(expr.op, expr.left, expr.right);
 	}
 
 	visitAssignmentExpr(expr: AssignmentExpr): string {
-		return this.parenthesize(expr.op.text, expr.name, expr.value);
+		return this.parenthesize(expr.op, expr.name, expr.value);
 	}
 
 	visitBinaryExpr(expr: BinaryExpr): string {
-		return this.parenthesize(expr.op.text, expr.left, expr.right);
+		return this.parenthesize(expr.op, expr.left, expr.right);
 	}
 
 	visitCallExpr(expr: CallExpr): string {
@@ -375,7 +373,7 @@ export class AstPrinter implements ExprVisitor<string> {
 	}
 
 	visitCompareExpr(expr: CompareExpr): string {
-		return this.parenthesize(expr.op.text, expr.left, expr.right);
+		return this.parenthesize(expr.op, expr.left, expr.right);
 	}
 
 	visitGetExpr(expr: GetExpr): string {
@@ -401,7 +399,7 @@ export class AstPrinter implements ExprVisitor<string> {
 	}
 
 	visitLogicalExpr(expr: LogicalExpr): string {
-		return this.parenthesize(expr.op.text, expr.left, expr.right);
+		return this.parenthesize(expr.op, expr.left, expr.right);
 	}
 
 	visitNameRefExpr(expr: NameRefExpr): string {
@@ -413,11 +411,11 @@ export class AstPrinter implements ExprVisitor<string> {
 	}
 
 	visitPostfixExpr(expr: PostfixExpr): string {
-		return this.parenthesize(expr.op.text, expr.right);
+		return this.parenthesize(expr.op, expr.right);
 	}
 
 	visitPrefixExpr(expr: PrefixExpr): string {
-		return this.parenthesize(expr.op.text, expr.left);
+		return this.parenthesize(expr.op, expr.left);
 	}
 
 	visitRangeExpr(expr: RangeExpr): string {
