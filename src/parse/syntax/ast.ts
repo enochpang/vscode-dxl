@@ -44,6 +44,34 @@ export type Expr =
 	| ExprTernary
 	| ExprWrite;
 
+interface AstExprVisitable {
+	tag: string;
+	accept<R>(visitor: AstExprVisitor<R>): R;
+}
+
+interface AstExprVisitor<R> {
+	visitExprArrow(expr: ExprArrow): R;
+	visitExprAssignment(expr: ExprAssignment): R;
+	visitExprBinary(expr: ExprBinary): R;
+	visitExprCall(expr: ExprCall): R;
+	visitExprCast(expr: ExprCast): R;
+	visitExprCompare(expr: ExprCompare): R;
+	visitExprGet(expr: ExprGet): R;
+	visitExprGrouping(expr: ExprGrouping): R;
+	visitExprIndex(expr: ExprIndex): R;
+	visitExprLiteral(expr: ExprLiteral): R;
+	visitExprLogical(expr: ExprLogical): R;
+	visitExprNameRef(expr: ExprNameRef): R;
+	visitExprNameRefList(expr: ExprNameRefList): R;
+	visitExprPostfix(expr: ExprPostfix): R;
+	visitExprPrefix(expr: ExprPrefix): R;
+	visitExprRange(expr: ExprRange): R;
+	visitExprSet(expr: ExprSet): R;
+	visitExprStringConcat(expr: ExprStringConcat): R;
+	visitExprTernary(expr: ExprTernary): R;
+	visitExprWrite(expr: ExprWrite): R;
+}
+
 export function cast(red: RedNode): AstNode | undefined {
 	const stmt = castStmt(red);
 	if (stmt) {
@@ -699,7 +727,7 @@ export class StmtWhile {
 	}
 }
 
-export class ExprArrow {
+export class ExprArrow implements AstExprVisitable {
 	public readonly tag = "ExprArrow";
 	public readonly red: RedNode;
 
@@ -726,9 +754,13 @@ export class ExprArrow {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprArrow(this);
+	}
 }
 
-export class ExprAssignment {
+export class ExprAssignment implements AstExprVisitable {
 	public readonly tag = "ExprAssign";
 	public readonly red: RedNode;
 
@@ -761,9 +793,13 @@ export class ExprAssignment {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprAssignment(this);
+	}
 }
 
-export class ExprBinary {
+export class ExprBinary implements AstExprVisitable {
 	public readonly tag = "ExprBinary";
 	public readonly red: RedNode;
 
@@ -792,9 +828,13 @@ export class ExprBinary {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprBinary(this);
+	}
 }
 
-export class ExprCall {
+export class ExprCall implements AstExprVisitable {
 	public readonly tag = "ExprCall";
 	public readonly red: RedNode;
 
@@ -819,9 +859,13 @@ export class ExprCall {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprCall(this);
+	}
 }
 
-export class ExprCast {
+export class ExprCast implements AstExprVisitable {
 	public readonly tag = "ExprCast";
 	public readonly red: RedNode;
 
@@ -841,9 +885,13 @@ export class ExprCast {
 	expr(): Expr | undefined {
 		return nthExpr(this.red, 0);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprCast(this);
+	}
 }
 
-export class ExprCompare {
+export class ExprCompare implements AstExprVisitable {
 	public readonly tag = "ExprCompare";
 	public readonly red: RedNode;
 
@@ -874,9 +922,13 @@ export class ExprCompare {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprCompare(this);
+	}
 }
 
-export class ExprGet {
+export class ExprGet implements AstExprVisitable {
 	public readonly tag = "ExprGet";
 	public readonly red: RedNode;
 
@@ -896,9 +948,13 @@ export class ExprGet {
 	property(): Expr | undefined {
 		return nthExpr(this.red, 1);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprGet(this);
+	}
 }
 
-export class ExprGrouping {
+export class ExprGrouping implements AstExprVisitable {
 	public readonly tag = "ExprGrouping";
 	public readonly red: RedNode;
 
@@ -909,9 +965,13 @@ export class ExprGrouping {
 	expr(): Expr | undefined {
 		return nthExpr(this.red, 0);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprGrouping(this);
+	}
 }
 
-export class ExprIndex {
+export class ExprIndex implements AstExprVisitable {
 	public readonly tag = "ExprIndex";
 	public readonly red: RedNode;
 
@@ -931,9 +991,13 @@ export class ExprIndex {
 	index(): Expr | undefined {
 		return nthExpr(this.red, 1);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprIndex(this);
+	}
 }
 
-export class ExprLiteral {
+export class ExprLiteral implements AstExprVisitable {
 	public readonly tag = "ExprLiteral";
 	public readonly red: RedNode;
 
@@ -948,9 +1012,13 @@ export class ExprLiteral {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprLiteral(this);
+	}
 }
 
-export class ExprLogical {
+export class ExprLogical implements AstExprVisitable {
 	public readonly tag = "ExprLogical";
 	public readonly red: RedNode;
 
@@ -977,9 +1045,13 @@ export class ExprLogical {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprLogical(this);
+	}
 }
 
-export class ExprNameRef {
+export class ExprNameRef implements AstExprVisitable {
 	public readonly tag = "ExprNameRef";
 	public readonly red: RedNode;
 
@@ -994,9 +1066,13 @@ export class ExprNameRef {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprNameRef(this);
+	}
 }
 
-export class ExprNameRefList {
+export class ExprNameRefList implements AstExprVisitable {
 	public readonly tag = "ExprNameRefList";
 	public readonly red: RedNode;
 
@@ -1020,9 +1096,13 @@ export class ExprNameRefList {
 			return undefined;
 		}
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprNameRefList(this);
+	}
 }
 
-export class ExprPostfix {
+export class ExprPostfix implements AstExprVisitable {
 	public readonly tag = "ExprPostfix";
 	public readonly red: RedNode;
 
@@ -1045,9 +1125,13 @@ export class ExprPostfix {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprPostfix(this);
+	}
 }
 
-export class ExprPrefix {
+export class ExprPrefix implements AstExprVisitable {
 	public readonly tag = "ExprPrefix";
 	public readonly red: RedNode;
 
@@ -1077,9 +1161,13 @@ export class ExprPrefix {
 
 		return undefined;
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprPrefix(this);
+	}
 }
 
-export class ExprRange {
+export class ExprRange implements AstExprVisitable {
 	public readonly tag = "ExprRange";
 	public readonly red: RedNode;
 
@@ -1094,9 +1182,13 @@ export class ExprRange {
 	endIndex(): Expr | undefined {
 		return nthExpr(this.red, 1);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprRange(this);
+	}
 }
 
-export class ExprSet {
+export class ExprSet implements AstExprVisitable {
 	public readonly tag = "ExprSet";
 	public readonly red: RedNode;
 
@@ -1120,9 +1212,13 @@ export class ExprSet {
 	value(): Expr | undefined {
 		return nthExpr(this.red, 2);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprSet(this);
+	}
 }
 
-export class ExprStringConcat {
+export class ExprStringConcat implements AstExprVisitable {
 	public readonly tag = "ExprStringConcat";
 	public readonly red: RedNode;
 
@@ -1137,9 +1233,13 @@ export class ExprStringConcat {
 	rhs(): Expr | undefined {
 		return nthExpr(this.red, 1);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprStringConcat(this);
+	}
 }
 
-export class ExprTernary {
+export class ExprTernary implements AstExprVisitable {
 	public readonly tag = "ExprTernary";
 	public readonly red: RedNode;
 
@@ -1158,9 +1258,13 @@ export class ExprTernary {
 	elseBranch(): Expr | undefined {
 		return nthExpr(this.red, 2);
 	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprTernary(this);
+	}
 }
 
-export class ExprWrite {
+export class ExprWrite implements AstExprVisitable {
 	public readonly tag = "ExprWrite";
 	public readonly red: RedNode;
 
@@ -1174,6 +1278,10 @@ export class ExprWrite {
 
 	rhs(): Expr | undefined {
 		return nthExpr(this.red, 1);
+	}
+
+	accept<R>(visitor: AstExprVisitor<R>): R {
+		return visitor.visitExprWrite(this);
 	}
 }
 
