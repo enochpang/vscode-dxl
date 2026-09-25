@@ -1,10 +1,10 @@
 type primitive = boolean | number | string | null;
 
-export interface Expr {
-	accept<R>(visitor: ExprVisitor<R>): R;
+export interface HirExprVistable {
+	accept<R>(visitor: HirExprVisitor<R>): R;
 }
 
-export interface ExprVisitor<R> {
+export interface HirExprVisitor<R> {
 	visitArrowExpr(expr: ArrowExpr): R;
 	visitAssignmentExpr(expr: AssignmentExpr): R;
 	visitBinaryExpr(expr: BinaryExpr): R;
@@ -28,294 +28,294 @@ export interface ExprVisitor<R> {
 	visitMissingExpr(): R;
 }
 
-export class ArrowExpr implements Expr {
-	public left: Expr;
+export class ArrowExpr implements HirExprVistable {
+	public left: HirExprVistable;
 	public op: string;
-	public right: Expr;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, op: string, right: Expr) {
+	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitArrowExpr(this);
 	}
 }
 
-export class AssignmentExpr implements Expr {
-	public name: Expr;
+export class AssignmentExpr implements HirExprVistable {
+	public name: HirExprVistable;
 	public op: string;
-	public value: Expr;
+	public value: HirExprVistable;
 
-	constructor(name: Expr, op: string, value: Expr) {
+	constructor(name: HirExprVistable, op: string, value: HirExprVistable) {
 		this.name = name;
 		this.op = op;
 		this.value = value;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitAssignmentExpr(this);
 	}
 }
 
-export class BinaryExpr implements Expr {
-	public left: Expr;
+export class BinaryExpr implements HirExprVistable {
+	public left: HirExprVistable;
 	public op: string;
-	public right: Expr;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, op: string, right: Expr) {
+	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitBinaryExpr(this);
 	}
 }
 
-export class CallExpr implements Expr {
-	public name: Expr;
-	public args: Expr[];
+export class CallExpr implements HirExprVistable {
+	public name: HirExprVistable;
+	public args: HirExprVistable[];
 
-	constructor(name: Expr, args: Expr[]) {
+	constructor(name: HirExprVistable, args: HirExprVistable[]) {
 		this.name = name;
 		this.args = args;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitCallExpr(this);
 	}
 }
 
-export class CastExpr implements Expr {
-	public typing: Expr;
-	public expr: Expr;
+export class CastExpr implements HirExprVistable {
+	public typing: HirExprVistable;
+	public expr: HirExprVistable;
 
-	constructor(typing: Expr, expr: Expr) {
+	constructor(typing: HirExprVistable, expr: HirExprVistable) {
 		this.typing = typing;
 		this.expr = expr;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitCastExpr(this);
 	}
 }
 
-export class CompareExpr implements Expr {
-	public left: Expr;
+export class CompareExpr implements HirExprVistable {
+	public left: HirExprVistable;
 	public op: string;
-	public right: Expr;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, op: string, right: Expr) {
+	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitCompareExpr(this);
 	}
 }
 
-export class GetExpr implements Expr {
-	public name: Expr;
-	public property: Expr;
+export class GetExpr implements HirExprVistable {
+	public name: HirExprVistable;
+	public property: HirExprVistable;
 
-	constructor(name: Expr, property: Expr) {
+	constructor(name: HirExprVistable, property: HirExprVistable) {
 		this.name = name;
 		this.property = property;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitGetExpr(this);
 	}
 }
 
-export class GroupingExpr implements Expr {
-	public expr: Expr;
+export class GroupingExpr implements HirExprVistable {
+	public expr: HirExprVistable;
 
-	constructor(expr: Expr) {
+	constructor(expr: HirExprVistable) {
 		this.expr = expr;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitGroupingExpr(this);
 	}
 }
 
-export class LiteralExpr implements Expr {
+export class LiteralExpr implements HirExprVistable {
 	public value: primitive;
 
 	constructor(value: primitive) {
 		this.value = value;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitLiteralExpr(this);
 	}
 }
 
-export class LogicalExpr implements Expr {
-	public left: Expr;
+export class LogicalExpr implements HirExprVistable {
+	public left: HirExprVistable;
 	public op: string;
-	public right: Expr;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, op: string, right: Expr) {
+	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitLogicalExpr(this);
 	}
 }
 
-export class IndexExpr implements Expr {
-	public name: Expr;
-	public index: Expr;
+export class IndexExpr implements HirExprVistable {
+	public name: HirExprVistable;
+	public index: HirExprVistable;
 
-	constructor(name: Expr, index: Expr) {
+	constructor(name: HirExprVistable, index: HirExprVistable) {
 		this.name = name;
 		this.index = index;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitIndexExpr(this);
 	}
 }
 
-export class NameRefExpr implements Expr {
-	public name: Expr;
+export class NameRefExpr implements HirExprVistable {
+	public name: HirExprVistable;
 
-	constructor(name: Expr) {
+	constructor(name: HirExprVistable) {
 		this.name = name;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitNameRefExpr(this);
 	}
 }
 
-export class NameRefListExpr implements Expr {
-	public names: Expr[];
+export class NameRefListExpr implements HirExprVistable {
+	public names: HirExprVistable[];
 
-	constructor(names: Expr[]) {
+	constructor(names: HirExprVistable[]) {
 		this.names = names;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitNameRefListExpr(this);
 	}
 }
 
-export class PostfixExpr implements Expr {
+export class PostfixExpr implements HirExprVistable {
 	public op: string;
-	public right: Expr;
+	public right: HirExprVistable;
 
-	constructor(op: string, right: Expr) {
+	constructor(op: string, right: HirExprVistable) {
 		this.op = op;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitPostfixExpr(this);
 	}
 }
 
-export class PrefixExpr implements Expr {
-	public left: Expr;
+export class PrefixExpr implements HirExprVistable {
+	public left: HirExprVistable;
 	public op: string;
 
-	constructor(left: Expr, op: string) {
+	constructor(left: HirExprVistable, op: string) {
 		this.left = left;
 		this.op = op;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitPrefixExpr(this);
 	}
 }
 
-export class RangeExpr implements Expr {
-	public start: Expr;
-	public end: Expr;
+export class RangeExpr implements HirExprVistable {
+	public start: HirExprVistable;
+	public end: HirExprVistable;
 
-	constructor(start: Expr, end: Expr) {
+	constructor(start: HirExprVistable, end: HirExprVistable) {
 		this.start = start;
 		this.end = end;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitRangeExpr(this);
 	}
 }
 
-export class SetExpr implements Expr {
-	public name: Expr;
-	public property: Expr;
-	public value: Expr;
+export class SetExpr implements HirExprVistable {
+	public name: HirExprVistable;
+	public property: HirExprVistable;
+	public value: HirExprVistable;
 
-	constructor(name: Expr, property: Expr, value: Expr) {
+	constructor(name: HirExprVistable, property: HirExprVistable, value: HirExprVistable) {
 		this.name = name;
 		this.property = property;
 		this.value = value;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitSetExpr(this);
 	}
 }
 
-export class StringConcatExpr implements Expr {
-	public left: Expr;
-	public right: Expr;
+export class StringConcatExpr implements HirExprVistable {
+	public left: HirExprVistable;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, right: Expr) {
+	constructor(left: HirExprVistable, right: HirExprVistable) {
 		this.left = left;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitStringConcatExpr(this);
 	}
 }
 
-export class TernaryExpr implements Expr {
-	public condition: Expr;
-	public thenBranch: Expr;
-	public elseBranch: Expr;
+export class TernaryExpr implements HirExprVistable {
+	public condition: HirExprVistable;
+	public thenBranch: HirExprVistable;
+	public elseBranch: HirExprVistable;
 
-	constructor(condition: Expr, thenBranch: Expr, elseBranch: Expr) {
+	constructor(condition: HirExprVistable, thenBranch: HirExprVistable, elseBranch: HirExprVistable) {
 		this.condition = condition;
 		this.thenBranch = thenBranch;
 		this.elseBranch = elseBranch;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitTernaryExpr(this);
 	}
 }
 
-export class WriteExpr implements Expr {
-	public left: Expr;
-	public right: Expr;
+export class WriteExpr implements HirExprVistable {
+	public left: HirExprVistable;
+	public right: HirExprVistable;
 
-	constructor(left: Expr, right: Expr) {
+	constructor(left: HirExprVistable, right: HirExprVistable) {
 		this.left = left;
 		this.right = right;
 	}
 
-	accept<R>(visitor: ExprVisitor<R>): R {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitWriteExpr(this);
 	}
 }
 
-export class MissingExpr implements Expr {
-	accept<R>(visitor: ExprVisitor<R>): R {
+export class MissingExpr implements HirExprVistable {
+	accept<R>(visitor: HirExprVisitor<R>): R {
 		return visitor.visitMissingExpr();
 	}
 }
@@ -323,7 +323,7 @@ export class MissingExpr implements Expr {
 /**
  * Returns a string representation for the given Expr.
  */
-export function ppExpr(expr: Expr): string {
+export function ppExpr(expr: HirExprVistable): string {
 	const astPrinter = new AstPrinter();
 	return astPrinter.parenthesize("", expr);
 }
@@ -331,8 +331,8 @@ export function ppExpr(expr: Expr): string {
 /**
  * Visitor to write the Expr to a string.
  */
-export class AstPrinter implements ExprVisitor<string> {
-	parenthesize(name: string, ...exprs: Expr[]): string {
+export class AstPrinter implements HirExprVisitor<string> {
+	parenthesize(name: string, ...exprs: HirExprVistable[]): string {
 		const result = [];
 
 		if (name !== "") {
