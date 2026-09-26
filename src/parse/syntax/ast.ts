@@ -1,8 +1,6 @@
 import type { RedNode, RedToken } from "./red_tree.ts";
 import { ONodeKind, OTokenKind } from "./syntax_kind.ts";
 
-export type AstNode = Stmt | Expr;
-
 export type Stmt =
 	| Root
 	| ArgList
@@ -72,7 +70,7 @@ interface AstExprVisitor<R> {
 	visitExprWrite(expr: ExprWrite): R;
 }
 
-export function cast(red: RedNode): AstNode | undefined {
+export function cast(red: RedNode): Stmt | Expr | undefined {
 	const stmt = castStmt(red);
 	if (stmt) {
 		return stmt;
