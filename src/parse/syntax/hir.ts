@@ -1,444 +1,357 @@
 type primitive = boolean | number | string | null;
 
-export interface HirExprVistable {
-	accept<R>(visitor: HirExprVisitor<R>): R;
+export interface HirNode {
+	tag: string;
 }
 
-export interface HirExprVisitor<R> {
-	visitArrowExpr(expr: ArrowExpr): R;
-	visitAssignmentExpr(expr: AssignmentExpr): R;
-	visitBinaryExpr(expr: BinaryExpr): R;
-	visitCallExpr(expr: CallExpr): R;
-	visitCastExpr(expr: CastExpr): R;
-	visitCompareExpr(expr: CompareExpr): R;
-	visitGetExpr(expr: GetExpr): R;
-	visitGroupingExpr(expr: GroupingExpr): R;
-	visitIndexExpr(expr: IndexExpr): R;
-	visitLiteralExpr(expr: LiteralExpr): R;
-	visitLogicalExpr(expr: LogicalExpr): R;
-	visitNameRefExpr(expr: NameRefExpr): R;
-	visitNameRefListExpr(expr: NameRefListExpr): R;
-	visitPostfixExpr(expr: PostfixExpr): R;
-	visitPrefixExpr(expr: PrefixExpr): R;
-	visitRangeExpr(expr: RangeExpr): R;
-	visitSetExpr(expr: SetExpr): R;
-	visitStringConcatExpr(expr: StringConcatExpr): R;
-	visitTernaryExpr(expr: TernaryExpr): R;
-	visitWriteExpr(expr: WriteExpr): R;
-	visitMissingExpr(): R;
-}
+export type Expr =
+	| ArrowExpr
+	| AssignmentExpr
+	| BinaryExpr
+	| CallExpr
+	| CastExpr
+	| CompareExpr
+	| GetExpr
+	| GroupingExpr
+	| LiteralExpr
+	| LogicalExpr
+	| IndexExpr
+	| NameRefExpr
+	| NameRefListExpr
+	| PostfixExpr
+	| PrefixExpr
+	| RangeExpr
+	| SetExpr
+	| StringConcatExpr
+	| TernaryExpr
+	| WriteExpr
+	| MissingExpr;
 
-export class ArrowExpr implements HirExprVistable {
-	public left: HirExprVistable;
+export class ArrowExpr implements HirNode {
+	public readonly tag = "ArrowExpr";
+
+	public left: Expr;
 	public op: string;
-	public right: HirExprVistable;
+	public right: Expr;
 
-	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitArrowExpr(this);
-	}
 }
 
-export class AssignmentExpr implements HirExprVistable {
-	public name: HirExprVistable;
-	public op: string;
-	public value: HirExprVistable;
+export class AssignmentExpr implements HirNode {
+	public readonly tag = "AssignmentExpr";
 
-	constructor(name: HirExprVistable, op: string, value: HirExprVistable) {
+	public name: Expr;
+	public op: string;
+	public value: Expr;
+
+	constructor(name: Expr, op: string, value: Expr) {
 		this.name = name;
 		this.op = op;
 		this.value = value;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitAssignmentExpr(this);
-	}
 }
 
-export class BinaryExpr implements HirExprVistable {
-	public left: HirExprVistable;
-	public op: string;
-	public right: HirExprVistable;
+export class BinaryExpr implements HirNode {
+	public readonly tag = "BinaryExpr";
 
-	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
+	public left: Expr;
+	public op: string;
+	public right: Expr;
+
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitBinaryExpr(this);
-	}
 }
 
-export class CallExpr implements HirExprVistable {
-	public name: HirExprVistable;
-	public args: HirExprVistable[];
+export class CallExpr implements HirNode {
+	public readonly tag = "CallExpr";
 
-	constructor(name: HirExprVistable, args: HirExprVistable[]) {
+	public name: Expr;
+	public args: Expr[];
+
+	constructor(name: Expr, args: Expr[]) {
 		this.name = name;
 		this.args = args;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitCallExpr(this);
-	}
 }
 
-export class CastExpr implements HirExprVistable {
-	public typing: HirExprVistable;
-	public expr: HirExprVistable;
+export class CastExpr implements HirNode {
+	public readonly tag = "CastExpr";
 
-	constructor(typing: HirExprVistable, expr: HirExprVistable) {
+	public typing: Expr;
+	public expr: Expr;
+
+	constructor(typing: Expr, expr: Expr) {
 		this.typing = typing;
 		this.expr = expr;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitCastExpr(this);
-	}
 }
 
-export class CompareExpr implements HirExprVistable {
-	public left: HirExprVistable;
-	public op: string;
-	public right: HirExprVistable;
+export class CompareExpr implements HirNode {
+	public readonly tag = "CompareExpr";
 
-	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
+	public left: Expr;
+	public op: string;
+	public right: Expr;
+
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitCompareExpr(this);
-	}
 }
 
-export class GetExpr implements HirExprVistable {
-	public name: HirExprVistable;
-	public property: HirExprVistable;
+export class GetExpr implements HirNode {
+	public readonly tag = "GetExpr";
 
-	constructor(name: HirExprVistable, property: HirExprVistable) {
+	public name: Expr;
+	public property: Expr;
+
+	constructor(name: Expr, property: Expr) {
 		this.name = name;
 		this.property = property;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitGetExpr(this);
-	}
 }
 
-export class GroupingExpr implements HirExprVistable {
-	public expr: HirExprVistable;
+export class GroupingExpr implements HirNode {
+	public readonly tag = "GroupingExpr";
 
-	constructor(expr: HirExprVistable) {
+	public expr: Expr;
+
+	constructor(expr: Expr) {
 		this.expr = expr;
 	}
+}
 
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitGroupingExpr(this);
+export class IndexExpr implements HirNode {
+	public readonly tag = "IndexExpr";
+
+	public name: Expr;
+	public index: Expr;
+
+	constructor(name: Expr, index: Expr) {
+		this.name = name;
+		this.index = index;
 	}
 }
 
-export class LiteralExpr implements HirExprVistable {
+export class LiteralExpr implements HirNode {
+	public readonly tag = "LiteralExpr";
+
 	public value: primitive;
 
 	constructor(value: primitive) {
 		this.value = value;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitLiteralExpr(this);
-	}
 }
 
-export class LogicalExpr implements HirExprVistable {
-	public left: HirExprVistable;
-	public op: string;
-	public right: HirExprVistable;
+export class LogicalExpr implements HirNode {
+	public readonly tag = "LogicalExpr";
 
-	constructor(left: HirExprVistable, op: string, right: HirExprVistable) {
+	public left: Expr;
+	public op: string;
+	public right: Expr;
+
+	constructor(left: Expr, op: string, right: Expr) {
 		this.left = left;
 		this.op = op;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitLogicalExpr(this);
-	}
 }
 
-export class IndexExpr implements HirExprVistable {
-	public name: HirExprVistable;
-	public index: HirExprVistable;
+export class NameRefExpr implements HirNode {
+	public readonly tag = "NameRefExpr";
 
-	constructor(name: HirExprVistable, index: HirExprVistable) {
-		this.name = name;
-		this.index = index;
-	}
+	public name: Expr;
 
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitIndexExpr(this);
-	}
-}
-
-export class NameRefExpr implements HirExprVistable {
-	public name: HirExprVistable;
-
-	constructor(name: HirExprVistable) {
+	constructor(name: Expr) {
 		this.name = name;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitNameRefExpr(this);
-	}
 }
 
-export class NameRefListExpr implements HirExprVistable {
-	public names: HirExprVistable[];
+export class NameRefListExpr implements HirNode {
+	public readonly tag = "NameRefListExpr";
 
-	constructor(names: HirExprVistable[]) {
+	public names: Expr[];
+
+	constructor(names: Expr[]) {
 		this.names = names;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitNameRefListExpr(this);
-	}
 }
 
-export class PostfixExpr implements HirExprVistable {
-	public op: string;
-	public right: HirExprVistable;
+export class PostfixExpr implements HirNode {
+	public readonly tag = "PostfixExpr";
 
-	constructor(op: string, right: HirExprVistable) {
+	public op: string;
+	public right: Expr;
+
+	constructor(op: string, right: Expr) {
 		this.op = op;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitPostfixExpr(this);
-	}
 }
 
-export class PrefixExpr implements HirExprVistable {
-	public left: HirExprVistable;
+export class PrefixExpr implements HirNode {
+	public readonly tag = "PrefixExpr";
+
+	public left: Expr;
 	public op: string;
 
-	constructor(left: HirExprVistable, op: string) {
+	constructor(left: Expr, op: string) {
 		this.left = left;
 		this.op = op;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitPrefixExpr(this);
-	}
 }
 
-export class RangeExpr implements HirExprVistable {
-	public start: HirExprVistable;
-	public end: HirExprVistable;
+export class RangeExpr implements HirNode {
+	public readonly tag = "RangeExpr";
 
-	constructor(start: HirExprVistable, end: HirExprVistable) {
+	public start: Expr;
+	public end: Expr;
+
+	constructor(start: Expr, end: Expr) {
 		this.start = start;
 		this.end = end;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitRangeExpr(this);
-	}
 }
 
-export class SetExpr implements HirExprVistable {
-	public name: HirExprVistable;
-	public property: HirExprVistable;
-	public value: HirExprVistable;
+export class SetExpr implements HirNode {
+	public readonly tag = "SetExpr";
 
-	constructor(name: HirExprVistable, property: HirExprVistable, value: HirExprVistable) {
+	public name: Expr;
+	public property: Expr;
+	public value: Expr;
+
+	constructor(name: Expr, property: Expr, value: Expr) {
 		this.name = name;
 		this.property = property;
 		this.value = value;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitSetExpr(this);
-	}
 }
 
-export class StringConcatExpr implements HirExprVistable {
-	public left: HirExprVistable;
-	public right: HirExprVistable;
+export class StringConcatExpr implements HirNode {
+	public readonly tag = "StringConcatExpr";
 
-	constructor(left: HirExprVistable, right: HirExprVistable) {
+	public left: Expr;
+	public right: Expr;
+
+	constructor(left: Expr, right: Expr) {
 		this.left = left;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitStringConcatExpr(this);
-	}
 }
 
-export class TernaryExpr implements HirExprVistable {
-	public condition: HirExprVistable;
-	public thenBranch: HirExprVistable;
-	public elseBranch: HirExprVistable;
+export class TernaryExpr implements HirNode {
+	public readonly tag = "TernaryExpr";
 
-	constructor(condition: HirExprVistable, thenBranch: HirExprVistable, elseBranch: HirExprVistable) {
+	public condition: Expr;
+	public thenBranch: Expr;
+	public elseBranch: Expr;
+
+	constructor(condition: Expr, thenBranch: Expr, elseBranch: Expr) {
 		this.condition = condition;
 		this.thenBranch = thenBranch;
 		this.elseBranch = elseBranch;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitTernaryExpr(this);
-	}
 }
 
-export class WriteExpr implements HirExprVistable {
-	public left: HirExprVistable;
-	public right: HirExprVistable;
+export class WriteExpr implements HirNode {
+	public readonly tag = "WriteExpr";
 
-	constructor(left: HirExprVistable, right: HirExprVistable) {
+	public left: Expr;
+	public right: Expr;
+
+	constructor(left: Expr, right: Expr) {
 		this.left = left;
 		this.right = right;
 	}
-
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitWriteExpr(this);
-	}
 }
 
-export class MissingExpr implements HirExprVistable {
-	accept<R>(visitor: HirExprVisitor<R>): R {
-		return visitor.visitMissingExpr();
-	}
+export class MissingExpr implements HirNode {
+	public readonly tag = "MissingExpr";
 }
 
 /**
  * Returns a string representation for the given Expr.
  */
-export function ppExpr(expr: HirExprVistable): string {
-	const astPrinter = new AstPrinter();
-	return astPrinter.parenthesize("", expr);
-}
-
-/**
- * Visitor to write the Expr to a string.
- */
-export class AstPrinter implements HirExprVisitor<string> {
-	parenthesize(name: string, ...exprs: HirExprVistable[]): string {
+export function ppHirExpr(expr: Expr): string {
+	function parenthesize(name: string, ...exprs: Expr[]): string {
 		const result = [];
 
+		result.push("(");
+
 		if (name !== "") {
-			result.push("(");
 			result.push(name);
 		}
 
 		for (const expr of exprs) {
 			result.push(" ");
-			result.push(expr.accept(this));
+			result.push(visit(expr));
 		}
 
-		if (name !== "") {
-			result.push(")");
-		}
+		result.push(")");
 
 		return result.join("");
 	}
 
-	visitArrowExpr(expr: ArrowExpr): string {
-		return this.parenthesize(expr.op, expr.left, expr.right);
-	}
-
-	visitAssignmentExpr(expr: AssignmentExpr): string {
-		return this.parenthesize(expr.op, expr.name, expr.value);
-	}
-
-	visitBinaryExpr(expr: BinaryExpr): string {
-		return this.parenthesize(expr.op, expr.left, expr.right);
-	}
-
-	visitCallExpr(expr: CallExpr): string {
-		return this.parenthesize("call", expr.name, ...expr.args);
-	}
-
-	visitCastExpr(expr: CastExpr): string {
-		return this.parenthesize("CAST", expr.typing, expr.expr);
-	}
-
-	visitCompareExpr(expr: CompareExpr): string {
-		return this.parenthesize(expr.op, expr.left, expr.right);
-	}
-
-	visitGetExpr(expr: GetExpr): string {
-		return this.parenthesize("GET", expr.name, expr.property);
-	}
-
-	visitGroupingExpr(expr: GroupingExpr): string {
-		return this.parenthesize("GROUP", expr.expr);
-	}
-
-	visitIndexExpr(expr: IndexExpr): string {
-		return this.parenthesize("INDEX", expr.name, expr.index);
-	}
-
-	visitLiteralExpr(expr: LiteralExpr): string {
-		if (expr.value === null) {
-			return "NULL";
-		} else if (typeof expr.value === "string") {
-			return expr.value as string;
-		} else {
-			return expr.value.toString();
+	function visit(expr: Expr): string {
+		switch (expr.tag) {
+			case "ArrowExpr":
+				return parenthesize(expr.op, expr.left, expr.right);
+			case "AssignmentExpr":
+				return parenthesize(expr.op, expr.name, expr.value);
+			case "BinaryExpr":
+				return parenthesize(expr.op, expr.left, expr.right);
+			case "CallExpr":
+				return parenthesize(visit(expr.name), ...expr.args);
+			case "CastExpr":
+				return parenthesize("CAST", expr.typing, expr.expr);
+			case "CompareExpr":
+				return parenthesize(expr.op, expr.left, expr.right);
+			case "GetExpr":
+				return parenthesize("GET", expr.name, expr.property);
+			case "GroupingExpr":
+				return parenthesize("", expr.expr);
+			case "IndexExpr":
+				return parenthesize("INDEX", expr.name, expr.index);
+			case "LiteralExpr":
+				if (expr.value === null) {
+					return "NULL";
+				} else if (typeof expr.value === "string") {
+					return expr.value as string;
+				} else {
+					return expr.value.toString();
+				}
+			case "LogicalExpr":
+				return parenthesize(expr.op, expr.left, expr.right);
+			case "NameRefExpr":
+				return parenthesize("NAMEREF", expr.name);
+			case "NameRefListExpr":
+				return parenthesize("NAMEREFLIST", ...expr.names);
+			case "PostfixExpr":
+				return parenthesize(expr.op, expr.right);
+			case "PrefixExpr":
+				return parenthesize(expr.op, expr.left);
+			case "RangeExpr":
+				return parenthesize("RANGE", expr.start, expr.end);
+			case "SetExpr":
+				return parenthesize("SET", expr.name, expr.property, expr.value);
+			case "StringConcatExpr":
+				return parenthesize("CONCAT", expr.left, expr.right);
+			case "TernaryExpr":
+				return parenthesize("TERNARY", expr.condition, expr.thenBranch, expr.elseBranch);
+			case "WriteExpr":
+				return parenthesize("WRITE", expr.left, expr.right);
+			case "MissingExpr":
+				return parenthesize("MISSING");
 		}
 	}
 
-	visitLogicalExpr(expr: LogicalExpr): string {
-		return this.parenthesize(expr.op, expr.left, expr.right);
-	}
-
-	visitNameRefExpr(expr: NameRefExpr): string {
-		return this.parenthesize("NAMEREF", expr.name);
-	}
-
-	visitNameRefListExpr(expr: NameRefListExpr): string {
-		return this.parenthesize("NAMEREFLIST", ...expr.names);
-	}
-
-	visitPostfixExpr(expr: PostfixExpr): string {
-		return this.parenthesize(expr.op, expr.right);
-	}
-
-	visitPrefixExpr(expr: PrefixExpr): string {
-		return this.parenthesize(expr.op, expr.left);
-	}
-
-	visitRangeExpr(expr: RangeExpr): string {
-		return this.parenthesize("RANGE", expr.start, expr.end);
-	}
-
-	visitSetExpr(expr: SetExpr): string {
-		return this.parenthesize("SET", expr.name, expr.property, expr.value);
-	}
-
-	visitStringConcatExpr(expr: StringConcatExpr): string {
-		return this.parenthesize("CONCAT", expr.left, expr.right);
-	}
-
-	visitTernaryExpr(expr: TernaryExpr): string {
-		return this.parenthesize("TERNARY", expr.condition, expr.thenBranch, expr.elseBranch);
-	}
-
-	visitWriteExpr(expr: WriteExpr): string {
-		return this.parenthesize("WRITE", expr.left, expr.right);
-	}
-
-	visitMissingExpr(): string {
-		return this.parenthesize("MISSING");
-	}
+	return visit(expr);
 }
