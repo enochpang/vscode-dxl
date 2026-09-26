@@ -4,6 +4,20 @@ export interface HirNode {
 	tag: string;
 }
 
+export type Stmt =
+	| ArrayDeclStmt
+	| BlockStmt
+	| BreakStmt
+	| ContinueStmt
+	| ForStmt
+	| ForInStmt
+	| FunctionDeclStmt
+	| IfStmt
+	| ReturnStmt
+	| VariableDeclStmt
+	| WhileStmt
+	| MissingStmt;
+
 export type Expr =
 	| ArrowExpr
 	| AssignmentExpr
@@ -26,6 +40,141 @@ export type Expr =
 	| TernaryExpr
 	| WriteExpr
 	| MissingExpr;
+
+export class ArrayDeclStmt implements HirNode {
+	public readonly tag = "ArrayDeclStmt";
+
+	public typing: string;
+	public name: string;
+	public count?: Expr;
+	public values?: Expr[];
+
+	constructor(typing: string, name: string, obj: { count?: Expr; values?: Expr[] }) {
+		this.typing = typing;
+		this.name = name;
+
+		if (obj.count) this.count = obj.count;
+		if (obj.values) this.values = obj.values;
+	}
+}
+
+export class BlockStmt implements HirNode {
+	public readonly tag = "BlockStmt";
+
+	public stmts: Stmt[];
+
+	constructor(stmts: Stmt[]) {
+		this.stmts = stmts;
+	}
+}
+
+export class BreakStmt implements HirNode {
+	public readonly tag = "BreakStmt";
+}
+
+export class ContinueStmt implements HirNode {
+	public readonly tag = "ContinueStmt";
+}
+
+export class ForStmt implements HirNode {
+	public readonly tag = "ForStmt";
+
+	public initializer: Expr;
+	public condition: Expr;
+	public increment: Expr;
+	public body: Stmt;
+
+	constructor(initializer: Expr, condition: Expr, increment: Expr, body: Stmt) {
+		this.initializer = initializer;
+		this.condition = condition;
+		this.increment = increment;
+		this.body = body;
+	}
+}
+
+export class ForInStmt implements HirNode {
+	public readonly tag = "ForInStmt";
+
+	public child: Expr;
+	public parent: Expr;
+	public body: Stmt;
+
+	constructor(child: Expr, parent: Expr, body: Stmt) {
+		this.child = child;
+		this.parent = parent;
+		this.body = body;
+	}
+}
+
+export class FunctionDeclStmt implements HirNode {
+	public readonly tag = "FunctionDeclStmt";
+
+	public typing: string;
+	public name: string;
+	public params: Expr[];
+	public body: Stmt;
+
+	constructor(typing: string, name: string, params: Expr[], body: Stmt) {
+		this.typing = typing;
+		this.name = name;
+		this.params = params;
+		this.body = body;
+	}
+}
+
+export class IfStmt implements HirNode {
+	public readonly tag = "IfStmt";
+
+	public condition: Expr;
+	public thenBranch: Stmt;
+	public elseBranch: Stmt;
+
+	constructor(condition: Expr, thenBranch: Stmt, elseBranch: Stmt) {
+		this.condition = condition;
+		this.thenBranch = thenBranch;
+		this.elseBranch = elseBranch;
+	}
+}
+
+export class ReturnStmt implements HirNode {
+	public readonly tag = "ReturnStmt";
+
+	public expr: Expr;
+
+	constructor(expr: Expr) {
+		this.expr = expr;
+	}
+}
+
+export class VariableDeclStmt implements HirNode {
+	public readonly tag = "VariableDeclStmt";
+
+	public typing: string;
+	public names: string[];
+	public value: Expr;
+
+	constructor(typing: string, names: string[], value: Expr) {
+		this.typing = typing;
+		this.names = names;
+		this.value = value;
+	}
+}
+
+export class WhileStmt implements HirNode {
+	public readonly tag = "WhileStmt";
+
+	public condition: Expr;
+	public body: Stmt;
+
+	constructor(condition: Expr, body: Stmt) {
+		this.condition = condition;
+		this.body = body;
+	}
+}
+
+export class MissingStmt implements HirNode {
+	public readonly tag = "MissingStmt";
+}
 
 export class ArrowExpr implements HirNode {
 	public readonly tag = "ArrowExpr";
