@@ -72,7 +72,7 @@ export function getSymbols(red_tree: RedNode): SymbolResult {
 	}
 
 	function loop(node: ast.Stmt | ast.Expr | undefined) {
-		if (!node) {
+		if (node === undefined) {
 			return;
 		}
 

@@ -4,7 +4,7 @@ import { ONodeKind, OTokenKind } from "./syntax/syntax_kind.ts";
 
 export function findDefinition(red_tree: RedNode, offset: number): RedToken | undefined {
 	const start_node = nodeAtOffset(red_tree, offset);
-	if (!start_node) {
+	if (start_node === undefined) {
 		return undefined;
 	}
 
@@ -14,7 +14,7 @@ export function findDefinition(red_tree: RedNode, offset: number): RedToken | un
 		start_name = start_expr.name()?.getText();
 	}
 
-	if (!start_name) {
+	if (start_name === undefined) {
 		return undefined;
 	}
 
@@ -84,7 +84,7 @@ export function findReferences(red_tree: RedNode, offset: number) {
 	}
 
 	const start_node = findDefinition(red_tree, offset)?.parent;
-	if (!start_node) {
+	if (start_node === undefined) {
 		return undefined;
 	}
 
@@ -94,12 +94,12 @@ export function findReferences(red_tree: RedNode, offset: number) {
 		start_name = start_expr.name()?.getText();
 	}
 
-	if (!start_name) {
+	if (start_name === undefined) {
 		return undefined;
 	}
 
 	const start_node_parent = start_node.parent;
-	if (!start_node_parent) {
+	if (start_node_parent === undefined) {
 		return undefined;
 	}
 
