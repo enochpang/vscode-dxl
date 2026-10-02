@@ -1,6 +1,6 @@
 [default]
 build:
-    npx tsc --project tsconfig.build.json
+    npx --no-install tsc --project tsconfig.build.json
 
 test:
     node --test tests/**/*.test.ts
@@ -8,7 +8,7 @@ test:
 check:
     biome check
 
-lint: 
+lint:
     biome lint
 
 format:
